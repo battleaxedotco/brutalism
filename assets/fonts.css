@@ -3,6 +3,7 @@
 	src: url('./Open_Sans/OpenSans-Light.ttf') format('truetype');
    font-weight: 300;
 }
+
 @font-face {
    font-family: 'Open Sans';
 	src: url('./Open_Sans/OpenSans-LightItalic.ttf') format('truetype');
@@ -15,6 +16,7 @@
 	src: url('./Open_Sans/OpenSans-Regular.ttf') format('truetype');
    font-weight: 400;
 }
+
 @font-face {
    font-family: 'Open Sans';
 	src: url('./Open_Sans/OpenSans-Italic.ttf') format('truetype');
