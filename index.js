@@ -22,6 +22,7 @@ const Wrapper = require("./components/Wrapper").default;
 const Autofocus = require("./components/directiveAutofocus.js").default;
 const FakeSpy = require("./utils/fakeSpy").default;
 require("./assets/material_icon_font/css/materialdesignicons.css");
+require("./assets/fonts.css");
 
 import { openURL, evalScript, saveDialog, openDialog, loadScript, rgbToHex, readDir, writeFile } from 'cluecumber'
 let Pan = require('vue-pan').default;
