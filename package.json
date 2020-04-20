@@ -1,7 +1,7 @@
 {
   "name": "brutalism",
-  "version": "1.0.06",
-  "description": "",
+  "version": "1.0.07",
+  "description": "Battleaxe's component library for Adobe CEP panels",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
