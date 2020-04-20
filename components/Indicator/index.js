@@ -1,1 +1,0 @@
-export default require('./Indicator.vue').default
