@@ -1,12 +1,12 @@
 {
   "name": "brutalism",
-  "version": "1.0.05",
+  "version": "1.0.06",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "brutalize": "node ./configure.js",
-    "divide": "node ./divide.js"
+    "brutalize": "node ./utils/configure.js",
+    "divide": "node ./utils/divide.js"
   },
   "keywords": [],
   "author": "Adam Plouff <adamplouff@gmail.com> && Tom Scharstein <tom@inventsable.cc>",
