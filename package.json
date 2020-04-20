@@ -1,0 +1,20 @@
+{
+  "name": "brutalism",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "brutalize": "node ./configure.js",
+    "divide": "node ./divide.js"
+  },
+  "keywords": [],
+  "author": "Adam Plouff <adamplouff@gmail.com> && Tom Scharstein <tom@inventsable.cc>",
+  "license": "ISC",
+  "dependencies": {
+    "cep-spy": "^1.1.1",
+    "cluecumber": "0.0.42",
+    "starlette": "^1.0.2",
+    "vue-pan": "^1.0.0"
+  }
+}

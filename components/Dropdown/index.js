@@ -1,0 +1,1 @@
+export default require('./Dropdown.vue').default

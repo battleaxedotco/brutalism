@@ -1,0 +1,1 @@
+export default require('./File-Input.vue').default
