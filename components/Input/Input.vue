@@ -48,6 +48,7 @@
 						:class="[
 							{ flat, filled, truncate },
 							'input-value',
+							uppercase ? 'uppercase' : '',
 							!flat && !filled ? 'default' : '',
 							hasFocus ? 'active' : 'idle'
 						]"
@@ -174,6 +175,10 @@ export default {
 			default: ""
 		},
 		autoSelect: {
+			type: Boolean,
+			default: false,
+		},
+		uppercase: {
 			type: Boolean,
 			default: false,
 		},
@@ -326,6 +331,10 @@ export default {
 	width: 100%;
 	color: var(--default-color);
 	border-radius: 2px 2px 0px 0px;
+}
+
+.uppercase {
+	text-transform: uppercase;
 }
 
 .input-inside:hover:not(.active) {
