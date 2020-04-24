@@ -84,7 +84,7 @@ export default {
 .fold-label-text {
 	text-transform: uppercase;
 	letter-spacing: 0.1em;
-	font-size: 10px;
+	/* font-size: 10px; */
 	user-select: none;
 }
 .fold-icon {

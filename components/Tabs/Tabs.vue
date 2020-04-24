@@ -232,7 +232,7 @@ export default {
 	justify-content: center;
 	align-items: center;
 	height: calc(100% - 2px);
-	font-size: 10px;
+	/* font-size: 10px; */
 	text-transform: uppercase;
 	transition: all 200ms var(--quad) 20ms;
 }
