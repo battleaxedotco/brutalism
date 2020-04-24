@@ -119,13 +119,21 @@ export default {
 
 		// If an active prop String is passed from parent,
 		// assign it just after mounting and menu generation
-		if (this.active) {
+		if (isNaN(this.active)) {
 			let found = this.menu.find(item => {
 				return (
 					item.value == this.active + "" ||
 					item.label == this.active + ""
 				);
 			});
+			if (found) found.active = true;
+			else
+				console.error(
+					`${this.active} does not exist in items!`,
+					this.items
+				);
+		} else if (!isNaN(this.active)) {
+			let found = this.menu[this.active];
 			if (found) found.active = true;
 			else
 				console.error(
@@ -398,7 +406,6 @@ svg {
 }
 
 .dropdown-container {
-	z-index: 1;
 	box-sizing: border-box;
 	position: relative;
 	/* width: 100%; */
@@ -416,6 +423,7 @@ svg {
 	box-sizing: border-box;
 	position: absolute;
 	left: -1px;
+	z-index: 1;
 	width: calc(100% + 2px);
 	user-select: none;
 	overflow-y: auto;
