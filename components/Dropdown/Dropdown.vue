@@ -72,7 +72,6 @@ export default {
 		items: Array,
 		// A total CSS width override for parent
 		width: String,
-
 		// Additional space in pixels to subtract from menu height,
 		// preventing panel scrolling when menu open
 		padding: {

@@ -21,7 +21,7 @@ Make panels for After Effects, Illustrator, Photoshop, InDesign, Premiere Pro, A
 
 Developing a panel for Adobe should be more about what your tool does, not just what your tool looks like. Brutalism is so quick you can make a panel in a few hours instead of a few months, and so flexible you can rely entirely on what it offers or take only the parts you need:
 
--   Blazing fast developer workflow lets you go from creating a panel to signing it as a ZXP in less than a minute.
+-   Blazing fast developer workflow with [bombino](https://github.com/Inventsable/bombino) lets you go from creating a panel to signing it as a ZXP in less than a minute.
 -   Components are designed to simplify your project and keep your logic clean, allowing you to create entire panels in a single page with less than 30 lines of HTML and hardly any JS.
 -   Host app themes, scrollbars, UI changes, and colors take care of themselves. You have access to over 40 colors specific to the current host and theme and you're free to let your own components and HTML blend in by using the corresponding CSS variables made available.
 -   Script loading is dead simple and dynamic. You can easily use any number of scripts via the root `<Panel>` component's `script-path` and `utils` props, and you can keep them anywhere you want.
