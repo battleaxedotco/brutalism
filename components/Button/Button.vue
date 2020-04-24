@@ -231,10 +231,15 @@ export default {
 					callback: () => openURL(self.goto)
 				},
 				{
+					type: "ToButton",
+					condition: this.to.length > 0,
+					callback: () => this.$router.push(this.to)
+				},
+				{
 					type: "NormalButton",
 					condition:
 						(this.passClick || !this.groupItem) &&
-						!this.goto.length,
+						!this.goto.length && !this.to.length,
 					callback: () => self.$emit("click")
 				},
 				{
