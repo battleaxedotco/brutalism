@@ -212,7 +212,7 @@ export default {
 			let style = `${
 				this.labelToLeft || this.labelToRight
 					? "width: fit-content; margin: 6px 0px; flex-wrap: nowrap; align-items: center;"
-					: "margin: 6px auto; flex-wrap: wrap;"
+					: `width: ${this.width || '100%'}; margin: 6px auto; flex-wrap: wrap;`
 			}`;
 			return style;
 		},
@@ -222,7 +222,7 @@ export default {
 					? `width: fit-content; margin-bottom: 0px; margin-top: 0px; order: ${
 							this.labelToLeft ? "0" : "1"
 					  }; padding-${!this.labelToLeft ? "left" : "right"}: 6px;`
-					: "width: 100%"
+					: `width: ${this.width || '100%'}`
 			}`;
 			return style;
 		},
@@ -378,6 +378,7 @@ export default {
 .dropdown-wrapper {
 	display: flex;
 	justify-content: flex-start;
+	flex-direction: column;
 	flex-wrap: wrap;
 	margin: 6px auto;
 }
