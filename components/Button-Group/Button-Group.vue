@@ -1,7 +1,9 @@
 <template>
-	<div :class="['button-group', direction, flex ? left || right : 'left']" :style="getStyle()">
+	<div class="button-group-container">
 		<span class="button-group-label" :style="[{ 'margin': labelMargin }]" v-if="label.length">{{label}}</span>
-		<slot />
+		<div :class="['button-group', direction, flex ? left || right : 'left']" :style="getStyle()">
+			<slot />
+		</div>
 	</div>
 </template>
 
@@ -72,6 +74,7 @@ export default {
 		};
 	},
 	mounted() {
+		// console.log(this);
 		if (typeof this.active === "number" || this.active == 0)
 			this.setActiveByIndex(this.active);
 		else if (this.active)
@@ -164,6 +167,11 @@ export default {
 .button-group {
 	width: 100%;
 	margin-right: 0px;
+}
+
+.button-group-container {
+	display: flex;
+	width: 100%;
 }
 
 .button-group-label {
