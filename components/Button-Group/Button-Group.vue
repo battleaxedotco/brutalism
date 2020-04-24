@@ -1,5 +1,6 @@
 <template>
 	<div :class="['button-group', direction, flex ? left || right : 'left']" :style="getStyle()">
+		<span class="button-group-label" :style="[{ 'margin': labelMargin }]" v-if="label.length">{{label}}</span>
 		<slot />
 	</div>
 </template>
@@ -9,6 +10,14 @@ import stylePropMixin from "../mixinStyleProps";
 
 export default {
 	props: {
+		labelMargin: {
+			type: String,
+			default: '0px 12px 0px 0px'
+		},
+		label: {
+			type: String,
+			default: ''
+		},
 		grid: {
 			type: Boolean,
 			default: false
@@ -63,7 +72,6 @@ export default {
 		};
 	},
 	mounted() {
-		// console.log(this);
 		if (typeof this.active === "number" || this.active == 0)
 			this.setActiveByIndex(this.active);
 		else if (this.active)
@@ -156,6 +164,12 @@ export default {
 .button-group {
 	width: 100%;
 	margin-right: 0px;
+}
+
+.button-group-label {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .column {

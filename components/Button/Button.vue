@@ -230,11 +230,12 @@ export default {
 					condition: this.goto.length > 0,
 					callback: () => openURL(self.goto)
 				},
-				{
-					type: "ToButton",
-					condition: this.to.length > 0,
-					callback: () => this.$router.push(this.to)
-				},
+				// Was this missing? There's a :to parameter. For routes?
+				// {
+				// 	type: "ToButton",
+				// 	condition: this.to.length > 0,
+				// 	callback: () => this.$router.push(this.to)
+				// },
 				{
 					type: "NormalButton",
 					condition:
