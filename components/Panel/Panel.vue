@@ -118,14 +118,14 @@ export default {
 		} else if ((this.app && this.theme)) {
 			this.parseWebTheme();
 		}
-		document.body.style.overflow = "";
+		document.body.style.overflow = "auto";
 	},
 	methods: {
 		errorMessage() {
 			console.error(`Brutalism requires CSInterface to function. Make sure to add a version of CSInterface to your panel's base index.html!\r\nSee an example index.html setup here: https://github.com/Inventsable/forte/blob/master/public/index.html#L8-L11`)
 		},
 		checkPanelHeight() {
-			return `overflow: hidden; height: ${document.querySelector('.tabs-wrapper') ? `calc(100vh - 32px);` : `100vh;`}`;
+			return `height: ${document.querySelector('.tabs-wrapper') ? `calc(100vh - 32px);` : `100vh;`}`;
 		},
 		parseWebTheme() {
 			let app =
