@@ -14,7 +14,7 @@
 			style="position: absolute; opacity: 0; width: 1px; height: 1px; cursor: default"
 		/>
 
-		<div class="dropdown-label" :style="getLabelStyle()">{{ label }}</div>
+		<div class="dropdown-label" :style="getLabelStyle()" v-if="label.length">{{ label }}</div>
 		<div class="dropdown-container" :style="getContainerStyle()">
 			<div class="dropdown-active">{{ activeLabel || activeValue }}</div>
 
