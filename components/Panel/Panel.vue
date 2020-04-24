@@ -1,5 +1,5 @@
 <template>
-	<div class="panel">
+	<div class="panel" :style="checkPanelHeight()">
 		<slot style="overflow:hidden;" />
 	</div>
 </template>
@@ -120,11 +120,16 @@ export default {
 		if (window.__adobe_cep__ && !this.debug) {
 			await this.loadUtils();
 			await this.loadScriptPath();
+		} else if ((this.app && this.theme)) {
+			this.parseWebTheme();
 		}
 	},
 	methods: {
 		errorMessage() {
 			console.error(`Brutalism requires CSInterface to function. Make sure to add a version of CSInterface to your panel's base index.html!\r\nSee an example index.html setup here: https://github.com/Inventsable/forte/blob/master/public/index.html#L8-L11`)
+		},
+		checkPanelHeight() {
+			return document.querySelector('.tabs-wrapper') ? `calc(100vh - 32px);` : `100vh`;
 		},
 		parseWebTheme() {
 			let app =
@@ -310,7 +315,6 @@ body {
 	position: relative;
 	box-sizing: border-box;
 	padding: 8px;
-	height: 100vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
