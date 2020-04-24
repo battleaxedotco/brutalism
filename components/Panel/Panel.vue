@@ -119,8 +119,23 @@ export default {
 			this.parseWebTheme();
 		}
 		document.body.style.overflow = "auto";
+		this.checkSize();
+		window.addEventListener('resize', () => {
+			this.checkSize();
+		})
 	},
 	methods: {
+		checkSize() {
+			if (window.orientation !== undefined) {
+				if (window.innerWidth > window.innerHeight) {
+					this.setCSS('font-size', '10px')
+				} else {
+					this.setCSS('font-size', '12px')
+				}
+			} else {
+				this.setCSS('font-size', '10px')
+			}
+		},
 		errorMessage() {
 			console.error(`Brutalism requires CSInterface to function. Make sure to add a version of CSInterface to your panel's base index.html!\r\nSee an example index.html setup here: https://github.com/Inventsable/forte/blob/master/public/index.html#L8-L11`)
 		},
@@ -141,7 +156,11 @@ export default {
 				gradient = +theme >= 100 ? 100 : +theme <= 0 ? 0 : +theme;
 				theme = "gradient";
 			}
-			starlette.initAs(app, theme, gradient);
+			try {
+				starlette.initAs(app, theme, gradient);
+			} catch(err) {
+				// 
+			}
 		},
 		removeRelativePrefix(thispath) {
 			return /^\.\//.test(thispath) && spy
@@ -269,7 +288,6 @@ export default {
 			for (let index in valids)
 				await this.loadScript(`${thispath}/${valids[index]}`);
 		},
-
 		replaceSpyVariables(str) {
 			Object.keys(spy).forEach(key => {
 				let rx = new RegExp(`\\[${key}\\]`);
@@ -280,7 +298,16 @@ export default {
 		consoler(msg) {
 			// Catches all console.log() usage in .jsx files via CSEvent
 			console.log(`${spy.appName}: ${msg.data}`);
-		}
+		},
+		setCSS(prop, data) {
+      // Sets value of CSS variable
+      // prop == typeof String as name of variable, with or without leading dashes:
+      // this.setCSS('color-bg', 'rgba(25,25,25,1)') || this.setCSS('--scrollbar-width', '20px')
+      document.documentElement.style.setProperty(
+        `${/^\-\-/.test(prop) ? prop : "--" + prop}`,
+        data
+      );
+    }
 	}
 };
 </script>
@@ -292,16 +319,15 @@ export default {
 	--quad: cubic-bezier(0.48, 0.04, 0.52, 0.96);
 	--quart: cubic-bezier(0.76, 0, 0.24, 1);
 	--quint: cubic-bezier(0.84, 0, 0.16, 1);
-
+	--font-size: 10px;
 	--highlight-bg: #b4d7fd;
 	--highlight-text: #161616;
-
 	background-color: var(--color-bg);
 	color: var(--default-color);
 	font-family: "Open Sans", sans-serif;
-	font-size: 10px;
 	user-select: none;
 	cursor: default;
+	font-size: var(--font-size);
 }
 body {
 	margin: 0px;
