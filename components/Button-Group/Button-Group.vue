@@ -1,7 +1,7 @@
 <template>
-	<div class="button-group-container">
-		<span class="button-group-label" :style="[{ 'margin': labelMargin }]" v-if="label.length">{{label}}</span>
-		<div :class="['button-group', direction, flex ? left || right : 'left']" :style="getStyle()">
+	<div class="button-group-container" :style="[{ 'margin': margin, 'width': width }]">
+		<span class="button-group-label" :style="[{ 'margin': computedMargin, 'order': right ? 1 : 0 }]" v-if="label.length">{{label}}</span>
+		<div :class="['button-group', direction, !grid ? right ? 'right' : center ? 'center' : 'left' : '']" :style="getStyle()">
 			<slot />
 		</div>
 	</div>
@@ -12,9 +12,17 @@ import stylePropMixin from "../mixinStyleProps";
 
 export default {
 	props: {
+		width: {
+			type: String,
+			default: '100%;'
+		},
+		margin: {
+			type: String,
+			default: '0px'
+		},
 		labelMargin: {
 			type: String,
-			default: '0px 12px 0px 0px'
+			default: '12px'
 		},
 		label: {
 			type: String,
@@ -60,6 +68,10 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		center: {
+			type: Boolean,
+			default: false,
+		},
 		active: [Number, Array]
 	},
 	mixins: [stylePropMixin],
@@ -94,6 +106,9 @@ export default {
 		},
 		styleType() {
 			return this.grid ? "grid" : "flex";
+		},
+		computedMargin() {
+			return this.right ? `0px 0px 0px ${this.labelMargin}` : `0px ${this.labelMargin} 0px 0px`
 		}
 	},
 	methods: {
@@ -178,6 +193,8 @@ export default {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	word-wrap: none;
+	white-space: nowrap;
 }
 
 .column {
@@ -189,5 +206,15 @@ export default {
 	grid-template-rows: 1fr;
 	flex-direction: row;
 	margin-bottom: 0px !important;
+}
+
+.right {
+	justify-content: flex-end !important;
+}
+.left {
+	justify-content: flex-start !important;
+}
+.center {
+	justify-content: center !important;
 }
 </style>

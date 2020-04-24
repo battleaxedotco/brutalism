@@ -1,6 +1,8 @@
 <template>
 	<div
 		@click="updateState"
+		@mouseenter="$emit('mouseenter')"
+		@mouseleave="$emit('mouseleave')"
 		:class="['toggle-item', { disabled, centered }]"
 		:style="{ color: color }"
 	>
@@ -105,6 +107,7 @@ export default {
 	methods: {
 		updateState() {
 			if (this.disabled) return null;
+			this.$emit('click');
 			this.realState = !this.realState;
 			this.$emit("update", this.realState);
 		}
@@ -120,7 +123,7 @@ export default {
 <style scoped>
 .toggle-item {
 	box-sizing: border-box;
-	/* padding: 0px 6px; */
+	width: fit-content;
 	display: flex;
 	justify-content: flex-start;
 	flex-direction: row;
@@ -130,10 +133,6 @@ export default {
 	margin-top: -2px;
 	margin-bottom: -2px;
 }
-
-/* .centered {
-	align-items: center;
-} */
 
 .disabled {
 	opacity: 0.4;
