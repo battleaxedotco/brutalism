@@ -1,4 +1,8 @@
 <template>
+	<!-- 
+		This should return a suitable @update param. As of right now, only returns static value.
+		That isn't helpful if you're using :active as an array index, to be given something other than the active index in return
+	 -->
 	<!-- This could be done much better, just a simple proof of concept for now -->
 	<div
 		class="dropdown-wrapper"
@@ -85,6 +89,7 @@ export default {
 		menu: [], // real data of menu, generated on mounted()
 		inside: false, // used to determine if user clicked outside this element,
 		//
+		returnType: 'index',
 		// These are related to a bug where the cursor can interrupt key navigation:
 		debounce: 500, // time in ms to lock cursor after each relevant keypress
 		cursorLocked: false, // determine if cursor can fire mouseovers and whether to reset debouncer
@@ -126,6 +131,7 @@ export default {
 					item.label == this.active + ""
 				);
 			});
+			// this.returnType = item.value == this.active + "" ? 'value' : 'label'
 			if (found) found.active = true;
 			else
 				console.error(
@@ -212,7 +218,7 @@ export default {
 			let style = `${
 				this.labelToLeft || this.labelToRight
 					? "width: fit-content; margin: 6px 0px; flex-wrap: nowrap; align-items: center;"
-					: `width: ${this.width || '100%'}; margin: 6px auto; flex-wrap: wrap;`
+					: `width: ${this.width || '100%'}; margin: 6px auto; flex-wrap: wrap; flex-direction: column;`
 			}`;
 			return style;
 		},
@@ -378,7 +384,6 @@ export default {
 .dropdown-wrapper {
 	display: flex;
 	justify-content: flex-start;
-	flex-direction: column;
 	flex-wrap: wrap;
 	margin: 6px auto;
 }
