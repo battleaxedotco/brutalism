@@ -12,6 +12,7 @@ const Icon = require("./components/Icon").default;
 const InputScroll = require("./components/Input-Scroll").default;
 const Input = require("./components/Input").default;
 const Menus = require("./components/Menus").default;
+const Panelify = require('./components/Panelify').default;
 const PanelInfo = require("./components/Panel-Info").default;
 const Panel = require("./components/Panel").default;
 const Row = require("./components/Row").default;
@@ -50,6 +51,7 @@ export {
 	InputScroll,
 	Input,
 	Menus,
+	Panelify,
 	PanelInfo,
 	Panel,
 	Row,
