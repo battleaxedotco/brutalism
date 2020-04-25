@@ -43,9 +43,14 @@ export default {
 		}
 	},
 	methods: {
-		toggle(val) {
+		toggle() {
 			this.isOpen = !this.isOpen;
 			this.$emit("clicked");
+		}
+	},
+	watch: {
+		open(val) {
+			this.toggle();
 		}
 	},
 	mounted() {
