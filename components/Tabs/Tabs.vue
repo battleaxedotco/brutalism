@@ -97,7 +97,8 @@ export default {
 			slideTop: 0,
 			slideWidth: 0,
 			underBreakpoint: false,
-			tabs: []
+			tabs: [],
+			overrideParams: true,
 		};
 	},
 	mounted() {
@@ -137,8 +138,17 @@ export default {
 				this.$router &&
 				this.$route.name !== item.value &&
 				this.$route.path !== item.value
-			)
-				this.$router.push(item.target);
+			) {
+				if (!this.$route.params || this.overrideParams) {
+					this.$router.push(item.target);
+				} else if (this.$route.name && this.$route.params) {
+					this.$router.push({name: this.$route.name, params: this.$route.params})
+					this.overrideParams = false;
+				} else {
+					this.$router.push(this.$route.path)
+				}
+
+			}
 		},
 		clearActive(active) {
 			this.tabs.forEach(item => {
@@ -199,7 +209,6 @@ export default {
 				self.makeActive(activeTab || this.tabs[0]);
 				self.isMounted = true;
 				self.getSliderPos();
-
 				window.addEventListener(
 					"resize",
 					self.debounce(self.getSliderPos, 300)
