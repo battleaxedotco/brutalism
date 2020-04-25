@@ -272,9 +272,6 @@ export default {
 	background: transparent;
 }
 
-.tab-wrapper:hover {
-	/* background: rgba(91, 155, 211, 0.0325); */
-}
 .tab-wrapper.idle:hover > .tab-line {
 	background: var(--tabs-idle-hover);
 }
