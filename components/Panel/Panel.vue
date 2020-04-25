@@ -144,13 +144,13 @@ export default {
 		},
 		parseWebTheme() {
 			let app =
-				this.app || (this.$route.params && this.$route.params.app)
-					? this.$route.params.app
-					: "";
+				this.app || (this.$route && this.$route.params && this.$route.params.app)
+					? this.app || this.$route.params.app
+					: "ILST";
 			let theme =
 				this.theme || (this.$route.params && this.$route.params.theme)
-					? this.$route.params.theme
-					: "";
+					? this.theme || this.$route.params.theme
+					: "darkest";
 			let gradient = this.gradient || "";
 			if (/\d/.test(theme) && !gradient.length) {
 				gradient = +theme >= 100 ? 100 : +theme <= 0 ? 0 : +theme;

@@ -3,7 +3,7 @@
 </template>
 
 <script>
-const spy = window.__adobe_cep__ ? require("cep-spy").default : null;
+const spy = window.__adobe_cep__ ? require("cep-spy").default : { appName: 'ILST' };
 import starlette from "starlette";
 
 export default {
