@@ -39,6 +39,10 @@ export default {
 			type: Boolean,
 			default: false
 		},
+		emitToParent: {
+			type: Boolean,
+			default: false,
+		},
 		delay: {
 			type: String,
 			default: "20ms"
@@ -75,6 +79,9 @@ export default {
 			set(val) {
 				if (val || val == 0) this.makeActive(this.tabs[val]);
 			}
+		},
+		activeRoute() {
+			return this.$route
 		}
 	},
 	watch: {
@@ -86,6 +93,11 @@ export default {
 		},
 		routes(val) {
 			this.init();
+		},
+		activeRoute(val) {
+			if (this.emitToParent) {
+				window.parent.postMessage("tabChange", JSON.stringify(val))
+			}
 		}
 	},
 	data() {
