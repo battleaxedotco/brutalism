@@ -7,7 +7,6 @@ Vue.config.devtools = false;
 
 // Brutalism library support
 import {
-    // Components
     Alert,
     ButtonGroup,
     Button,
@@ -22,6 +21,7 @@ import {
     InputScroll,
     Input,
     Menus,
+    Panelify,
     PanelInfo,
     Panel,
     Row,
@@ -29,10 +29,6 @@ import {
     TextArea,
     Toggle,
     Wrapper,
-    // 
-    // Directives
-    Autofocus,
-    Pan,
 } from "brutalism";
 
 Vue.component("Alert", Alert);
@@ -49,6 +45,7 @@ Vue.component("Icon", Icon);
 Vue.component("Input-Scroll", InputScroll);
 Vue.component("Input", Input);
 Vue.component("Menus", Menus);
+Vue.component("Panelify", Panelify);
 Vue.component("Panel-Info", PanelInfo);
 Vue.component("Panel", Panel);
 Vue.component("Row", Row);
