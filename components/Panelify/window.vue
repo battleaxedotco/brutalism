@@ -24,13 +24,17 @@ import starlette from 'starlette'
 
 export default {
   props: {
+    debug: {
+      type: Boolean,
+      default: false
+    },
     name: {
       type: String,
       default: ''
     },
     app: {
       type: String,
-      default: 'ILST',
+      default: 'ILST'
     },
     url: {
       type: String,
@@ -46,7 +50,7 @@ export default {
     },
     gradient: {
       type: Number,
-      default: 0,
+      default: 0
     },
     height: {
       type: String,
@@ -59,7 +63,7 @@ export default {
   },
   computed: {
     src() {
-      return `${this.url}${this.route}`
+      return `${this.url}${this.route}`.replace(/(?<!https\:)(?<!http\:)(?<!www)\/\//, '');
     },
     realTheme() {
       return this.theme == 'gradient' ? this.gradient : this.theme;
@@ -100,7 +104,7 @@ export default {
       `;
     },
     mounted() {
-      console.log(this.src)
+      if (this.debug) console.log('Panelify src value at:', this.src)
     }
   }
 }
