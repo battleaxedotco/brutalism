@@ -63,6 +63,7 @@
 						@focus="focus"
 						@input="inputEvent"
 						@keyup.enter="submit"
+						:spellcheck="spellcheck"
 						:tabindex="disabled ? '-1' : ''"
 					/>
 					<div 
@@ -183,6 +184,10 @@ export default {
 			default: false,
 		},
 		truncate: {
+			type: Boolean,
+			default: false,
+		},
+		spellcheck: {
 			type: Boolean,
 			default: false,
 		}

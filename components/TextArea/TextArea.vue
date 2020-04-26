@@ -185,10 +185,6 @@ export default {
 			type: String,
 			default: "soft"
 		},
-		spellcheck: {
-			type: Boolean,
-			default: false
-		},
 		prependIcon: {
 			type: String,
 			default: ""
@@ -212,6 +208,10 @@ export default {
 		truncate: {
 			type: Boolean,
 			default: false,
+		},
+		spellcheck: {
+			type: Boolean,
+			default: false
 		}
 	},
 	mixins: [require("../mixinStyleProps").default],
