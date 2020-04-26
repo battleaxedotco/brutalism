@@ -231,21 +231,24 @@ export default {
 			return (str += `</Menu>`);
 		},
 		setContextMenu() {
-			window.__adobe_cep__.invokeAsync(
-				"setContextMenuByJSON",
-				JSON.stringify(this.realContext),
-				this.menuClicked
-			);
+			if (window.__adobe_cep__)
+				window.__adobe_cep__.invokeAsync(
+					"setContextMenuByJSON",
+					JSON.stringify(this.realContext),
+					this.menuClicked
+				);
 		},
 		setFlyoutMenu() {
-			window.__adobe_cep__.invokeSync(
-				"setPanelFlyoutMenu",
-				this.flyoutMenu
-			);
-			window.__adobe_cep__.addEventListener(
-				"com.adobe.csxs.events.flyoutMenuClicked",
-				this.menuClicked
-			);
+			if (window.__adobe_cep__) {
+				window.__adobe_cep__.invokeSync(
+					"setPanelFlyoutMenu",
+					this.flyoutMenu
+				);
+				window.__adobe_cep__.addEventListener(
+					"com.adobe.csxs.events.flyoutMenuClicked",
+					this.menuClicked
+				);
+			}
 		},
 		refreshPage() {
 			location.reload();
@@ -265,16 +268,18 @@ export default {
 			}
 		},
 		init() {
-			this.buildMenu("context");
-			this.buildMenu("flyout");
-			window.__adobe_cep__.addEventListener(
-				"com.adobe.csxs.events.flyoutMenuOpened",
-				this.$emit("flyoutFocus")
-			);
-			window.__adobe_cep__.addEventListener(
-				"com.adobe.csxs.events.flyoutMenuClosed",
-				this.$emit("flyoutBlur")
-			);
+			if (window.__adobe_cep__) {
+				this.buildMenu("context");
+				this.buildMenu("flyout");
+				window.__adobe_cep__.addEventListener(
+					"com.adobe.csxs.events.flyoutMenuOpened",
+					this.$emit("flyoutFocus")
+				);
+				window.__adobe_cep__.addEventListener(
+					"com.adobe.csxs.events.flyoutMenuClosed",
+					this.$emit("flyoutBlur")
+				);
+			}
 		},
 		// Fetch the raw text file from github (same as file accessed via Raw button)
 		async grabRepoRaw() {

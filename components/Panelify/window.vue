@@ -1,7 +1,7 @@
 <template>
-  <div class="panel-wrapper" :style="``">
+  <div class="panel-wrapper">
     <div class="panel-header" :style="getWrapperStyle()">
-      <div class="panel-title">
+      <div class="panel-title" :style="getTitleStyle()">
         <header-icon icon="arrows" style="margin-right: 4px;" />
         <header-icon icon="x" />
       </div>
@@ -63,6 +63,9 @@ export default {
     },
     realTheme() {
       return this.theme == 'gradient' ? this.gradient : this.theme;
+    },
+    isGradientApp() {
+      return /ILST|IDSN|PHXS/.test(this.app)
     }
   },
   components: {
@@ -83,7 +86,7 @@ export default {
     getWrapperStyle() {
       return `
         background-color: ${starlette.getColorAs(
-          "color-header",
+          this.isGradientApp ? "color-header" : "color-bg",
           this.app,
           this.theme,
           this.gradient || null
