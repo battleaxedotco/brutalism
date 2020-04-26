@@ -54,7 +54,7 @@ export default {
     },
     height: {
       type: String,
-      default: "300px"
+      default: "100%"
     },
     width: {
       type: String,
@@ -115,10 +115,11 @@ export default {
   border-radius: 6px 6px 0px 0px;
   box-sizing: border-box;
   max-width: calc(100% - 20px);
-  overflow: hidden;
+  overflow: auto;
   box-shadow: 0 1px 1px rgba(0,0,0,0.11), 
               0 2px 2px rgba(0,0,0,0.11), 
               0 4px 4px rgba(0,0,0,0.11);
+  height: 100%;
   }
 
 .panel-header {
@@ -154,7 +155,7 @@ export default {
   border-radius: 20px;
   margin: 0px 5px;
 }
-
+/* 
 @media (orientation: landscape) {
   :root, body, html, #app {
     overflow: auto;
@@ -166,5 +167,5 @@ export default {
   .panel-wrapper {
     height: 100%;
   }
-}
+} */
 </style>

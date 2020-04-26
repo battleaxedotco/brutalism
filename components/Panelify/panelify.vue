@@ -263,6 +263,7 @@ export default {
 .panelify-wrapper {
   display: flex;
   box-sizing: border-box;
+  height: calc(100% - 21.5px);
 }
 .panelify-controller-button {
   width: 20px;
