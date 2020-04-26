@@ -1,7 +1,7 @@
 <template>
   <div class="panel-wrapper">
     <div class="panel-header" :style="getWrapperStyle()">
-      <div class="panel-title" :style="getTitleStyle()">
+      <div class="panel-title">
         <header-icon icon="arrows" style="margin-right: 4px;" />
         <header-icon icon="x" />
       </div>
