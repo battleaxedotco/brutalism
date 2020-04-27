@@ -1,5 +1,7 @@
 # <a href="https://www.battleaxe.co/"><img src="https://avatars2.githubusercontent.com/u/60149336?s=200&v=4" width="40" height="40"/></a> brutalism
 
+[![NPM](https://nodei.co/npm/brutalism.png)](https://nodei.co/npm/brutalism/)
+
 | [Demos](#demos) | [Installation](#installation) | [Getting Started](#getting-started) | [Templates](#templates) | [Components](#features) |
 | ----------------------------- | :---------------------------: | :---------------------------------: | :---------------------: | :---------------------: |
  
