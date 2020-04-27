@@ -95,8 +95,19 @@ export default {
 			this.init();
 		},
 		activeRoute(val) {
-			if (this.emitToParent) {
-				window.parent.postMessage("tabChange", JSON.stringify(val))
+			if (this.emitToParent && window.parent) {
+				let msg = {
+					fullPath: val.fullPath,
+					hash: val.hash,
+					meta: val.meta,
+					name: val.name,
+					params: val.params,
+					path: val.path,
+					query: val.query
+				}
+				window.parent.postMessage(JSON.stringify(msg), "*")
+				const event = new CustomEvent('tabChange', { msg })
+				window.parent.document.dispatchEvent(event);
 			}
 		}
 	},
