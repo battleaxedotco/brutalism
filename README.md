@@ -56,6 +56,9 @@ npm i -g bombino
 bombino
 
 # > Select a Brutalism template on prompt
+
+# Skip above installation and invocation with a single command:
+# npx bombino
 ```
 
 ---
