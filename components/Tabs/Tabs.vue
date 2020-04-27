@@ -105,9 +105,9 @@ export default {
 					path: val.path,
 					query: val.query
 				}
-				// window.parent.postMessage(JSON.stringify(msg), "*")
-				const event = new CustomEvent('tabChange', { msg })
-				window.parent.document.dispatchEvent(event);
+				window.parent.postMessage(JSON.stringify(msg), "*")
+				// const event = new CustomEvent('tabChange', { msg })
+				// window.parent.document.dispatchEvent(event);
 			}
 		}
 	},
