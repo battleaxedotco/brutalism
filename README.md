@@ -29,10 +29,10 @@ Developing a panel for Adobe should be more about what your tool does, not just 
 
 ### These are not screenshots, they're the real thing in browser:
 
-- [API panel](https://xenodochial-knuth-23208d.netlify.app/#/)
-- [Bombino Basic](https://xenodochial-knuth-23208d.netlify.app/#/brutalism-basic)
-- [Bombino Router](https://xenodochial-knuth-23208d.netlify.app/#/brutalism-router)
-- [Bombino Vuex](https://xenodochial-knuth-23208d.netlify.app/#/brutalism-vuex)
+- [API panel](https://brutalism.netlify.app/#/)
+- [Bombino Basic](https://brutalism.netlify.app/#/basic)
+- [Bombino Router](https://brutalism.netlify.app/#/router)
+- [Bombino Vuex](https://brutalism.netlify.app/#/vuex)
 - [AEUX](https://hungry-goldstine-0c6a71.netlify.com/#/) - [Homepage](https://aeux.io)
 
 All of the above are made possible by this library's `<Panelify>` component and dead simple to do.
@@ -103,9 +103,9 @@ export default {
 
 Quickstart templates with [bombino](https://github.com/Inventsable/bombino) to get you up and running in less than a minute:
 
-- [Brutalism Basic](https://github.com/Inventsable/bombino-brutalism-basic)
-- [Brutalism Router](https://github.com/Inventsable/bombino-brutalism-router)
-- [Brutalism Vuex](https://github.com/Inventsable/bombino-brutalism-router)
+- [Brutalism Basic](https://github.com/battleaxedotco/bombino-brutalism-basic)
+- [Brutalism Router](https://github.com/battleaxedotco/bombino-brutalism-router)
+- [Brutalism Vuex](https://github.com/battleaxedotco/bombino-brutalism-router)
 
 ---
 
