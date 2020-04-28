@@ -263,6 +263,7 @@ export default {
 .panelify-wrapper {
   display: flex;
   box-sizing: border-box;
+  width: 100%;
   height: calc(100% - 21.5px);
 }
 .panelify-controller-button {
@@ -284,6 +285,7 @@ export default {
   flex-wrap: wrap;
   justify-content: flex-start;
   align-items: center;
+  width: 100%;
 }
 .block-panel-title {
   font-family: "Open Sans";

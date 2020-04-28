@@ -114,13 +114,14 @@ export default {
 .panel-wrapper {
   border-radius: 6px 6px 0px 0px;
   box-sizing: border-box;
-  max-width: calc(100% - 20px);
+  /* max-width: calc(100% - 20px); */
   overflow: auto;
   box-shadow: 0 1px 1px rgba(0,0,0,0.11), 
               0 2px 2px rgba(0,0,0,0.11), 
               0 4px 4px rgba(0,0,0,0.11);
   height: 100%;
-  }
+  width: 100%;
+}
 
 .panel-header {
   background: var(--color-header-dark);
