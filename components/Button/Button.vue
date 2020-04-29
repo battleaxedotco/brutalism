@@ -171,7 +171,7 @@ export default {
 			type: Boolean,
 			default: false
 		},
-		evalscript: {
+		evalScript: {
 			type: String,
 			default: ""
 		},
@@ -257,9 +257,9 @@ export default {
 			// Since only one value will be true, use filter to remove any false conditions
 			// Immediately call the remaining Array item's callback
 			possibles.filter(type => type.condition)[0].callback();
-			if (this.evalscript.length) {
-				let result = await evalScript(this.evalscript);
-				this.$emit('evalscript', result);
+			if (this.evalScript.length) {
+				let result = await evalScript(this.evalScript);
+				this.$emit('evalScript', result);
 			}
 		},
 		// This should accurately place :label and :icon with left/right positions

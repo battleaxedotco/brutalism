@@ -1,6 +1,6 @@
 <template>
   <div :class="[{ disabled }, 'input-scroll-container']" :style="`font-size: ${size}px`">
-    <div v-if="!thin" class="input-scroll-label" v-pan.prevent.mouse="panHandle">{{ label }}</div>
+    <div v-if="!thin" :class="[ 'input-scroll-label', { filled }]" v-pan.prevent.mouse="panHandle">{{ label }}</div>
     <div
       class="input-scroll-wrapper"
       @mouseenter="hover = true"
@@ -42,6 +42,7 @@
             :max="max"
             v-model="val"
             :step="realStep"
+            @keyup.enter="submit"
             @input="inputEvt"
             @blur="blur"
             @focus="focus"
@@ -74,7 +75,7 @@ export default {
   props: {
     label: {
       type: String,
-      default: "Label"
+      default: ""
     },
     size: {
       type: Number,
@@ -351,6 +352,10 @@ export default {
       if (evt.inputType) this.inputting = true;
       this.resize(evt);
     },
+    submit() {
+			this.$emit("submit", this.val);
+			this.blur();
+		},
     clamp(result) {
       result =
         (this.min || this.min == 0) && +result < this.min ? this.min : result;
@@ -479,6 +484,10 @@ export default {
   margin-right: 3px;
   user-select: none;
   cursor: ew-resize;
+}
+
+.input-scroll-label.filled {
+  margin-right: 9px;
 }
 
 .input-scroll-indicator {

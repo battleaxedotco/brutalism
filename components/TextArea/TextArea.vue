@@ -42,6 +42,7 @@
 					<textarea
 						:type="type"
 						title
+						:wrap="wrap"
 						ref="input"
 						:placeholder="placeholder"
 						:class="[
@@ -63,7 +64,7 @@
 						@focus="focus"
 						@input="inputEvent"
 						@mouseup="altFocus"
-						@keyup.enter="submit"
+						@keyup.enter.ctrl="submit"
 						:tabindex="disabled ? '-1' : ''"
 					/>
 					<div

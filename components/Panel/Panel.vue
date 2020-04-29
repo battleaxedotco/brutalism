@@ -95,6 +95,10 @@ export default {
 				}`
 			);
 		}
+		
+		this.csInterface = new CSInterface();
+		this.csInterface.addEventListener("console", this.consoler);
+
 		// dont redirect if file dropped
 		window.addEventListener(
 			"dragover",
