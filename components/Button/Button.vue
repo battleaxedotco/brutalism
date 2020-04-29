@@ -70,7 +70,8 @@
 </template>
 
 <script>
-import { openURL } from 'cluecumber'
+import { openURL, evalScript } from 'cluecumber'
+
 
 export default {
 	props: {
@@ -169,7 +170,11 @@ export default {
 		noBold: {
 			type: Boolean,
 			default: false
-		}
+		},
+		evalscript: {
+			type: String,
+			default: ""
+		},
 	},
 	data: () => ({
 		groupItem: false,
@@ -222,7 +227,7 @@ export default {
 		}
 	},
 	methods: {
-		handleClick() {
+		async handleClick() {
 			const self = this;
 			let possibles = [
 				{
@@ -252,6 +257,10 @@ export default {
 			// Since only one value will be true, use filter to remove any false conditions
 			// Immediately call the remaining Array item's callback
 			possibles.filter(type => type.condition)[0].callback();
+			if (this.evalscript.length) {
+				let result = await evalScript(this.evalscript);
+				this.$emit('evalscript', result);
+			}
 		},
 		// This should accurately place :label and :icon with left/right positions
 		computedLabelStyle() {
