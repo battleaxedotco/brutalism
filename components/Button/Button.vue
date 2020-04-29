@@ -338,6 +338,7 @@ export default {
 	border: 1px solid transparent;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	flex-shrink: inherit;
 	padding: 4px 6px;
 	border-radius: 2px;
