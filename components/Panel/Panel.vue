@@ -325,9 +325,6 @@ export default {
 	background-color: var(--color-bg);
 	color: var(--default-color);
 	font-family: "Open Sans", sans-serif;
-	user-select: none;
-	cursor: default;
-	font-size: var(--font-size);
 }
 body {
 	margin: 0px;
@@ -340,6 +337,9 @@ body {
 	padding: 8px;
 	overflow-y: auto;
 	overflow-x: hidden;
+	user-select: none;
+	cursor: default;
+	font-size: var(--font-size);
 }
 .fold:first-of-type {
 	border-top: solid 1px transparent !important;
