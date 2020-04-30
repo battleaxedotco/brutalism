@@ -112,6 +112,14 @@ export default {
 			this.init();
 		},
 		activeRoute(val) {
+			if (!this.dummy) {
+				if (val.name !== this.activeItem.value || val.path !== this.activeItem.value) {
+					let foundTab = this.tabs.find(item => {
+						return item.value == val.name || val.path;
+					})
+					if (foundTab) this.makeActive(foundTab)
+				}
+			}
 			if (this.emitToParent && window.parent) {
 				let msg = {
 					fullPath: val.fullPath,
@@ -266,7 +274,7 @@ export default {
 					"resize",
 					self.debounce(self.getSliderPos, 300)
 				);
-				self.emit('mounted');
+				self.$emit('mounted');
 			}, 100);
 		}
 	}
