@@ -11,7 +11,7 @@
 			:class="['tab-wrapper', tab.active ? 'active' : 'idle', { filled, isGradient }]"
 			:ref="`tab-${i}`"
 			:key="i"
-			@click="activeIndex = i"
+			@click="clickHandler(i)"
 		>
 			<div :class="['tab-label', tab.active ? 'tab-active' : 'tab-idle', { filled, isGradient }]">
 				<span v-if="tab.label">{{ tab.label }}</span>
@@ -145,6 +145,10 @@ export default {
 		this.init();
 	},
 	methods: {
+		clickHandler(i) {
+			this.activeIndex = i;
+			this.$emit('click');
+		},
 		buildTabs() {
 			let tabs = [];
 			this.routes.forEach((route, i) => {
@@ -190,6 +194,7 @@ export default {
 				}
 
 			}
+			this.$emit('update', item);
 		},
 		clearActive(active) {
 			this.tabs.forEach(item => {
@@ -261,6 +266,7 @@ export default {
 					"resize",
 					self.debounce(self.getSliderPos, 300)
 				);
+				self.emit('mounted');
 			}, 100);
 		}
 	}
