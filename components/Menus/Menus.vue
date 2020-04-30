@@ -1,5 +1,7 @@
 <template>
-	<div class="menu"></div>
+	<div v-if="isBrowser" class="menu">
+		<input tabindex="-1" v-model="localhost" class="menu-clipboard" ref="clipboard" type="text" >
+	</div>
 </template>
 
 <script>
@@ -39,6 +41,7 @@ export default {
 	},
 	data() {
 		return {
+			localhost: '',
 			outdated: false,
 			repo: null,
 			webVersion: null,
@@ -68,7 +71,7 @@ export default {
 			},
 			debugItem: {
 				id: "localhost",
-				label: "Launch debug",
+				label: "Copy debug URL",
 				enabled: true,
 				checkable: false,
 				checked: false,
@@ -93,6 +96,9 @@ export default {
 		};
 	},
 	computed: {
+		isBrowser() {
+			return window.__adobe_cep__;
+		},
 		contextMenu() {
 			return this.realContext.menu;
 		},
@@ -118,6 +124,7 @@ export default {
 			if (this.gitUpdate) await this.checkGitForUpdate();
 			await this.init();
 		}
+		this.localhost = spy.localhost;
 	},
 	methods: {
 		buildMenu(type) {
@@ -254,7 +261,10 @@ export default {
 			location.reload();
 		},
 		launchDebug() {
-			spy.launchLocalhost();
+			this.$refs.clipboard.select();
+			document.execCommand("copy");
+			this.$refs.clipboard.blur();
+			console.log(`Copied to clipboard: ${this.localhost}`)
 		},
 		switchTheme() {
 			starlette.switch();
@@ -322,5 +332,16 @@ export default {
 <style scoped>
 .menu {
 	margin: 0;
+}
+
+.menu-clipboard {
+	margin: 0;
+	padding: 0;
+	/* display: none; */
+	position: absolute;
+	top: -20px;
+	width: 0px;
+	height: 0px;
+	
 }
 </style>

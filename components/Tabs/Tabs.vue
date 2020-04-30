@@ -15,7 +15,6 @@
 		>
 			<div :class="['tab-label', tab.active ? 'tab-active' : 'tab-idle']">
 				<span v-if="tab.label">{{ tab.label }}</span>
-				<!-- <Icon v-else-if="tab.icon" size="20px" :name="tab.icon" /> -->
 			</div>
 			<div
 				:ref="`tab-${i}-line`"
@@ -114,9 +113,8 @@ export default {
 					query: val.query
 				}
 				window.parent.postMessage(JSON.stringify(msg), "*")
-				// const event = new CustomEvent('tabChange', { msg })
-				// window.parent.document.dispatchEvent(event);
 			}
+			this.$emit('update', this.activeItem)
 		}
 	},
 	data() {
