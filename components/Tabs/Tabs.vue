@@ -35,6 +35,10 @@ export default {
 				return [{ label: "home", path: "/" }];
 			}
 		},
+		offset: {
+			type: Number,
+			default: 0
+		},
 		invert: {
 			type: Boolean,
 			default: false
@@ -54,6 +58,10 @@ export default {
 		timing: {
 			type: String,
 			default: "var(--quad)"
+		},
+		dummy: {
+			type: Boolean,
+			default: false
 		},
 		breakpoint: {
 			type: Number,
@@ -156,6 +164,7 @@ export default {
 			this.showSlider = true;
 			item.active = true;
 			this.getSliderPos();
+			if (this.dummy) return null;
 			if (
 				this.routes &&
 				this.$router &&
@@ -205,14 +214,16 @@ export default {
 			if (!this.activeItem) return null;
 			let elt = this.$refs[`tab-${this.activeIndex}`][0];
 			let slider = this.$refs[`tab-${this.activeIndex}-line`][0];
+			let parent = this.$el;
 			if (elt) {
 				let eltpos = elt.getBoundingClientRect(),
-					sliderpos = slider.getBoundingClientRect();
+					sliderpos = slider.getBoundingClientRect(),
+					parentpos = parent.getBoundingClientRect();
 				this.underBreakpoint = this.breakpoint >= eltpos.width;
 				this.slideTop = this.invert
 					? `${eltpos.top - sliderpos.top}px;`
 					: `${eltpos.bottom - sliderpos.bottom}px;`;
-				this.slideLeft = `${eltpos.left}px;`;
+				this.slideLeft = `${eltpos.left - parentpos.left}px;`;
 				this.slideWidth = `${eltpos.width}px;`;
 			}
 		},
