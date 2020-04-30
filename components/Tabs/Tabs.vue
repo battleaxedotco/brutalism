@@ -5,20 +5,21 @@
 		@mouseenter="hover = true"
 		@mouseleave="hover = false"
 	>
-		<div :class="['active-line']" :style="getActiveLineStyle()"></div>
+		<div :class="['active-line', { filled, isGradient }]" :style="getActiveLineStyle()"></div>
 		<div
 			v-for="(tab, i) in tabs"
-			:class="['tab-wrapper', tab.active ? 'active' : 'idle']"
+			:class="['tab-wrapper', tab.active ? 'active' : 'idle', { filled, isGradient }]"
 			:ref="`tab-${i}`"
 			:key="i"
 			@click="activeIndex = i"
 		>
-			<div :class="['tab-label', tab.active ? 'tab-active' : 'tab-idle']">
+			<div :class="['tab-label', tab.active ? 'tab-active' : 'tab-idle', { filled, isGradient }]">
 				<span v-if="tab.label">{{ tab.label }}</span>
+				<!-- <Icon v-else-if="tab.icon" size="20px" :name="tab.icon" /> -->
 			</div>
 			<div
 				:ref="`tab-${i}-line`"
-				:class="['tab-line', { invert }]"
+				:class="['tab-line', { invert, filled }]"
 				:style="[showSlider ? 'display: none;' : '']"
 			></div>
 		</div>
@@ -26,6 +27,8 @@
 </template>
 
 <script>
+import spy from 'cep-spy'
+
 export default {
 	props: {
 		routes: {
@@ -37,6 +40,10 @@ export default {
 		offset: {
 			type: Number,
 			default: 0
+		},
+		filled: {
+			type: Boolean,
+			default: false
 		},
 		invert: {
 			type: Boolean,
@@ -79,6 +86,9 @@ export default {
 				  })
 				: null;
 		},
+		isGradient() {
+			return /AEFT|PPRO|AUDT/.test(spy.appName)
+		},
 		activeIndex: {
 			get() {
 				return (this.isMounted && this.activeItem.index) || 0;
@@ -113,8 +123,9 @@ export default {
 					query: val.query
 				}
 				window.parent.postMessage(JSON.stringify(msg), "*")
+				// const event = new CustomEvent('tabChange', { msg })
+				// window.parent.document.dispatchEvent(event);
 			}
-			this.$emit('update', this.activeItem)
 		}
 	},
 	data() {
@@ -189,18 +200,23 @@ export default {
 			return `grid-template-columns: repeat(${this.tabs.length}, 1fr)`;
 		},
 		getActiveLineStyle() {
-			let style = `width: ${this.slideWidth}px; left: ${
-				this.slideLeft
-			}px; ${this.invert ? "top" : "bottom"}: ${this.slideTop}px;`;
-			style += !this.showSlider ? "display: none;" : "display: block;";
-			style += this.delay ? `transition-delay: ${this.delay};` : "";
-			style += this.duration
-				? `transition-duration: ${this.duration};`
-				: "";
-			style += this.timing
-				? `transition-timing-function: ${this.timing};`
-				: "";
-			style += this.transition ? `transition: ${this.transition};` : "";
+			let style = '';
+			if (!this.filled) {
+				style = `width: ${this.slideWidth}px; left: ${
+					this.slideLeft
+				}px; ${this.invert ? "top" : "bottom"}: ${this.slideTop}px;`;
+				style += !this.showSlider ? "display: none;" : "display: block;";
+				style += this.delay ? `transition-delay: ${this.delay};` : "";
+				style += this.duration
+					? `transition-duration: ${this.duration};`
+					: "";
+				style += this.timing
+					? `transition-timing-function: ${this.timing};`
+					: "";
+				style += this.transition ? `transition: ${this.transition};` : "";
+			} else {
+				style += 'display: none;'
+			}
 			return style;
 		},
 		swapSliders() {
@@ -277,12 +293,16 @@ export default {
 	text-transform: uppercase;
 	transition: all 200ms var(--quad) 20ms;
 }
-.tab-active {
+.tab-active:not(.filled) {
 	color: var(--color-selection);
 }
 
 .tab-idle {
 	color: var(--tabs-idle);
+}
+
+.tab-idle.filled:not(.isGradient) {
+	background-color: var(--color-header);
 }
 
 .tab-line {
@@ -296,15 +316,19 @@ export default {
 	order: -1;
 }
 
-.tab-wrapper.active > .tab-line {
+.tab-wrapper.active > .tab-line:not(.filled) {
 	background: var(--color-selection);
 }
+.tab-wrapper.active.isGradient > .tab-line {
+	background: var(--color-default);
+}
+
 
 .tab-wrapper.idle > .tab-line {
 	background: transparent;
 }
 
-.tab-wrapper.idle:hover > .tab-line {
+.tab-wrapper.idle:hover > .tab-line:not(.filled) {
 	background: var(--tabs-idle-hover);
 }
 
