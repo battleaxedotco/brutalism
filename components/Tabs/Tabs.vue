@@ -112,13 +112,11 @@ export default {
 			this.init();
 		},
 		activeRoute(val) {
-			if (!this.dummy && this.activeItem) {
-				if (val.name !== this.activeItem.value || val.path !== this.activeItem.value) {
-					let foundTab = this.tabs.find(item => {
-						return item.value == val.name || val.path;
-					})
-					if (foundTab) this.makeActive(foundTab)
-				}
+			const self = this;
+			if (!this.dummy && this.activeItem && !window.__adobe_cep__) {
+				setTimeout(() => {
+					self.doubleCheckRoute(val)
+				}, 200);
 			}
 			if (this.emitToParent && window.parent) {
 				let msg = {
@@ -153,6 +151,25 @@ export default {
 		this.init();
 	},
 	methods: {
+		doubleCheckRoute(val) {
+			// console.log('Double check route')
+			// if (val.name !== this.activeItem.value || val.path !== this.activeItem.value) {
+			// 	console.log('Inside', val)
+			// 		let foundTab = this.tabs.find(item => {
+			// 			let rx = new RegExp(item.value.replace('home', ''));
+			// 			console.log(rx, this.$route.path)
+			// 			return rx.test(this.$route.path);
+			// 			// return rx.test
+			// 		})
+			// 		if (foundTab) {
+			// 			console.log('Found tab:', foundTab, this.$route)
+			// 			this.makeActive(foundTab)
+			// 		} else {
+			// 			console.log('No found tab...')
+			// 			console.log(foundTab, this.$route)
+			// 		}
+			// 	}
+		},
 		clickHandler(i) {
 			this.activeIndex = i;
 			this.$emit('click');
