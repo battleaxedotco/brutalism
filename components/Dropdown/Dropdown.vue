@@ -468,7 +468,7 @@ svg {
 	float: right;
 	padding: 4px;
 	border-radius: 4px;
-	margin-top: 3px;
+	/* margin-top: 3px; */
 	background-color: var(--color-selection);
 }
 
