@@ -112,7 +112,7 @@ export default {
 			this.init();
 		},
 		activeRoute(val) {
-			if (!this.dummy) {
+			if (!this.dummy && this.activeItem) {
 				if (val.name !== this.activeItem.value || val.path !== this.activeItem.value) {
 					let foundTab = this.tabs.find(item => {
 						return item.value == val.name || val.path;

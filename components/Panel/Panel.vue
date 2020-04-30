@@ -95,7 +95,7 @@ export default {
 				}`
 			);
 		}
-		if (!window.__adobe_cep__) {
+		if (window.__adobe_cep__) {
 			this.csInterface = new CSInterface();
 			this.csInterface.addEventListener("console", this.consoler);
 		}
