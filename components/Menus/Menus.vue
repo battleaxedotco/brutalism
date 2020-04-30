@@ -124,7 +124,7 @@ export default {
 			if (this.gitUpdate) await this.checkGitForUpdate();
 			await this.init();
 		}
-		this.localhost = spy.localhost;
+		this.localhost = window.__adobe_cep__ ? spy.localhost : 'localhost:8080';
 	},
 	methods: {
 		buildMenu(type) {

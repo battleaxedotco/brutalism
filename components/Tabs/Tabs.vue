@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import spy from 'cep-spy'
+const spy = window.__adobe_cep__ ? require('cep-spy').default : { appName: 'ILST' }
 
 export default {
 	props: {
