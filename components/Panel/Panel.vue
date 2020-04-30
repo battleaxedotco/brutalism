@@ -95,9 +95,10 @@ export default {
 				}`
 			);
 		}
-		
-		this.csInterface = new CSInterface();
-		this.csInterface.addEventListener("console", this.consoler);
+		if (!window.__adobe_cep__) {
+			this.csInterface = new CSInterface();
+			this.csInterface.addEventListener("console", this.consoler);
+		}
 
 		// dont redirect if file dropped
 		window.addEventListener(
