@@ -1,15 +1,16 @@
 <template>
-  <span :class="[ 'annotation', { uppercase } ]" :style="{
+  <span :class="[ 'anno-wrapper', { uppercase } ]" :style="{
     color: color,
     'font-size': size,
     'font-family': font,
     'letter-spacing': letterSpacing,
-    'margin': margin
+    margin: margin,
+    'display': 'block'
   }">
-    <span v-if="$slots.default">
+    <span v-if="$slots.default" class="anno-content">
       <slot />
     </span>
-    <span v-else-if="text">{{text}}</span>
+    <span v-else-if="text" class="anno-content">{{text}}</span>
   </span>
 </template>
 
@@ -49,8 +50,9 @@ export default {
 </script>
 
 <style>
-.annotation {
+.anno-wrapper {
   margin-bottom: 1ch;
+  display: block;
 }
 .uppercase {
   text-transform: uppercase;
