@@ -274,7 +274,6 @@ export default {
 				let result = await evalScript(this.evalScript);
 				this.$emit('evalScript', result);
 			}
-			console.log(this.realClipboard, this.copy)
 			if (this.copy.length) {
 				this.copyTextToClipboard();
 			}

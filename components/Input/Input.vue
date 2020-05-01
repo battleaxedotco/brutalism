@@ -24,7 +24,8 @@
 			]"
 		>
 			<div class="input-contents">
-				<Icon v-if="prependOuterIcon.length" class="input-prepend-outer-icon" :name="prependOuterIcon" />
+				<Icon v-if="prependOuterIcon.length" 
+					class="input-prepend-outer-icon" :name="prependOuterIcon" :size="iconSize" />
 				<div
 					:class="[
 						{ filled, flat },
@@ -39,6 +40,7 @@
 						class="input-prepend-icon"
 						:color="activeColor"
 						:name="prependIcon"
+						:size="iconSize"
 					/>
 					<input
 						:type="type"
@@ -72,11 +74,14 @@
 						class="input-append-icon" 
 						@click="$emit('append-click', val)"
 					>
-						<Icon :color="activeColor" :name="appendIcon" />
+						<Icon :color="activeColor" :name="appendIcon" :size="iconSize" />
 					</div>
 				</div>
-				<div v-if="appendOuterIcon.length" class="input-append-outer-icon" @click="$emit('append-outer-click', val)">
-					<Icon :name="appendOuterIcon" />
+				<div v-if="appendOuterIcon.length && !copyContent" class="input-append-outer-icon" @click="$emit('append-outer-click', val)">
+					<Icon :name="appendOuterIcon" :size="iconSize" />
+				</div>
+				<div v-else-if="copyContent" class="input-append-outer-icon" @click="copyInputContent">
+					<Icon :name="dynamicCopyIcon" :size="iconSize" />
 				</div>
 			</div>
 			<div
@@ -109,6 +114,8 @@
 </template>
 
 <script>
+import { copy } from 'cluecumber'
+
 export default {
 	props: {
 		value: {
@@ -151,6 +158,10 @@ export default {
 			type: String,
 			default: "1.5px"
 		},
+		iconSize: {
+			type: String,
+			default: '16px'
+		},
 		left: {
 			type: Boolean,
 			default: false
@@ -190,6 +201,14 @@ export default {
 		spellcheck: {
 			type: Boolean,
 			default: false,
+		},
+		copyContent: {
+			type: Boolean,
+			default: false
+		},
+		clipboardCooldown: {
+			type: Number,
+			default: 1000
 		}
 	},
 	mixins: [require("../mixinStyleProps").default],
@@ -198,10 +217,14 @@ export default {
 		lastVal: null,
 		hasFocus: false,
 		hover: false,
-		error: null
+		error: null,
+		dynamicCopyIcon: 'content-copy'
 	}),
 	mounted() {
 		this.val = this.lastVal = this.value;
+		if (this.appendOuterIcon && this.copyContent) {
+			this.dynamicCopyIcon = this.appendOuterIcon;
+		}
 	},
 	watch: {
 		value(val) {
@@ -253,6 +276,16 @@ export default {
 	methods: {
 		altFocus(evt) {
 			if (this.autoSelect) evt.preventDefault()
+		},
+		copyInputContent() {
+			const self = this;
+			let lastIcon = this.dynamicCopyIcon;
+			let clipboard = copy(this.$refs.input.value);
+			this.dynamicCopyIcon = 'clipboard-check'
+			this.$emit('clipboard', clipboard)
+			setTimeout(() => {
+				self.dynamicCopyIcon = lastIcon;
+			}, this.clipboardCooldown);
 		},
 		focus(evt = null) {
 			this.hasFocus = true;
