@@ -1,12 +1,11 @@
 <template>
-	<div v-if="isBrowser" class="menu">
-		<input tabindex="-1" v-model="localhost" class="menu-clipboard" ref="clipboard" type="text" >
-	</div>
+	<div v-if="isAdobe" class="menu"></div>
 </template>
 
 <script>
-const spy = window.__adobe_cep__ ? require("cep-spy").default : { appName: 'ILST' };
+const spy = window.__adobe_cep__ ? require("cep-spy").default : { appName: 'ILST', localhost: '####' };
 import starlette from "starlette";
+import { copy } from 'cluecumber'
 
 export default {
 	name: "adobe-menus",
@@ -96,7 +95,7 @@ export default {
 		};
 	},
 	computed: {
-		isBrowser() {
+		isAdobe() {
 			return window.__adobe_cep__;
 		},
 		contextMenu() {
@@ -261,10 +260,7 @@ export default {
 			location.reload();
 		},
 		launchDebug() {
-			this.$refs.clipboard.select();
-			document.execCommand("copy");
-			this.$refs.clipboard.blur();
-			console.log(`Copied to clipboard: ${this.localhost}`)
+			copy(spy.localhost)
 		},
 		switchTheme() {
 			starlette.switch();

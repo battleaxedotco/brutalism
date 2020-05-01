@@ -24,6 +24,7 @@
 					v-if="prependOuterIcon.length"
 					class="textarea-prepend-outer-icon"
 					:name="prependOuterIcon"
+					:size="iconSize"
 				/>
 				<div
 					:class="[
@@ -38,6 +39,7 @@
 						class="textarea-prepend-icon"
 						:color="activeColor"
 						:name="prependIcon"
+						:size="iconSize"
 					/>
 					<textarea
 						:type="type"
@@ -93,9 +95,10 @@
 						class="textarea-append-icon"
 						:color="activeColor"
 						:name="appendIcon"
+						:size="iconSize"
 					/>
 				</div>
-				<Icon v-if="appendOuterIcon.length" class="textarea-append-outer-icon" :icon="appendOuterIcon" />
+				<Icon v-if="appendOuterIcon.length" :size="iconSize" class="textarea-append-outer-icon" :icon="appendOuterIcon" />
 			</div>
 			<div class="indicator-wrapper" :style="[
 					{
@@ -213,6 +216,10 @@ export default {
 		spellcheck: {
 			type: Boolean,
 			default: false
+		},
+		iconSize: {
+			type: String,
+			default: '16px'
 		}
 	},
 	mixins: [require("../mixinStyleProps").default],

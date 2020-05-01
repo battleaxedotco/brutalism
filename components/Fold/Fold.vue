@@ -55,6 +55,7 @@ export default {
 		toggle() {
 			this.isOpen = !this.isOpen;
 			this.$emit("click");
+			this.$emit('clicked')
 		}
 	},
 	watch: {

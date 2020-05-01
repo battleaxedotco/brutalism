@@ -12,13 +12,17 @@
   }">
     <span v-if="$slots.default" 
       :style="{
-        'decoration': textDecoration
+        'text-decoration': textDecoration
       }"
       :class="['anno-content', { strikethrough, overline, underline }]"
     >
-      <slot />
+      <slot :style="{
+        'text-decoration': textDecoration
+      }" />
     </span>
-    <span v-else-if="text" :class="['anno-content', { strikethrough, overline, underline }]">{{text}}</span>
+    <span :style="{
+        'text-decoration': textDecoration
+      }" v-else-if="text" :class="['anno-content', { strikethrough, overline, underline }]">{{text}}</span>
   </span>
 </template>
 
@@ -104,6 +108,13 @@ export default {
 <style>
 .uppercase {
   text-transform: uppercase;
+}
+.underline {
+  text-decoration: underline;
+}
+
+.overline {
+  text-decoration: overline;
 }
 .italic {
   font-style: italic;
