@@ -110,7 +110,7 @@ Quickstart templates with [bombino](https://github.com/Inventsable/bombino) to g
 
 - [Brutalism Basic](https://github.com/battleaxedotco/bombino-brutalism-basic)
 - [Brutalism Router](https://github.com/battleaxedotco/bombino-brutalism-router)
-- [Brutalism Vuex](https://github.com/battleaxedotco/bombino-brutalism-router)
+- [Brutalism Vuex](https://github.com/battleaxedotco/bombino-brutalism-vuex)
 
 ---
 
