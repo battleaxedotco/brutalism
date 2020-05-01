@@ -271,6 +271,7 @@ export default {
 		},
 		inputEvent(evt) {
 			this.$emit("change", this.val);
+			this.$emit('input', this.val);
 		},
 		submit() {
 			this.$emit("submit", this.val);

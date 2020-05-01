@@ -342,6 +342,5 @@ export default {
 	top: -20px;
 	width: 0px;
 	height: 0px;
-	
 }
 </style>

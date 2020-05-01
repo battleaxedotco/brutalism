@@ -28,6 +28,13 @@
 		@mouseenter="hover = true"
 		@mouseleave="hover = false"
 	>
+		<input 
+			tabindex="-1" 
+			v-model="copy" 
+			class="menu-clipboard" 
+			ref="clipboard" 
+			type="text" 
+		>
 		<div
 			ref="tooltipWrapper"
 			:class="['button-tooltip-wrapper', { left, right }]"
@@ -175,6 +182,10 @@ export default {
 			type: String,
 			default: ""
 		},
+		copy: {
+			type: String,
+			default: ''
+		}
 	},
 	data: () => ({
 		groupItem: false,
@@ -261,6 +272,9 @@ export default {
 				let result = await evalScript(this.evalScript);
 				this.$emit('evalScript', result);
 			}
+			if (this.copy.length) {
+				this.copyTextToClipboard();
+			}
 		},
 		// This should accurately place :label and :icon with left/right positions
 		computedLabelStyle() {
@@ -293,6 +307,14 @@ export default {
 				clearTimeout(inDebounce);
 				inDebounce = setTimeout(() => func.apply(context, args), delay);
 			};
+		},
+		copyTextToClipboard() {
+			let lastFocus = document.activeElement;
+			this.$refs.clipboard.select();
+			document.execCommand("copy");
+			this.$refs.clipboard.blur();
+			if (lastFocus)
+				lastFocus.focus();
 		},
 		checkTooltipPos() {
 			const self = this;
@@ -331,6 +353,19 @@ export default {
 </script>
 
 <style scoped>
+
+.menu-clipboard {
+	margin: 0;
+	padding: 0;
+	/* display: none; */
+	position: absolute;
+	top: 0px;
+	outline: none;
+	width: 0px;
+	height: 0px;
+	opacity: 0;
+	pointer-events: none;
+}
 .button {
 	position: relative;
 	background: var(--button);
