@@ -1,4 +1,5 @@
 const Alert = require("./components/Alert").default;
+const Anno = require('./components/Anno').default;
 const ButtonGroup = require("./components/Button-Group").default;
 const Button = require("./components/Button").default;
 const Col = require("./components/Col").default;
@@ -30,6 +31,7 @@ let Pan = require('vue-pan').default;
 
 export {
 	Alert,
+	Anno,
 	ButtonGroup,
 	Button,
 	Col,

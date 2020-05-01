@@ -30,6 +30,14 @@ export default {
     color: {
       type: String,
       default: 'var(--default-color)'
+    },
+    uppercase: {
+      type: Boolean,
+      default: false
+    },
+    letterSpacing: {
+      type: String,
+      default: 'normal'
     }
   }
 }
