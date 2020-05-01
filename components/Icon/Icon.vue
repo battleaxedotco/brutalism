@@ -15,7 +15,19 @@ export default {
 		},
 		size: {
 			type: String,
-			default: "16px"
+			default: "24px"
+		},
+		mdi: {
+			type: Boolean,
+			default: true
+		},
+		fa: {
+			type: Boolean,
+			default: false
+		},
+		battleaxe: {
+			type: Boolean,
+			default: false
 		}
 	},
 	computed: {

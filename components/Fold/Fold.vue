@@ -16,8 +16,13 @@
         otherwise the data inside will be reset whenever the user
         folds and unfolds. Checkboxes, inputs, etc. will all reset
 		-->
-		<div class="fold-content" v-show="isOpen" :style="{ padding: innerPadding }">
+		<div class="fold-content" v-if="persistent" v-show="isOpen" :style="{ padding: innerPadding }">
 			<slot />
+		</div>
+		<div v-else>
+			<div class="fold-content" v-if="isOpen" :style="{ padding: innerPadding }">
+				<slot />
+			</div>
 		</div>
 	</div>
 </template>
@@ -35,7 +40,11 @@ export default {
 		},
 		label: {
 			type: String,
-			default: "toggle"
+			default: ""
+		},
+		persistent: {
+			type: Boolean,
+			default: true
 		},
 		innerPadding: {
 			type: String,
@@ -45,7 +54,7 @@ export default {
 	methods: {
 		toggle() {
 			this.isOpen = !this.isOpen;
-			this.$emit("clicked");
+			this.$emit("click");
 		}
 	},
 	watch: {
@@ -61,16 +70,11 @@ export default {
 
 <style>
 .fold {
-	/* background: salmon; */
 	border-top: solid var(--fold-border-width) var(--fold-border);
 	width: 100%;
 	cursor: default;
 	padding-bottom: 0;
 	margin-bottom: 0 !important;
-	/* overflow: hidden;
-		We should avoid this if able, otherwise things like tooltips
-		and dropdowns will be cropped to the <Fold> element's dimensions
-   */
 	cursor: default;
 	user-select: none;
 }
@@ -79,7 +83,6 @@ export default {
 	width: calc(100% - 10px);
 	padding-left: 10px;
 }
-
 .fold-label {
 	padding: 6px 0;
 	display: flex;
@@ -88,8 +91,7 @@ export default {
 }
 .fold-label-text {
 	text-transform: uppercase;
-	letter-spacing: 0.1em;
-	/* font-size: 10px; */
+	letter-spacing: 0.25ch;
 	user-select: none;
 }
 .fold-icon {

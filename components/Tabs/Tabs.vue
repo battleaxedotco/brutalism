@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="tabs-wrapper"
+		:class="[ 'tabs-wrapper', { disabled } ]"
 		:style="getWrapperStyle()"
 		@mouseenter="hover = true"
 		@mouseleave="hover = false"
@@ -19,7 +19,7 @@
 			</div>
 			<div
 				:ref="`tab-${i}-line`"
-				:class="['tab-line', { invert, filled }]"
+				:class="['tab-line', { invert, filled, disabled }]"
 				:style="[showSlider ? 'display: none;' : '']"
 			></div>
 		</div>
@@ -44,6 +44,10 @@ export default {
 		filled: {
 			type: Boolean,
 			default: false
+		},
+		disabled: {
+			type: Boolean,
+			default: false,
 		},
 		invert: {
 			type: Boolean,
@@ -232,7 +236,8 @@ export default {
 		},
 		getActiveLineStyle() {
 			let style = '';
-			if (!this.filled) {
+			if (this.disabled) style += 'display: none;'
+			if (!this.filled && !this.disabled) {
 				style = `width: ${this.slideWidth}px; left: ${
 					this.slideLeft
 				}px; ${this.invert ? "top" : "bottom"}: ${this.slideTop}px;`;
@@ -309,6 +314,11 @@ export default {
 	margin: 0px;
 }
 
+.tabs-wrapper.disabled {
+	pointer-events: none;
+	opacity: 1; 
+}
+
 .tab-wrapper {
 	display: flex;
 	flex-direction: column;
@@ -323,8 +333,14 @@ export default {
 	height: calc(100% - 2px);
 	font-size: 10px;
 	text-transform: uppercase;
+	letter-spacing: .2ch;
 	transition: all 200ms var(--quad) 20ms;
 }
+
+.tabs-wrapper.disabled .tab-active, .tabs-wrapper.disabled .tab-idle {
+	color: var(--tabs-idle);
+}
+
 .tab-active:not(.filled) {
 	color: var(--color-selection);
 }
@@ -346,6 +362,14 @@ export default {
 
 .tab-line.invert {
 	order: -1;
+}
+
+.tab-line.disabled {
+	opacity: 1;
+}
+
+.disabled > .tab-wrapper.active > .tab-line:not(.filled) {
+	background: var(--tabs-idle);
 }
 
 .tab-wrapper.active > .tab-line:not(.filled) {
