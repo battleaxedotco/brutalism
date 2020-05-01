@@ -70,8 +70,7 @@
 </template>
 
 <script>
-import { openURL, evalScript } from 'cluecumber'
-
+import { openURL, evalScript, copy } from 'cluecumber'
 
 export default {
 	props: {
@@ -313,18 +312,7 @@ export default {
 			};
 		},
 		copyTextToClipboard() {
-			var textarea = document.createElement('textarea');
-			textarea.textContent = this.realClipboard;
-			document.body.appendChild(textarea);
-			var selection = document.getSelection();
-			var range = document.createRange();
-			range.selectNode(textarea);
-			selection.removeAllRanges();
-			selection.addRange(range);
-			let clipboard = document.execCommand('copy')
-			console.log('copied:', clipboard);
-			selection.removeAllRanges();
-			document.body.removeChild(textarea);
+			let clipboard = copy(this.realClipboard);
 			this.$emit('clipboard', clipboard);
 		},
 		checkTooltipPos() {

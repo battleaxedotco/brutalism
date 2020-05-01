@@ -14,51 +14,53 @@
 
 <script>
 export default {
-	props: {
-		state: {
-			type: Boolean,
-			default: false
-		},
-		label: {
-			type: String,
-			default: ""
-		},
-		disabled: {
-			type: Boolean,
-			default: false
-		},
-		onIcon: {
-			type: String,
-			default: "checkbox-intermediate"
-		},
-		offIcon: {
-			type: String,
-			default: "checkbox-blank-outline"
-		},
-		size: {
-			type: String,
-			default: "18px"
-		},
-		color: {
-			type: String,
-			default: ""
-		},
-		centered: {
-			type: Boolean,
-			default: false
-		},
-		checkbox: {
-			type: Boolean,
-			default: false
-		},
-		radio: {
-			type: Boolean,
-			default: false
-		},
-		switch: {
-			type: Boolean,
-			default: false
-		}
+	props: [ 'value', 
+		{
+			state: {
+				type: Boolean,
+				default: false
+			},
+			label: {
+				type: String,
+				default: ""
+			},
+			disabled: {
+				type: Boolean,
+				default: false
+			},
+			onIcon: {
+				type: String,
+				default: "checkbox-intermediate"
+			},
+			offIcon: {
+				type: String,
+				default: "checkbox-blank-outline"
+			},
+			size: {
+				type: String,
+				default: "18px"
+			},
+			color: {
+				type: String,
+				default: ""
+			},
+			centered: {
+				type: Boolean,
+				default: false
+			},
+			checkbox: {
+				type: Boolean,
+				default: false
+			},
+			radio: {
+				type: Boolean,
+				default: false
+			},
+			switch: {
+				type: Boolean,
+				default: false
+			}
+		]
 	},
 	data: function() {
 		return {
@@ -110,6 +112,7 @@ export default {
 			this.$emit('click');
 			this.realState = !this.realState;
 			this.$emit("update", this.realState);
+			this.$emit('input', this.realState);
 		}
 	},
 	watch: {
