@@ -202,6 +202,7 @@ export default {
 			this.showSlider = true;
 			item.active = true;
 			this.getSliderPos();
+			this.$emit('update', item);
 			if (this.dummy) return null;
 			if (
 				this.routes &&
@@ -219,7 +220,7 @@ export default {
 				}
 
 			}
-			this.$emit('update', item);
+			
 		},
 		clearActive(active) {
 			this.tabs.forEach(item => {
