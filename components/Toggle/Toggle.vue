@@ -14,53 +14,64 @@
 
 <script>
 export default {
-	props: [ 'value', 
-		{
-			state: {
-				type: Boolean,
-				default: false
-			},
-			label: {
-				type: String,
-				default: ""
-			},
-			disabled: {
-				type: Boolean,
-				default: false
-			},
-			onIcon: {
-				type: String,
-				default: "checkbox-intermediate"
-			},
-			offIcon: {
-				type: String,
-				default: "checkbox-blank-outline"
-			},
-			size: {
-				type: String,
-				default: "18px"
-			},
-			color: {
-				type: String,
-				default: ""
-			},
-			centered: {
-				type: Boolean,
-				default: false
-			},
-			checkbox: {
-				type: Boolean,
-				default: false
-			},
-			radio: {
-				type: Boolean,
-				default: false
-			},
-			switch: {
-				type: Boolean,
-				default: false
-			}
-		]
+	props: {
+		state: {
+			type: Boolean,
+			default: false
+		},
+		label: {
+			type: String,
+			default: ""
+		},
+		disabled: {
+			type: Boolean,
+			default: false
+		},
+		onIcon: {
+			type: String,
+			default: "checkbox-intermediate"
+		},
+		offIcon: {
+			type: String,
+			default: "checkbox-blank-outline"
+		},
+		size: {
+			type: String,
+			default: "18px"
+		},
+		color: {
+			type: String,
+			default: ""
+		},
+		centered: {
+			type: Boolean,
+			default: false
+		},
+		checkbox: {
+			type: Boolean,
+			default: false
+		},
+		radio: {
+			type: Boolean,
+			default: false
+		},
+		switch: {
+			type: Boolean,
+			default: false
+		},
+		debug: {
+			type: Boolean,
+			default: false
+		},
+		value: {
+			type: Boolean,
+			default: false
+		}
+	},
+	mounted() {
+		if (this.debug) {
+			console.log(this)
+		}
 	},
 	data: function() {
 		return {
@@ -104,6 +115,7 @@ export default {
 	watch: {
 		state(val) {
 			this.realState = val
+			this.$emit('input', val);
 		}
 	},
 	methods: {
@@ -115,11 +127,7 @@ export default {
 			this.$emit('input', this.realState);
 		}
 	},
-	watch: {
-		state(val) {
-			this.realState = val;
-		}
-	}
+	
 };
 </script>
 
