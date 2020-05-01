@@ -1,6 +1,6 @@
 {
   "name": "brutalism",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Battleaxe's component library for Adobe CEP panels",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "cep-spy": "latest",
-    "cluecumber": "latest",
+    "cluecumber": "0.0.6",
     "starlette": "latest",
     "vue-pan": "latest"
   }

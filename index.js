@@ -29,7 +29,7 @@ require("./assets/fonts.css");
 
 
 
-import { openURL, evalScript, saveDialog, openDialog, loadScript, rgbToHex, readDir, writeFile } from 'cluecumber'
+import { openURL, copy, evalScript, saveDialog, openDialog, loadScript, rgbToHex, readDir, writeFile } from 'cluecumber'
 let Pan = require('vue-pan').default;
 
 export {
@@ -38,6 +38,7 @@ export {
 	ButtonGroup,
 	Button,
 	Col,
+	copy,
 	Divider,
 	Dropdown,
 	Dropzone,
