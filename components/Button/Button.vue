@@ -28,13 +28,6 @@
 		@mouseenter="hover = true"
 		@mouseleave="hover = false"
 	>
-		<input 
-			tabindex="-1" 
-			v-model="copy" 
-			class="menu-clipboard" 
-			ref="clipboard" 
-			type="text" 
-		>
 		<div
 			ref="tooltipWrapper"
 			:class="['button-tooltip-wrapper', { left, right }]"
@@ -192,12 +185,19 @@ export default {
 		passClick: false,
 		hover: false,
 		sizeDebouncer: null,
-		isResizing: false
+		isResizing: false,
+		realClipboard: '',
+		hasCopy: false,
 	}),
 	mixins: [
 		require("../mixinUID").default,
 		require("../mixinStyleProps").default
 	],
+	watch: {
+		copy(val) {
+			this.realClipboard = val;
+		}
+	},
 	mounted() {
 		if (/button-group/i.test(this.$parent.$vnode.tag)) {
 			this.groupItem = true;
@@ -210,6 +210,9 @@ export default {
 				this.debounce(this.checkTooltipPos, 300)
 			);
 			this.checkTooltipPos();
+		}
+		if (this.copy.length) {
+			this.realClipboard = this.copy;
 		}
 	},
 	computed: {
@@ -272,6 +275,7 @@ export default {
 				let result = await evalScript(this.evalScript);
 				this.$emit('evalScript', result);
 			}
+			console.log(this.realClipboard, this.copy)
 			if (this.copy.length) {
 				this.copyTextToClipboard();
 			}
@@ -309,12 +313,19 @@ export default {
 			};
 		},
 		copyTextToClipboard() {
-			let lastFocus = document.activeElement;
-			this.$refs.clipboard.select();
-			document.execCommand("copy");
-			this.$refs.clipboard.blur();
-			if (lastFocus)
-				lastFocus.focus();
+			var textarea = document.createElement('textarea');
+			textarea.textContent = this.realClipboard;
+			document.body.appendChild(textarea);
+			var selection = document.getSelection();
+			var range = document.createRange();
+			range.selectNode(textarea);
+			selection.removeAllRanges();
+			selection.addRange(range);
+			let clipboard = document.execCommand('copy')
+			console.log('copied:', clipboard);
+			selection.removeAllRanges();
+			document.body.removeChild(textarea);
+			this.$emit('clipboard', clipboard);
 		},
 		checkTooltipPos() {
 			const self = this;
