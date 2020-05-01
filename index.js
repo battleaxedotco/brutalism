@@ -12,6 +12,7 @@ const Footer = require("./components/Footer").default;
 const Icon = require("./components/Icon").default;
 const InputScroll = require("./components/Input-Scroll").default;
 const Input = require("./components/Input").default;
+const Link = require("./components/Link").default;
 const Menus = require("./components/Menus").default;
 const Panelify = require('./components/Panelify').default;
 const PanelInfo = require("./components/Panel-Info").default;
@@ -25,6 +26,8 @@ const Autofocus = require("./components/directiveAutofocus.js").default;
 const FakeSpy = require("./utils/fakeSpy").default;
 require("./assets/material_icon_font/css/materialdesignicons.css");
 require("./assets/fonts.css");
+
+
 
 import { openURL, evalScript, saveDialog, openDialog, loadScript, rgbToHex, readDir, writeFile } from 'cluecumber'
 let Pan = require('vue-pan').default;
@@ -52,6 +55,7 @@ export {
 	Icon,
 	InputScroll,
 	Input,
+	Link,
 	Menus,
 	Panelify,
 	PanelInfo,
