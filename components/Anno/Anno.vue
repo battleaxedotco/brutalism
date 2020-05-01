@@ -3,7 +3,8 @@
     color: color,
     'font-size': size,
     'font-family': font,
-    'letter-spacing': letterSpacing
+    'letter-spacing': letterSpacing,
+    'margin': margin
   }">
     <span v-if="$slots.default">
       <slot />
@@ -38,6 +39,10 @@ export default {
     letterSpacing: {
       type: String,
       default: 'normal'
+    },
+    margin: {
+      type: String,
+      default: '0px 0px 1ch 0px'
     }
   }
 }
