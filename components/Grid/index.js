@@ -1,0 +1,1 @@
+export default require('./Grid.vue').default
