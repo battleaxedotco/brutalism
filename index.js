@@ -28,10 +28,10 @@ const FakeSpy = require("./utils/fakeSpy").default;
 require("./assets/material_icon_font/css/materialdesignicons.css");
 require("./assets/fonts.css");
 
-
-
 import { openURL, copy, evalScript, saveDialog, openDialog, loadScript, rgbToHex, readDir, writeFile } from 'cluecumber'
 let Pan = require('vue-pan').default;
+import { spy } from 'cep-spy'
+import { starlette } from 'starlette'
 
 export {
 	Alert,
@@ -70,5 +70,7 @@ export {
 	Wrapper,
 	Autofocus,
 	FakeSpy,
-	Pan
+	Pan,
+	spy,
+	starlette
 };
