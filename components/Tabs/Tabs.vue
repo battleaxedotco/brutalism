@@ -41,7 +41,7 @@ export default {
 			type: Number,
 			default: 0
 		},
-		filled: {
+		flat: {
 			type: Boolean,
 			default: false
 		},
@@ -100,6 +100,9 @@ export default {
 			set(val) {
 				if (val || val == 0) this.makeActive(this.tabs[val]);
 			}
+		},
+		filled() {
+			return !this.flat
 		},
 		activeRoute() {
 			return this.$route
