@@ -23,8 +23,8 @@ const isBrowser = window.__adobe_cep__;
 
 const fs = !isBrowser ? require("fs") : null;
 const path = !isBrowser ? require("path") : null;
-const spy = !isBrowser ? require("cep-spy").default
-	: { appName: 'ILST' };
+// const spy = !isBrowser ? require("cep-spy").default
+// 	: { appName: 'ILST' };
 import { evalScript } from 'cluecumber'
 
 export default {
@@ -142,7 +142,7 @@ export default {
 			}
 			
 		});
-		if (spy.appName == "ILST")
+		// if (spy.appName == "ILST")
 			window.addEventListener("dragexit", () => {
 				if (this.fullscreen) {
 
