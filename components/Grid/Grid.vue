@@ -1,9 +1,8 @@
 <template>
   <div class="brutalism-grid-wrapper">
     <div class="brutalism-grid-content" :style="getStyle()">
-
+      <slot />
     </div>
-    <slot />
   </div>
 </template>
 
@@ -11,6 +10,18 @@
 export default {
   props: {
     template: {
+      type: String,
+      default: ''
+    },
+    grid: {
+      type: String,
+      default: ''
+    },
+    gridArea: {
+      type: String,
+      default: ''
+    },
+    gridTemplate: {
       type: String,
       default: ''
     },
@@ -26,16 +37,25 @@ export default {
   computed: {
     templateString() {
 			if (this.template.length) return this.template;
-			return `repeat(${this.$slots.default.length}, 1fr);`
+			return `repeat(${this.$slots.default.length}, 1fr)`
 		},
   },
   methods: {
     getStyle() {
-			let style = `grid-gap: ${this.gap};`;
-			style += `${ this.column ? "grid-template-columns"
-					: "grid-template-rows"
-      }: ${this.templateString};`
-      console.log(style);
+      let style = `grid-gap: ${this.gap};`;
+      if (!this.grid.length && !this.gridTemplate.length) {
+        style += `${ this.column ? "grid-template-columns"
+            : "grid-template-rows"
+        }: ${this.templateString};`
+      } else if (this.grid.length) {
+        style += this.grid.replace(/\;$/, '') + ';'
+      } 
+      // else if (this.gridTemplate.length) {
+      //   console.log('Check')
+      //   style += `grid-template: ` + this.gridTemplate.replace(/\;$/, '') + ';'
+      // }
+      if (this.gridArea.length) style += this.gridArea.replace(/\;$/, '') + ';'
+      // console.log(style);
 			return style;
 		}
   }
@@ -43,5 +63,13 @@ export default {
 </script>
 
 <style>
+.brutalism-grid-wrapper, .brutalism-grid-content {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
 
+.brutalism-grid-content {
+  display: grid;
+}
 </style>
