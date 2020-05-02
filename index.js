@@ -30,8 +30,8 @@ require("./assets/fonts.css");
 
 import { openURL, copy, evalScript, saveDialog, openDialog, loadScript, rgbToHex, readDir, writeFile } from 'cluecumber'
 let Pan = require('vue-pan').default;
-import { spy } from 'cep-spy'
-import { starlette } from 'starlette'
+// import { spy } from 'cep-spy'
+// import { starlette } from 'starlette'
 
 export {
 	Alert,
@@ -71,6 +71,6 @@ export {
 	Autofocus,
 	FakeSpy,
 	Pan,
-	spy,
-	starlette
 };
+// spy,
+// starlette
