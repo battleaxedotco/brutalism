@@ -1,11 +1,13 @@
 <template>
-	<div id="dropzone">
+	<div :class="[ 'dropzone', { fullscreen } ]" :style="getDropzoneStyle()">
 		<input
 			ref="input"
 			style="position: absolute; opacity: 0; width: 1px; height: 1px; cursor: default"
 			v-model="inputText"
 		/>
-		<slot v-if="isDragging && !overlay && $slots.default" />
+		<slot name="overlay" v-if="isDragging && !overlay && $slots.overlay && $slots.overlay.length"></slot>
+		<slot name="prompt" v-else-if="!isDragging && !overlay && $slots.prompt && $slots.prompt.length"></slot>
+		<slot name="overlay" v-else-if="isDragging && !overlay && $slots.default"></slot>
 		<div v-if="isDragging && overlay" class="overlay-test">
 			<slot v-if="$slots.default" />
 			<div v-else class="overlay-card">{{ anno }}</div>
@@ -25,6 +27,11 @@ const evalScript = window.__adobe_cep__
 
 export default {
 	props: {
+		// Whether dropzone is fullscreen or fills the relative size of container
+		fullscreen: {
+			type: Boolean,
+			default: true
+		},
 		// Only accept a single file, if multiple are dropped only accept one
 		single: {
 			type: Boolean,
@@ -78,7 +85,8 @@ export default {
 			leaveCount: 0,
 			isDragging: false,
 			csInterface: null,
-			inputText: null
+			inputText: null,
+			border: 'transparent'
 		};
 	},
 	computed: {
@@ -89,6 +97,7 @@ export default {
 		}
 	},
 	mounted() {
+		console.log(this.$slots)
 		window.addEventListener("dragenter", () => {
 			this.leaveCount = 0;
 			if (!this.isDragging) this.enter();
@@ -119,13 +128,15 @@ export default {
 	methods: {
 		enter() {
 			this.isDragging = true;
-			document.querySelector("#dropzone").style.borderColor =
-				"var(--dropzone-active)";
+			this.border = "var(--dropzone-active)"
+			// document.querySelector("#dropzone").style.borderColor =
+			// 	"var(--dropzone-active)";
 		},
 		exit() {
 			this.reset();
-			document.querySelector("#dropzone").style.borderColor =
-				"transparent";
+			this.border = 'transparent'
+			// document.querySelector("#dropzone").style.borderColor =
+			// 	"transparent";
 		},
 		drop(e) {
 			this.reset();
@@ -142,8 +153,10 @@ export default {
 								this.getAsText(file);
 					  });
 			this.confirmDrop(e.dataTransfer.files);
-			document.querySelector("#dropzone").style.borderColor =
-				"transparent";
+
+			this.border = 'transparent'
+			// document.querySelector("#dropzone").style.borderColor =
+			// 	"transparent";
 		},
 		async handleILSTDrop(e) {
 			if (!window.__adobe_cep__) return null;
@@ -204,6 +217,35 @@ export default {
 			this.reset();
 			if (evt.target.error.name == "NotReadableError") console.error(evt);
 			else console.error(evt.target.error);
+		},
+		getDropzoneStyle() {
+			let style;
+			style = `
+				border-color: ${this.border};
+				box-sizing: border-box;
+				border-width: 2px;
+				border-style: solid;
+				display: grid;
+				z-index: 100;
+			`
+			if (this.fullscreen) {
+				style += `
+					width: calc(100vw - 1px);
+					height: calc(100vh - 2px);
+					position: fixed;
+					top: 0;
+					left: 0;
+				`
+			} else {
+				`
+					width: 100%;
+					height: 100%;
+					position: relative;
+					top: 0;
+					left: 0;
+				`
+			}
+			return style;
 		},
 		async confirmDrop(data) {
 			// If not enumerable, wrap in Array so below filter will work
@@ -272,16 +314,8 @@ export default {
 </script>
 
 <style>
-#dropzone {
+.dropzone {
 	/* background: rgba(255, 0, 0, 0.5); */
-	border: 2px solid transparent;
-	width: calc(100% - 4px);
-	height: calc(100% - 5px);
-	position: fixed;
-	display: grid;
-	top: 0;
-	left: 0;
-	z-index: 100;
 	pointer-events: none;
 }
 
