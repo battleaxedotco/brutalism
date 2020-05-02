@@ -382,9 +382,8 @@ export default {
 	background: var(--color-default);
 }
 
-
 .tab-wrapper.idle > .tab-line {
-	background: transparent;
+	background: var(--color-header);
 }
 
 .tab-wrapper.idle:hover > .tab-line:not(.filled) {

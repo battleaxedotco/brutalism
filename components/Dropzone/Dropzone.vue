@@ -1,29 +1,31 @@
 <template>
-	<div :class="[ 'dropzone', { fullscreen } ]" :style="getDropzoneStyle()">
+	<div :class="[ 'dropzone', !fullscreen && !isDraggingInWindow ? 'no-pointer-events' : '', { fullscreen } ]" 
+		:style="getDropzoneStyle()" 
+		@dragover="handleDragEnter" 
+		@dragleave="handleDragLeave"
+		@drop="dropHandlerCEP"
+	>
 		<input
 			ref="input"
 			style="position: absolute; opacity: 0; width: 1px; height: 1px; cursor: default"
 			v-model="inputText"
 		/>
-		<slot name="overlay" v-if="isDragging && !overlay && $slots.overlay && $slots.overlay.length"></slot>
+		<slot 
+			name="overlay"
+			v-if="isDragging && !overlay && $slots.overlay && $slots.overlay.length" />
 		<slot name="prompt" v-else-if="!isDragging && !overlay && $slots.prompt && $slots.prompt.length"></slot>
-		<slot name="overlay" v-else-if="isDragging && !overlay && $slots.default"></slot>
-		<div v-if="isDragging && overlay" class="overlay-test">
-			<slot v-if="$slots.default" />
-			<div v-else class="overlay-card">{{ anno }}</div>
-		</div>
+		<slot name="overlay" v-else-if="isDragging && !overlay && $slots.default" />
 	</div>
 </template>
 
 <script>
-const fs = require("fs");
-const path = require("path");
-const spy = window.__adobe_cep__
-	? require("cep-spy").default
-	: require("../../utils/fakeSpy").default;
-const evalScript = window.__adobe_cep__
-	? require("cluecumber").evalScript
-	: null;
+const isBrowser = window.__adobe_cep__;
+
+const fs = !isBrowser ? require("fs") : null;
+const path = !isBrowser ? require("path") : null;
+const spy = !isBrowser ? require("cep-spy").default
+	: { appName: 'ILST' };
+import { evalScript } from 'cluecumber'
 
 export default {
 	props: {
@@ -31,6 +33,14 @@ export default {
 		fullscreen: {
 			type: Boolean,
 			default: true
+		},
+		noBorder: {
+			type: Boolean,
+			default: false
+		},
+		borderWidth: {
+			type: String,
+			default: '2px'
 		},
 		// Only accept a single file, if multiple are dropped only accept one
 		single: {
@@ -77,6 +87,14 @@ export default {
 		pureSvg: {
 			type: Boolean,
 			default: false
+		},
+		color: {
+			type: String,
+			default: 'var(--dropzone-active)'
+		},
+		debug: {
+			type: Boolean,
+			default: false
 		}
 	},
 	data() {
@@ -86,7 +104,11 @@ export default {
 			isDragging: false,
 			csInterface: null,
 			inputText: null,
-			border: 'transparent'
+			border: 'transparent',
+			isDraggingInWindow: false,
+			hover: false,
+			isDirty: false,
+			enterCount: 0
 		};
 	},
 	computed: {
@@ -97,48 +119,126 @@ export default {
 		}
 	},
 	mounted() {
-		console.log(this.$slots)
-		window.addEventListener("dragenter", () => {
-			this.leaveCount = 0;
-			if (!this.isDragging) this.enter();
+		window.addEventListener("dragover", () => {
+			if (this.fullscreen) {
+				this.leaveCount = 0;
+				if (!this.isDragging) this.enter();
+			} else {
+				// this.leaveCount = 0;
+				if (!this.isDragging) this.enter();
+			}
 		});
 		window.addEventListener("dragleave", () => {
-			// console.log("Leave");
-			// This produced a loop of leave/enter events on Windows for me, where moving the cursor while dragging
-			// over elements like buttons would cause the events to refire and the Dropzone to flash
-			//
-			this.leaveCount++;
-			// But for some reason, dragexit doesn't work on window or this element.
-			// dragleave is fired twice only when exiting the window on for me, we might be able to use that as a condition
-			//
-			// Otherwise this might be fired when hovering any element, similar to mouseover
-			if (this.leaveCount == 2) this.exit();
+			if (this.fullscreen) {
+				// This produced a loop of leave/enter events on Windows for me, where moving the cursor while dragging
+				// over elements like buttons would cause the events to refire and the Dropzone to flash
+				//
+				this.leaveCount++;
+				// But for some reason, dragexit doesn't work on window or this element.
+				// dragleave is fired twice only when exiting the window on for me, we might be able to use that as a condition
+				//
+				// Otherwise this might be fired when hovering any element, similar to mouseover
+				if (this.leaveCount >= 1) this.exit();
+			}
+			
 		});
 		if (spy.appName == "ILST")
 			window.addEventListener("dragexit", () => {
-				this.exit();
+				if (this.fullscreen) {
+
+					this.exit();
+				} else {
+					// Shouldn't be needed
+					// this.isDraggingInWindow = false;
+					// this.isDragging = false;
+				}
+				if (this.debug) console.log('Window exit')
 			});
 
-		// Would be awesome to add Illustrator support for this, bypassing file input for activeLayer.selection
-		window.addEventListener("drop", e => {
-			e.preventDefault();
-			this.drop(e);
-		});
+		if (this.fullscreen) {
+			// Would be awesome to add Illustrator support for this, bypassing file input for activeLayer.selection
+			window.addEventListener("drop", e => {
+				e.preventDefault();
+				this.drop(e);
+			});
+		}
+	},
+	watch: {
+		leaveCount(val) {
+			// if (this.debug)
+			// 	console.log('leaveCount:', val);
+		},
+		enterCount(val) {
+			if (this.debug)
+				console.log('enterCount:', val);
+		},
+		isDraggingInWindow(val) {
+			if (!this.fullscreen) {
+				// if (!val) this.isDragging = false;
+			}
+		},
+		isDragging(val) {
+			if (this.debug)
+				console.log('isDragging:', val)
+			this.$emit(val ? 'dragover' : 'dragleave')
+		}
 	},
 	methods: {
+		handleDragEnter() {
+			// if (this.debug) console.log('enter')
+			// if (this.fullscreen) return null;
+			// // this.leaveCount = 0;
+			// this.enter();
+
+			// this.isDragging = true;
+			// this.border = this.color;
+			// this.isDirty = true;
+
+			// this.enterCount++;
+			// // console.log('Drag Enter')
+
+			if (!this.isDragging) {
+
+				this.isDragging = true;
+				this.border = this.color;
+			}
+		},
+		handleDragLeave() {
+			if (this.fullscreen) return null;
+			if (this.isDragging) {
+				this.isDragging = false;
+				this.border = 'transparent'
+			}
+		},
 		enter() {
-			this.isDragging = true;
-			this.border = "var(--dropzone-active)"
-			// document.querySelector("#dropzone").style.borderColor =
-			// 	"var(--dropzone-active)";
+			if (this.fullscreen) {
+				this.isDragging = true;
+				this.border = this.color
+			} else {
+				this.isDraggingInWindow = true;
+			}
 		},
 		exit() {
-			this.reset();
-			this.border = 'transparent'
-			// document.querySelector("#dropzone").style.borderColor =
-			// 	"transparent";
+			if (this.debug) console.log('Hard reset')
+			if (this.fullscreen) {
+				this.reset();
+			} else {
+				if (this.isDirty) {
+					
+				} else {
+					this.reset()
+				}
+				console.log(this.leaveCount)
+			// 	// Should be all if not using overlay
+			// 	this.reset();
+			}
+		},
+		dropHandlerCEP(e) {
+			if (this.fullscreen) return null;
+			this.drop(e)
 		},
 		drop(e) {
+			if (this.debug) console.log('Drop reset')
 			this.reset();
 			if (this.pureSvg) return this.handleILSTDrop(e);
 			if (this.autoRead)
@@ -153,10 +253,6 @@ export default {
 								this.getAsText(file);
 					  });
 			this.confirmDrop(e.dataTransfer.files);
-
-			this.border = 'transparent'
-			// document.querySelector("#dropzone").style.borderColor =
-			// 	"transparent";
 		},
 		async handleILSTDrop(e) {
 			if (!window.__adobe_cep__) return null;
@@ -214,6 +310,7 @@ export default {
 			});
 		},
 		errorHandler(evt) {
+			console.log('Error reset')
 			this.reset();
 			if (evt.target.error.name == "NotReadableError") console.error(evt);
 			else console.error(evt.target.error);
@@ -223,7 +320,7 @@ export default {
 			style = `
 				border-color: ${this.border};
 				box-sizing: border-box;
-				border-width: 2px;
+				border-width: ${this.noBorder ? '0px' : this.borderWidth};
 				border-style: solid;
 				display: grid;
 				z-index: 100;
@@ -248,19 +345,25 @@ export default {
 			return style;
 		},
 		async confirmDrop(data) {
+			console.log(data)
 			// If not enumerable, wrap in Array so below filter will work
 			data = this.single ? [data[0]] : data;
 			// Remove any File whose name doesn't pass the accept regex from FileList
 			data = [...data].filter(item => {
 				return this.acceptRX.test(item.name);
 			});
-			if (this.readFolders) data = await this.expandFolderData(data);
+			if (this.readFolders) data = !isBrowser 
+				? await this.expandFolderData(data) 
+				: this.createError(`Cannot read folders in browser!`)
 			data.length
 				? this.$emit("drop", data)
 				: this.createError("Unsupported file type for Drop event");
 		},
 		reset() {
+			console.log('reset')
 			this.isDragging = false;
+			this.isDraggingInWindow = false;
+			this.border = 'transparent';
 			this.msg = this.anno;
 		},
 		async expandFolderData(data) {
@@ -316,10 +419,14 @@ export default {
 <style>
 .dropzone {
 	/* background: rgba(255, 0, 0, 0.5); */
+}
+
+.no-pointer-events {
 	pointer-events: none;
 }
 
 .overlay-test {
+	pointer-events: all;
 	background: rgba(72, 133, 198, 0.2);
 	display: flex;
 	justify-content: center;
@@ -327,6 +434,7 @@ export default {
 	font-size: 30px;
 }
 .overlay-card {
+	pointer-events: all;
 	border-radius: 4px 4px 0px 0px;
 	color: white;
 	background: rgba(0, 0, 0, 0.3125);
