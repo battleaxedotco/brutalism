@@ -12,6 +12,7 @@ const Footer = require("./components/Footer").default;
 const Icon = require("./components/Icon").default;
 const InputScroll = require("./components/Input-Scroll").default;
 const Input = require("./components/Input").default;
+const Grid = require("./components/Grid").default;
 const Link = require("./components/Link").default;
 const Menus = require("./components/Menus").default;
 const Panelify = require('./components/Panelify').default;
@@ -57,6 +58,7 @@ export {
 	InputScroll,
 	Input,
 	Link,
+	Grid,
 	Menus,
 	Panelify,
 	PanelInfo,
