@@ -228,7 +228,6 @@ export default {
 				} else {
 					this.reset()
 				}
-				console.log(this.leaveCount)
 			// 	// Should be all if not using overlay
 			// 	this.reset();
 			}
@@ -279,9 +278,9 @@ export default {
 			}
 			this.exit();
 		},
-		getAsText(readFile) {
+		getAsText(readFile, evt) {
 			if (!readFile)
-				return this.createError("Unsupported file type for Read event");
+				return this.createError("Unsupported file type for Read event", readFile);
 			var reader = new FileReader();
 			reader.readAsText(readFile, "UTF-8");
 			reader.onload = this.loaded;
@@ -304,13 +303,13 @@ export default {
 				return false;
 			}
 		},
-		createError(message) {
+		createError(message, evt) {
 			this.errorHandler({
 				target: { error: message }
 			});
+			console.log('HTML not yet supported! Files only.')
 		},
 		errorHandler(evt) {
-			console.log('Error reset')
 			this.reset();
 			if (evt.target.error.name == "NotReadableError") console.error(evt);
 			else console.error(evt.target.error);
@@ -345,7 +344,6 @@ export default {
 			return style;
 		},
 		async confirmDrop(data) {
-			console.log(data)
 			// If not enumerable, wrap in Array so below filter will work
 			data = this.single ? [data[0]] : data;
 			// Remove any File whose name doesn't pass the accept regex from FileList
@@ -360,7 +358,6 @@ export default {
 				: this.createError("Unsupported file type for Drop event");
 		},
 		reset() {
-			console.log('reset')
 			this.isDragging = false;
 			this.isDraggingInWindow = false;
 			this.border = 'transparent';

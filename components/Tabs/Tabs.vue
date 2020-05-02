@@ -5,15 +5,15 @@
 		@mouseenter="hover = true"
 		@mouseleave="hover = false"
 	>
-		<div :class="['active-line', { filled, isGradient }]" :style="getActiveLineStyle()"></div>
+		<div :class="['active-line', { filled, flat, isGradient }]" :style="getActiveLineStyle()"></div>
 		<div
 			v-for="(tab, i) in tabs"
-			:class="['tab-wrapper', tab.active ? 'active' : 'idle', { filled, isGradient }]"
+			:class="['tab-wrapper', tab.active ? 'active' : 'idle', { filled, flat, isGradient }]"
 			:ref="`tab-${i}`"
 			:key="i"
 			@click="clickHandler(i)"
 		>
-			<div :class="['tab-label', tab.active ? 'tab-active' : 'tab-idle', { filled, isGradient }]">
+			<div :class="['tab-label', tab.active ? 'tab-active' : 'tab-idle', { filled, flat, isGradient }]">
 				<span v-if="tab.label">{{ tab.label }}</span>
 				<!-- <Icon v-else-if="tab.icon" size="20px" :name="tab.icon" /> -->
 			</div>
@@ -382,8 +382,11 @@ export default {
 	background: var(--color-default);
 }
 
-.tab-wrapper.idle > .tab-line {
+.tab-wrapper.idle:not(.flat) > .tab-line {
 	background: var(--color-header);
+}
+.tab-wrapper.idle.flat > .tab-line {
+	background: var(--color-bg);
 }
 
 .tab-wrapper.idle:hover > .tab-line:not(.filled) {
@@ -403,7 +406,6 @@ export default {
 .tab-svg {
 	max-height: 22px;
 	max-width: 100%;
-	border: 1px solid red;
 }
 
 .tab-svg svg {
