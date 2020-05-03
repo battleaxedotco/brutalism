@@ -1,7 +1,5 @@
 # <a href="https://www.battleaxe.co/"><img src="https://avatars2.githubusercontent.com/u/60149336?s=200&v=4" width="40" height="40"/></a> brutalism
 
-[![NPM](https://nodei.co/npm/brutalism.png)](https://nodei.co/npm/brutalism/)
-
 | [Demos](#demos) | [Installation](#installation) | [Getting Started](#getting-started) | [Templates](#templates) | [Components](#features) |
 | ----------------------------- | :---------------------------: | :---------------------------------: | :---------------------: | :---------------------: |
  
@@ -10,6 +8,8 @@
 ![](./assets/ILSTsample.png)
 ![](./assets/FLPRsample.png)
 ![](./assets/AEFTsample.png)
+
+## [Check out the documentation site](https://battleaxe.dev/brutalism-docs/)
 
 Make panels for After Effects, Illustrator, Photoshop, InDesign, Premiere Pro, Audition, Animate, InCopy, Prelude, Dreamweaver, Muse, Bridge and Rush like a pro even if you can't code like one.
 
