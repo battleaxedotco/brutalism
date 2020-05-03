@@ -167,14 +167,14 @@ export default {
     getHeaderStyle() {
       return `
         width: 100%;
-        border-color: ${starlette.getColorAs(
+        border-color: ${!this.isBlock ?starlette.getColorAs(
           "color-scrollbar-thumb",
           this.appName,
           this.newTheme || this.theme,
           this.newGradient || this.newGradient == 0
             ? this.newGradient
             : this.gradient || null
-        )};
+        ) : 'transparent'};
         border-width: ${this.isBlock ? "0px 0px 1px 0px" : "0px"};
         background-color: ${
           !this.isBlock
