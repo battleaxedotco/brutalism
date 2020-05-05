@@ -1,6 +1,10 @@
 <template>
   <div
-    :class="[ 'dropzone', !isDraggingInWindow ? 'no-pointer-events' : '', { fullscreen } ]"
+    :class="[ 
+		'dropzone', 
+		!isDraggingInWindow ? 'no-pointer-events' : '', 
+		{ fullscreen } 
+	]"
     :style="getDropzoneStyle()"
     @dragover="handleDragEnter"
     @dragleave="handleDragLeave"
@@ -121,42 +125,22 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener("dragover", () => {
+    window.addEventListener("dragenter", () => {
       if (this.fullscreen) {
+        if (this.debug) console.log("dragover");
         this.leaveCount = 0;
         if (!this.isDragging) this.enter();
       } else {
-        // this.leaveCount = 0;
-        if (!this.isDragging) this.enter();
+        if (!this.isDraggingInWindow) this.isDraggingInWindow = true;
       }
     });
     window.addEventListener("dragleave", () => {
       if (this.fullscreen) {
-        // This produced a loop of leave/enter events on Windows for me, where moving the cursor while dragging
-        // over elements like buttons would cause the events to refire and the Dropzone to flash
-        //
         this.leaveCount++;
-        // But for some reason, dragexit doesn't work on window or this element.
-        // dragleave is fired twice only when exiting the window on for me, we might be able to use that as a condition
-        //
-        // Otherwise this might be fired when hovering any element, similar to mouseover
-        if (this.leaveCount >= 1) this.exit();
+        if (this.leaveCount >= 2) this.exit();
       }
     });
-    // if (spy.appName == "ILST")
-    window.addEventListener("dragexit", () => {
-      if (this.fullscreen) {
-        this.exit();
-      } else {
-        // Shouldn't be needed
-        // this.isDraggingInWindow = false;
-        // this.isDragging = false;
-      }
-      if (this.debug) console.log("Window exit");
-    });
-
     if (this.fullscreen) {
-      // Would be awesome to add Illustrator support for this, bypassing file input for activeLayer.selection
       window.addEventListener("drop", e => {
         e.preventDefault();
         this.drop(e);
@@ -183,25 +167,12 @@ export default {
   },
   methods: {
     handleDragEnter() {
-      // if (this.debug) console.log('enter')
-      // if (this.fullscreen) return null;
-      // // this.leaveCount = 0;
-      // this.enter();
-
-      // this.isDragging = true;
-      // this.border = this.color;
-      // this.isDirty = true;
-
-      // this.enterCount++;
-      // // console.log('Drag Enter')
-
       if (!this.isDragging) {
         this.isDragging = true;
         this.border = this.color;
       }
     },
     handleDragLeave() {
-      if (this.fullscreen) return null;
       if (this.isDragging) {
         this.isDragging = false;
         this.border = "transparent";
@@ -209,27 +180,30 @@ export default {
     },
     enter() {
       if (this.fullscreen) {
+        if (this.debug) console.log("Hard enter");
         this.isDragging = true;
         this.border = this.color;
+        this.isDraggingInWindow = true;
       } else {
         this.isDraggingInWindow = true;
       }
     },
     exit() {
       if (this.debug) console.log("Hard reset");
-      if (this.fullscreen) {
-        this.reset();
+      //   if (this.fullscreen) {
+      //     this.reset();
+      //   } else {
+      if (this.isDirty) {
+        //
       } else {
-        if (this.isDirty) {
-        } else {
-          this.reset();
-        }
-        // 	// Should be all if not using overlay
-        // 	this.reset();
+        this.reset();
       }
+      // 	// Should be all if not using overlay
+      // 	this.reset();
+      //   }
     },
     dropHandlerCEP(e) {
-      if (this.fullscreen) return null;
+      //   if (this.fullscreen) return null;
       this.drop(e);
     },
     drop(e) {
@@ -415,6 +389,10 @@ export default {
 <style>
 .dropzone {
   /* background: rgba(255, 0, 0, 0.5); */
+}
+
+.fullscreen {
+  pointer-events: none;
 }
 
 .no-pointer-events {
