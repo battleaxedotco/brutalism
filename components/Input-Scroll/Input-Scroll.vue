@@ -1,6 +1,10 @@
 <template>
   <div :class="[{ disabled }, 'input-scroll-container']" :style="`font-size: ${size}px`">
-    <div v-if="!thin" :class="[ 'input-scroll-label', { filled }]" v-pan.prevent.mouse="panHandle">{{ label }}</div>
+    <div
+      v-if="!thin"
+      :class="[ 'input-scroll-label', { filled }]"
+      v-pan.prevent.mouse="panHandle"
+    >{{ label }}</div>
     <div
       class="input-scroll-wrapper"
       @mouseenter="hover = true"
@@ -11,7 +15,7 @@
 				}
 			]"
     >
-			<!-- Add scrubbing to label as well -->
+      <!-- Add scrubbing to label as well -->
       <div class="input-scroll-field" v-pan.prevent.mouse="panHandle">
         <span v-if="prefix && prefix.length">{{ prefix }}</span>
         <div @mouseup.prevent="focus($event)">
@@ -162,6 +166,10 @@ export default {
     lazy: {
       type: Boolean,
       default: false
+    },
+    prefsId: {
+      type: String,
+      default: ""
     }
   },
   data: () => ({
@@ -179,11 +187,13 @@ export default {
     isPanning: false,
     mouseDown: false,
     inputting: false,
-    hover: false
+    hover: false,
+    type: "inputScroll"
   }),
   directives: {
     pan: require("vue-pan").default
   },
+  mixins: [require("../mixinPrefs").default],
   watch: {
     value(val) {
       this.val = val;
@@ -197,8 +207,10 @@ export default {
       if (!val) {
         this.reset();
         if (this.validate(this.val) !== this.lastVal) {
-          this.$emit("update", this.validate(this.val));
-          this.lastVal = this.validate(this.val);
+          let finalVal = this.validate(this.val);
+          this.$emit("update", finalVal);
+          this.lastVal = finalVal;
+          if (this.prefsId.length) this.setPrefsById(this.prefsId, finalVal);
         }
         window.removeEventListener("keydown", evt => {
           this.parseModifiers(evt, true, false);
@@ -256,7 +268,18 @@ export default {
   },
   mounted() {
     this.realStep = (this.step || this.steps[1]) * this.modifier;
-    this.val = this.value;
+    if (this.prefsId.length) {
+      this.checkLocalPrefs();
+      let lastState = this.checkPrefsFor(this.prefsId);
+      if (lastState === null) {
+        this.val = this.value;
+      } else {
+        this.val = lastState.value;
+        this.$emit("prefs", lastState);
+      }
+    } else {
+      this.val = this.value;
+    }
     this.$nextTick(() => {
       this.resize();
     });
@@ -353,9 +376,9 @@ export default {
       this.resize(evt);
     },
     submit() {
-			this.$emit("submit", this.val);
-			this.blur();
-		},
+      this.$emit("submit", this.val);
+      this.blur();
+    },
     clamp(result) {
       result =
         (this.min || this.min == 0) && +result < this.min ? this.min : result;
@@ -569,14 +592,14 @@ export default {
   pointer-events: none;
 }
 
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type=number] {
-  -moz-appearance:textfield;
+input[type="number"] {
+  -moz-appearance: textfield;
 }
 input:invalid {
   box-shadow: none;
