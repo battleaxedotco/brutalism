@@ -3,12 +3,14 @@
     @click="updateState"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
-    :class="['toggle-item', { disabled, centered }]"
+    :class="['toggle-item', { disabled, centered, custom }]"
     :style="{ color: color }"
   >
     <slot v-if="hasSlotContent" />
     <Icon v-if="!hasSlotContent" :name="activeIcon" :size="size" />
-    <span v-if="!hasSlotContent && label.length" class="label">{{ label }}</span>
+    <span v-if="!hasSlotContent && label.length" class="label">{{
+      label
+    }}</span>
   </div>
 </template>
 
@@ -17,60 +19,68 @@ export default {
   props: {
     state: {
       type: Boolean,
-      default: false
+      default: false,
     },
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     onIcon: {
       type: String,
-      default: "checkbox-intermediate"
+      default: "checkbox-intermediate",
     },
     offIcon: {
       type: String,
-      default: "checkbox-blank-outline"
+      default: "checkbox-blank-outline",
+    },
+    custom: {
+      type: Boolean,
+      default: false,
     },
     size: {
       type: String,
-      default: "18px"
+      default: "18px",
     },
     color: {
       type: String,
-      default: ""
+      default: "",
     },
     centered: {
       type: Boolean,
-      default: false
+      default: false,
     },
     checkbox: {
       type: Boolean,
-      default: false
+      default: false,
     },
     radio: {
       type: Boolean,
-      default: false
+      default: false,
     },
     switch: {
       type: Boolean,
-      default: false
+      default: false,
     },
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
     prefsId: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
   },
   mixins: [require("../mixinPrefs").default],
   mounted() {
@@ -85,7 +95,7 @@ export default {
       }
     }
   },
-  data: function() {
+  data: function () {
     return {
       type: "toggle",
       realState: this.state,
@@ -93,19 +103,19 @@ export default {
         {
           name: "radio",
           onIcon: "radiobox-marked",
-          offIcon: "radiobox-blank"
+          offIcon: "radiobox-blank",
         },
         {
           name: "checkbox",
           onIcon: "checkbox-intermediate",
-          offIcon: "checkbox-blank-outline"
+          offIcon: "checkbox-blank-outline",
         },
         {
           name: "switch",
           onIcon: "toggle-switch",
-          offIcon: "toggle-switch-off"
-        }
-      ]
+          offIcon: "toggle-switch-off",
+        },
+      ],
     };
   },
   computed: {
@@ -113,7 +123,7 @@ export default {
       return this.$slots.default;
     },
     activeIcon() {
-      let activeSet = this.sets.find(item => {
+      let activeSet = this.sets.find((item) => {
         return this[item.name];
       });
       return !activeSet
@@ -123,17 +133,17 @@ export default {
         : this.realState
         ? activeSet.onIcon
         : activeSet.offIcon;
-    }
+    },
   },
   watch: {
     state(val) {
       this.realState = val;
       this.$emit("input", val);
-    }
+    },
   },
   methods: {
     updateState() {
-      if (this.disabled) return null;
+      if (this.disabled || this.readOnly) return null;
       this.$emit("click");
       this.realState = !this.realState;
       this.$emit("update", this.realState);
@@ -141,8 +151,8 @@ export default {
       if (this.prefsId.length) {
         this.setPrefsById(this.prefsId, this.realState);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -153,11 +163,17 @@ export default {
   display: flex;
   justify-content: flex-start;
   flex-direction: row;
-  align-items: center;
   overflow: hidden;
   color: var(--color-icon);
   margin-top: -2px;
   margin-bottom: -2px;
+}
+
+.toggle-item:not(.custom) {
+  align-items: center;
+}
+.toggle-item.custom {
+  align-items: flex-start;
 }
 
 .disabled {
@@ -167,5 +183,8 @@ export default {
 
 .label {
   padding-left: 6px;
+}
+.custom .label {
+  margin-top: 2px;
 }
 </style>

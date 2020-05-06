@@ -2,26 +2,26 @@
   <div
     :class="[{ disabled }, 'input-container']"
     :style="[
-			{
-				width: width,
-				margin: margin
-			}
-		]"
+      {
+        width: width,
+        margin: margin,
+      },
+    ]"
   >
     <span class="input-label" v-if="label.length">{{ label }}</span>
     <div
       :class="[
-				{ flat, filled },
-				'input-wrapper',
-				!flat && !filled ? 'default' : ''
-			]"
+        { flat, filled },
+        'input-wrapper',
+        !flat && !filled ? 'default' : '',
+      ]"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
       :style="[
-				{
-					'justify-content': alignPos
-				}
-			]"
+        {
+          'justify-content': alignPos,
+        },
+      ]"
     >
       <div class="input-contents">
         <Icon
@@ -32,11 +32,11 @@
         />
         <div
           :class="[
-						{ filled, flat },
-						'input-inside',
-						!flat && !filled ? 'default' : '',
-						hasFocus ? 'active' : 'idle'
-					]"
+            { filled, flat },
+            'input-inside',
+            !flat && !filled ? 'default' : '',
+            hasFocus ? 'active' : 'idle',
+          ]"
         >
           <Icon
             v-if="prependIcon.length"
@@ -48,19 +48,20 @@
           <input
             title
             ref="input"
+            :type="inputType"
             :placeholder="placeholder"
             :class="[
-							{ flat, filled, truncate },
-							'input-value',
-							uppercase ? 'uppercase' : '',
-							!flat && !filled ? 'default' : '',
-							hasFocus ? 'active' : 'idle'
-						]"
+              { flat, filled, truncate },
+              'input-value',
+              uppercase ? 'uppercase' : '',
+              !flat && !filled ? 'default' : '',
+              hasFocus ? 'active' : 'idle',
+            ]"
             :style="[
-							{
-								color: activeColor
-							}
-						]"
+              {
+                color: activeColor,
+              },
+            ]"
             v-model="val"
             @mouseup="altFocus"
             @blur="blur"
@@ -86,32 +87,31 @@
         >
           <Icon :name="appendOuterIcon" :size="iconSize" />
         </div>
-        <div v-else-if="copyContent" class="input-append-outer-icon" @click="copyInputContent">
+        <div
+          v-else-if="copyContent"
+          class="input-append-outer-icon"
+          @click="copyInputContent"
+        >
           <Icon :name="dynamicCopyIcon" :size="iconSize" />
         </div>
       </div>
       <div
         class="input-indicator-wrapper"
         :style="[
-					{
-						'justify-content': alignPos
-					}
-				]"
+          {
+            'justify-content': alignPos,
+          },
+        ]"
       >
         <div
           v-if="!filled"
-          :class="[
-						hasFocus || hover ? 'active' : 'idle',
-						'input-indicator'
-					]"
+          :class="[hasFocus || hover ? 'active' : 'idle', 'input-indicator']"
           :style="[
-						{
-							background: hasFocus
-								? realColor
-								: 'var(--color-default)',
-							height: underlineSize
-						}
-					]"
+            {
+              background: hasFocus ? realColor : 'var(--color-default)',
+              height: underlineSize,
+            },
+          ]"
         />
       </div>
     </div>
@@ -126,100 +126,104 @@ export default {
   props: {
     value: {
       type: String,
-      default: ""
+      default: "",
     },
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     color: {
       type: String,
-      default: "var(--color-selection)"
+      default: "var(--color-selection)",
     },
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     placeholder: {
       type: String,
-      default: ""
+      default: "",
+    },
+    inputType: {
+      type: String,
+      default: "text",
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     flat: {
       type: Boolean,
-      default: false
+      default: false,
     },
     filled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     underlineSize: {
       type: String,
-      default: "1.5px"
+      default: "1.5px",
     },
     iconSize: {
       type: String,
-      default: "16px"
+      default: "16px",
     },
     left: {
       type: Boolean,
-      default: false
+      default: false,
     },
     right: {
       type: Boolean,
-      default: false
+      default: false,
     },
     prependIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     appendIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     prependOuterIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     appendOuterIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     autoSelect: {
       type: Boolean,
-      default: false
+      default: false,
     },
     uppercase: {
       type: Boolean,
-      default: false
+      default: false,
     },
     truncate: {
       type: Boolean,
-      default: false
+      default: false,
     },
     spellcheck: {
       type: Boolean,
-      default: false
+      default: false,
     },
     copyContent: {
       type: Boolean,
-      default: false
+      default: false,
     },
     clipboardCooldown: {
       type: Number,
-      default: 1000
+      default: 1000,
     },
     prefsId: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   mixins: [
     require("../mixinStyleProps").default,
-    require("../mixinPrefs").default
+    require("../mixinPrefs").default,
   ],
   data: () => ({
     val: null,
@@ -228,7 +232,7 @@ export default {
     hover: false,
     error: null,
     type: "input",
-    dynamicCopyIcon: "content-copy"
+    dynamicCopyIcon: "content-copy",
   }),
   mounted() {
     if (this.prefsId.length) {
@@ -265,7 +269,7 @@ export default {
         }
         this.lastVal = this.val;
       }
-    }
+    },
   },
   computed: {
     alignPos() {
@@ -291,7 +295,7 @@ export default {
           .replace(/(--color-|color-)/, "")
           .replace(/\)$/, "")})`;
       }
-    }
+    },
   },
   methods: {
     altFocus(evt) {
@@ -329,8 +333,8 @@ export default {
     submit() {
       this.$emit("submit", this.val);
       this.blur();
-    }
-  }
+    },
+  },
 };
 </script>
 
