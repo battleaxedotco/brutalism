@@ -74,7 +74,7 @@ export default {
       this.toggle();
     }
   },
-  mounted() {
+  created() {
     if (this.prefsId.length) {
       this.checkLocalPrefs();
       let lastState = this.checkPrefsFor(this.prefsId);
