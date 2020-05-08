@@ -1,5 +1,5 @@
 <template>
-  <div :class="[{ disabled }, 'input-scroll-container']" :style="`font-size: ${size}px`">
+  <div :class="[{ disabled, readOnly }, 'input-scroll-container']" :style="`font-size: ${size}px`">
     <div
       v-if="!thin"
       :class="[ 'input-scroll-label', { filled }]"
@@ -167,9 +167,9 @@ export default {
       type: Boolean,
       default: false
     },
-    prefsId: {
-      type: String,
-      default: ""
+    readOnly: {
+      type: Boolean,
+      default: false
     }
   },
   data: () => ({
@@ -187,13 +187,11 @@ export default {
     isPanning: false,
     mouseDown: false,
     inputting: false,
-    hover: false,
-    type: "inputScroll"
+    hover: false
   }),
   directives: {
     pan: require("vue-pan").default
   },
-  mixins: [require("../mixinPrefs").default],
   watch: {
     value(val) {
       this.val = val;
@@ -207,10 +205,8 @@ export default {
       if (!val) {
         this.reset();
         if (this.validate(this.val) !== this.lastVal) {
-          let finalVal = this.validate(this.val);
-          this.$emit("update", finalVal);
-          this.lastVal = finalVal;
-          if (this.prefsId.length) this.setPrefsById(this.prefsId, finalVal);
+          this.$emit("update", this.validate(this.val));
+          this.lastVal = this.validate(this.val);
         }
         window.removeEventListener("keydown", evt => {
           this.parseModifiers(evt, true, false);
@@ -268,18 +264,7 @@ export default {
   },
   mounted() {
     this.realStep = (this.step || this.steps[1]) * this.modifier;
-    if (this.prefsId.length) {
-      this.checkLocalPrefs();
-      let lastState = this.checkPrefsFor(this.prefsId);
-      if (lastState === null) {
-        this.val = this.value;
-      } else {
-        this.val = lastState.value;
-        this.$emit("prefs", lastState);
-      }
-    } else {
-      this.val = this.value;
-    }
+    this.val = this.value;
     this.$nextTick(() => {
       this.resize();
     });
@@ -466,6 +451,10 @@ export default {
 <style>
 :root {
   --animation-timing: 200ms var(--quad) 20ms;
+}
+
+.readOnly {
+  pointer-events: none;
 }
 
 .input-scroll-container {
