@@ -15,10 +15,18 @@
     <input
       ref="input"
       type="text"
-      style="position: absolute; opacity: 0; width: 1px; height: 1px; cursor: default"
+      style="
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        cursor: default;
+      "
     />
 
-    <div class="dropdown-label" :style="getLabelStyle()" v-if="label.length">{{ label }}</div>
+    <div class="dropdown-label" :style="getLabelStyle()" v-if="label.length">
+      {{ label }}
+    </div>
     <div class="dropdown-container" :style="getContainerStyle()">
       <div class="dropdown-active">{{ activeLabel || activeValue }}</div>
 
@@ -38,9 +46,7 @@
           :style="getMenuItemStyle(item)"
         >
           <span class="dropdown-menu-item-label">
-            {{
-            item.label || item.value
-            }}
+            {{ item.label || item.value }}
           </span>
           <span class="dropdown-menu-item-indicator" v-show="item.active" />
         </li>
@@ -55,15 +61,15 @@ export default {
     // The text above the dropdown
     label: {
       type: String,
-      default: "Label"
+      default: "Label",
     },
     labelToLeft: {
       type: Boolean,
-      default: false
+      default: false,
     },
     labelToRight: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // The item to set as active on mount
     active: [String, Number],
@@ -75,8 +81,8 @@ export default {
     // preventing panel scrolling when menu open
     padding: {
       type: Number,
-      default: 16
-    }
+      default: 16,
+    },
   },
   components: {
     // Feel free to replace this with your own
@@ -91,9 +97,19 @@ export default {
     // These are related to a bug where the cursor can interrupt key navigation:
     debounce: 500, // time in ms to lock cursor after each relevant keypress
     cursorLocked: false, // determine if cursor can fire mouseovers and whether to reset debouncer
-    debouncer: null // a local setTimeout() object to refresh after each relevant keypress
+    debouncer: null, // a local setTimeout() object to refresh after each relevant keypress
   }),
   watch: {
+    active(val) {
+      this.generateMenu();
+      const self = this;
+      this.$nextTick(() => {
+        let attempt = self.findItemByValue(val);
+        if (attempt) {
+          self.makeActive(attempt);
+        }
+      });
+    },
     // Always emit event to parent when selection is changed
     activeValue(val) {
       if (val) this.$emit("update", val);
@@ -114,7 +130,7 @@ export default {
         this.blur();
         this.$emit("blur");
       }
-    }
+    },
   },
   mounted() {
     // Generate array at launch
@@ -123,7 +139,7 @@ export default {
     // If an active prop String is passed from parent,
     // assign it just after mounting and menu generation
     if (isNaN(this.active)) {
-      let found = this.menu.find(item => {
+      let found = this.menu.find((item) => {
         return item.value == this.active + "" || item.label == this.active + "";
       });
       // this.returnType = item.value == this.active + "" ? 'value' : 'label'
@@ -152,7 +168,7 @@ export default {
     // keep track of the object via ES6 Array.find()
     activeItem() {
       return this.menu.length
-        ? this.menu.find(item => {
+        ? this.menu.find((item) => {
             return item.active;
           })
         : null;
@@ -178,17 +194,17 @@ export default {
       // But we can also directly assign 'this.activeIndex = 2'
       set(val) {
         if (val || val == 0) this.makeActive(this.menu[val]);
-      }
+      },
     },
     hoverItem() {
       if (!this.menu.length) return null;
-      let hovered = this.menu.find(item => {
+      let hovered = this.menu.find((item) => {
         return item.hover;
       });
       if (hovered) return hovered;
       else
         return {
-          index: -1
+          index: -1,
         };
     },
     hoverIndex: {
@@ -197,16 +213,17 @@ export default {
       },
       set(val) {
         this.makeHover(this.menu[val]);
-      }
-    }
+      },
+    },
   },
   methods: {
     getWrapperStyle() {
       let style = `${
         this.labelToLeft || this.labelToRight
           ? "width: fit-content; margin: 6px 0px; flex-wrap: nowrap; align-items: center;"
-          : `width: ${this.width ||
-              "100%"}; margin: 6px auto; flex-wrap: wrap; flex-direction: column;`
+          : `width: ${
+              this.width || "100%"
+            }; margin: 6px auto; flex-wrap: wrap; flex-direction: column;`
       }`;
       return style;
     },
@@ -239,7 +256,7 @@ export default {
           value: isString ? item : item.value,
           index: i,
           hover: false,
-          active: false
+          active: false,
         };
         if (!isString) newItem["label"] = item.key || item.label;
         this.menu.push(newItem);
@@ -281,9 +298,27 @@ export default {
     },
     // Clear all active menu items
     clearActive(active) {
-      this.menu.forEach(item => {
+      this.menu.forEach((item) => {
         item.active = active && item.value !== active.value;
       });
+    },
+    // In the event you need to search by value / index / label
+    findItemByValue(value) {
+      let searchByIndex = !isNaN(+value) ? this.menu[value] : null;
+      let searchByValue = this.menu.find((item) => {
+        return item == value;
+      });
+      let searchByProperty = this.menu.find((item) => {
+        if (item.value || item.label) {
+          return (
+            (item.value && item.value == value) ||
+            (item.label && item.label == value)
+          );
+        } else {
+          return null;
+        }
+      });
+      return searchByIndex || searchByValue || searchByProperty;
     },
     // Clear all hovered menu items and set current to hovered
     makeHover(item) {
@@ -297,7 +332,7 @@ export default {
     },
     // Clear all hovered menu items
     clearHover() {
-      this.menu.forEach(item => {
+      this.menu.forEach((item) => {
         item.hover = false;
       });
     },
@@ -350,8 +385,8 @@ export default {
     blur() {
       if (this.open) this.open = false;
       this.$refs.input.blur();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -396,6 +431,7 @@ svg {
   box-sizing: border-box;
   position: relative;
   /* width: 100%; */
+  min-width: 60px;
   height: 24px;
   padding: 0px 2px 0 8px;
   display: flex;
