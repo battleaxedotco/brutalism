@@ -3,24 +3,33 @@
     <div class="block-panel-wrapper" :style="getWrapperStyle()">
       <div class="block-panel-header" :style="getHeaderStyle()">
         <div class="block-panel-tab" :style="getTabStyle()">
-          <div class="block-panel-title">{{extName}}</div>
+          <div class="block-panel-title">{{ extName }}</div>
           <div v-if="isBlock" class="block-panel-menu">
             <hamburger :color="getMenuColor()" />
           </div>
         </div>
-        <div v-if="!isBlock" style="padding-right: 12px; padding-bottom: 4px;" class="block-panel-menu">
+        <div
+          v-if="!isBlock"
+          style="padding-right: 12px; padding-bottom: 4px;"
+          class="block-panel-menu"
+        >
           <hamburger :color="getMenuColor()" />
         </div>
       </div>
       <div class="block-panel-content">
-        <iframe ref="panel" :src="this.src" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+        <iframe
+          ref="panel"
+          :src="this.src"
+          frameborder="0"
+          style="width: 100%; height: 100%;"
+        ></iframe>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import starlette from 'starlette'
+import starlette from "starlette";
 export default {
   props: {
     extName: String,
@@ -28,11 +37,11 @@ export default {
     theme: String,
     width: {
       type: String,
-      default: '100%'
+      default: "100%",
     },
     height: String,
     gradient: Number,
-    src: String
+    src: String,
   },
   computed: {
     isBlock() {
@@ -49,57 +58,58 @@ export default {
       {
         active: false,
         value: 0,
-        panelBG: [35, 35, 35]
+        panelBG: [35, 35, 35],
       },
       {
         active: false,
         value: 50,
-        panelBG: [59, 59, 59]
+        panelBG: [59, 59, 59],
       },
       {
         active: false,
         value: 100,
-        panelBG: [83, 83, 83]
-      }
+        panelBG: [83, 83, 83],
+      },
     ],
     ILSTcontrollers: [
       {
         active: false,
         value: "darkest",
-        panelBG: [50, 50, 50]
+        panelBG: [50, 50, 50],
       },
       {
         active: false,
         value: "dark",
-        panelBG: [83, 83, 83]
+        panelBG: [83, 83, 83],
       },
       {
         active: false,
         value: "light",
-        panelBG: [184, 184, 184]
+        panelBG: [184, 184, 184],
       },
       {
         active: false,
         value: "lightest",
-        panelBG: [240, 240, 240]
-      }
-    ]
+        panelBG: [240, 240, 240],
+      },
+    ],
   }),
   components: {
-    hamburger: require('./hamburger').default
+    hamburger: require("./hamburger").default,
   },
   mounted() {
     let themeController;
     themeController = this.isBlock
-      ? this.AEFTcontrollers.find(item => {
+      ? this.AEFTcontrollers.find((item) => {
           return item.value == this.gradient;
         })
-      : this.ILSTcontrollers.find(item => {
+      : this.ILSTcontrollers.find((item) => {
           return item.value == this.theme;
         });
     themeController.active = true;
     const self = this;
-    if (this.src) this.$refs.panel.onload = () => {
+    if (this.src)
+      this.$refs.panel.onload = () => {
         // self.updatePanelifyTheme();
       };
   },
@@ -112,11 +122,11 @@ export default {
     // },
     clearActives() {
       if (this.isBlock) {
-        this.AEFTcontrollers.forEach(controller => {
+        this.AEFTcontrollers.forEach((controller) => {
           controller.active = false;
         });
       } else {
-        this.ILSTcontrollers.forEach(controller => {
+        this.ILSTcontrollers.forEach((controller) => {
           controller.active = false;
         });
       }
@@ -137,12 +147,12 @@ export default {
         height: ${this.height};
         border-style: solid;
         border-color: ${starlette.getColorAs(
-        "color-header-border",
-        this.appName,
-        this.newTheme || this.theme,
-        this.newGradient || this.newGradient == 0
-          ? this.newGradient
-          : this.gradient || null
+          "color-header-border",
+          this.appName,
+          this.newTheme || this.theme,
+          this.newGradient || this.newGradient == 0
+            ? this.newGradient
+            : this.gradient || null
         )};
         border: ${this.isBlock ? "0px 4px 4px 4px" : "0px 2px 2px 2px"};
         border-top-width: 0px !important;
@@ -167,14 +177,18 @@ export default {
     getHeaderStyle() {
       return `
         width: 100%;
-        border-color: ${!this.isBlock ?starlette.getColorAs(
-          "color-scrollbar-thumb",
-          this.appName,
-          this.newTheme || this.theme,
-          this.newGradient || this.newGradient == 0
-            ? this.newGradient
-            : this.gradient || null
-        ) : 'transparent'};
+        border-color: ${
+          !this.isBlock
+            ? starlette.getColorAs(
+                "color-scrollbar-thumb",
+                this.appName,
+                this.newTheme || this.theme,
+                this.newGradient || this.newGradient == 0
+                  ? this.newGradient
+                  : this.gradient || null
+              )
+            : "transparent"
+        };
         border-width: ${this.isBlock ? "0px 0px 1px 0px" : "0px"};
         background-color: ${
           !this.isBlock
@@ -253,13 +267,13 @@ export default {
           ? this.newGradient
           : this.gradient || null
       )}`;
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style>
-@import url(//fonts.googleapis.com/css?family=Open+Sans);
+@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
 .panelify-wrapper {
   display: flex;
   box-sizing: border-box;
