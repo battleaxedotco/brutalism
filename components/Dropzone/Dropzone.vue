@@ -1,10 +1,10 @@
 <template>
   <div
-    :class="[ 
-		'dropzone', 
-		!isDraggingInWindow ? 'no-pointer-events' : '', 
-		{ fullscreen } 
-	]"
+    :class="[
+      'dropzone',
+      !isDraggingInWindow ? 'no-pointer-events' : '',
+      { fullscreen },
+    ]"
     :style="getDropzoneStyle()"
     @dragover="handleDragEnter"
     @dragleave="handleDragLeave"
@@ -12,13 +12,24 @@
   >
     <input
       ref="input"
-      style="position: absolute; opacity: 0; width: 1px; height: 1px; cursor: default"
+      style="
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        cursor: default;
+      "
       v-model="inputText"
     />
-    <slot name="overlay" v-if="isDragging && !overlay && $slots.overlay && $slots.overlay.length" />
+    <slot
+      name="overlay"
+      v-if="isDragging && !overlay && $slots.overlay && $slots.overlay.length"
+    />
     <slot
       name="prompt"
-      v-else-if="!isDragging && !overlay && $slots.prompt && $slots.prompt.length"
+      v-else-if="
+        !isDragging && !overlay && $slots.prompt && $slots.prompt.length
+      "
     ></slot>
     <slot name="overlay" v-else-if="isDragging && !overlay && $slots.default" />
   </div>
@@ -38,70 +49,74 @@ export default {
     // Whether dropzone is fullscreen or fills the relative size of container
     fullscreen: {
       type: Boolean,
-      default: true
+      default: true,
     },
     noBorder: {
       type: Boolean,
-      default: false
+      default: false,
     },
     borderWidth: {
       type: String,
-      default: "2px"
+      default: "2px",
     },
     // Only accept a single file, if multiple are dropped only accept one
     single: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // Return the value of a file instead of the path
     autoRead: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // If true display a sample overlay while dragging
     overlay: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // The default text appearing in the overlay
     anno: {
       type: String,
-      default: "Drop files here"
+      default: "Drop files here",
+    },
+    encoding: {
+      type: String,
+      default: "UTF-8",
     },
     // A regex string (e.g. "jpg|png") or Array like ['jpg', 'png']
     // Only files passing this validation will be sent by @drop/@read
     accepts: {
       type: [String, Array],
-      default: ".*"
+      default: ".*",
     },
     // Autoparse JSON files during @read
     autoParse: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // If the user drops a folder, return it's children's paths instead of it's own path
     readFolders: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // Return single-depth Array instead of Arrays within Arrays if dropping folders
     flatten: {
       type: Boolean,
-      default: true
+      default: true,
     },
     // If Illustrator and drag/dropping activeDoc selection
     pureSvg: {
       type: Boolean,
-      default: false
+      default: false,
     },
     color: {
       type: String,
-      default: "var(--dropzone-active)"
+      default: "var(--dropzone-active)",
     },
     debug: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data() {
     return {
@@ -114,7 +129,7 @@ export default {
       isDraggingInWindow: false,
       hover: false,
       isDirty: false,
-      enterCount: 0
+      enterCount: 0,
     };
   },
   computed: {
@@ -122,7 +137,7 @@ export default {
       if (typeof this.accepts === "object")
         return new RegExp(`(${this.accepts.join("|")})$`);
       else return new RegExp(`${this.accepts.replace(/\$$/, "")}$`);
-    }
+    },
   },
   mounted() {
     window.addEventListener("dragenter", () => {
@@ -141,7 +156,7 @@ export default {
       }
     });
     if (this.fullscreen) {
-      window.addEventListener("drop", e => {
+      window.addEventListener("drop", (e) => {
         e.preventDefault();
         this.drop(e);
       });
@@ -163,7 +178,7 @@ export default {
     isDragging(val) {
       if (this.debug) console.log("isDragging:", val);
       this.$emit(val ? "dragover" : "dragleave");
-    }
+    },
   },
   methods: {
     handleDragEnter() {
@@ -217,7 +232,7 @@ export default {
                 ? e.dataTransfer.files[0]
                 : null
             )
-          : e.dataTransfer.files.forEach(file => {
+          : e.dataTransfer.files.forEach((file) => {
               if (this.acceptRX.test(file.name)) this.getAsText(file);
             });
       this.confirmDrop(e.dataTransfer.files);
@@ -254,7 +269,7 @@ export default {
           readFile
         );
       var reader = new FileReader();
-      reader.readAsText(readFile, "UTF-8");
+      reader.readAsText(readFile, this.encoding);
       reader.onload = this.loaded;
       reader.onerror = this.errorHandler;
     },
@@ -277,7 +292,7 @@ export default {
     },
     createError(message, evt) {
       this.errorHandler({
-        target: { error: message }
+        target: { error: message },
       });
       console.log("HTML not yet supported! Files only.");
     },
@@ -319,7 +334,7 @@ export default {
       // If not enumerable, wrap in Array so below filter will work
       data = this.single ? [data[0]] : data;
       // Remove any File whose name doesn't pass the accept regex from FileList
-      data = [...data].filter(item => {
+      data = [...data].filter((item) => {
         return this.acceptRX.test(item.name);
       });
       if (this.readFolders)
@@ -344,7 +359,7 @@ export default {
           ? await this.readDir(data[i].path)
           : data[i];
         data[i] = data[i].length
-          ? data[i].map(file => {
+          ? data[i].map((file) => {
               // File.path is read only. Best to create a fake File containing all the same key/values
               let child = new File([""], `${file}`, {});
               let clone = {};
@@ -355,9 +370,9 @@ export default {
                 "path",
                 "size",
                 "type",
-                "webkitRelativePath"
+                "webkitRelativePath",
               ];
-              keys.forEach(key => {
+              keys.forEach((key) => {
                 clone[key] = child[key];
               });
               clone.path = `${originalpath.replace(
@@ -381,8 +396,8 @@ export default {
           }
         );
       });
-    }
-  }
+    },
+  },
 };
 </script>
 
