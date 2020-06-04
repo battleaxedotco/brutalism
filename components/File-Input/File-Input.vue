@@ -62,31 +62,61 @@ export default {
     type: "fileInput",
   }),
   mounted() {
-    if (this.prefsId.length) {
-      this.checkLocalPrefs();
-      let lastState = this.checkPrefsFor(this.prefsId);
-      if (lastState === null) {
-        this.path = this.value;
-      } else {
-        this.path = lastState.value.path;
-        console.log("HELLO");
-        this.$emit("update", lastState.value);
-      }
-    } else {
-      this.path = this.value;
-    }
+    this.checkValue();
+  },
+  watch: {
+    value(val) {
+      this.updateValue(val);
+    },
   },
   computed: {
     shortLength() {
-      let targ = this.path.length ? this.path : this.value;
-      if (/\/|\\/.test(targ)) {
-        return `../${targ.replace(/.*(\/|\\)/, "")}`;
+      let targ =
+        typeof this.path === "object"
+          ? this.path.path
+          : this.path.length
+          ? this.path
+          : this.value;
+      // return this.path;
+      // let targ = this.path || this.value;
+      if (targ) {
+        if (/\/|\\/.test(targ) && targ !== "./") {
+          return `../${targ.replace(/.*(\/|\\)/, "")}`;
+        } else {
+          return targ;
+        }
       } else {
-        return targ;
+        return "";
       }
+      return targ;
     },
   },
   methods: {
+    checkValue() {
+      console.log("UPDATE?");
+      if (this.prefsId.length) {
+        this.checkLocalPrefs();
+        let lastState = this.checkPrefsFor(this.prefsId);
+        console.log(lastState);
+        if (lastState === null) {
+          this.path = this.value;
+        } else {
+          this.path = lastState.value;
+          this.$emit("update", lastState.value);
+        }
+      } else {
+        this.path = this.value;
+      }
+    },
+    updateValue(result) {
+      console.log("RESULT:");
+      console.log(result);
+      this.path = result;
+      this.$emit("update", result);
+      if (this.prefsId.length) {
+        this.setPrefsById(this.prefsId, result);
+      }
+    },
     async getFolder() {
       let result;
       if (this.$props.picker) {
@@ -106,9 +136,11 @@ export default {
         this.$emit("update", result);
       }
       if (this.prefsId.length) {
+        console.log("SET TO:");
+        console.log(result.path);
         this.setPrefsById(this.prefsId, result);
-        console.log("SET PREFS:");
       }
+      this.path = result.path;
     },
   },
 };
