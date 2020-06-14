@@ -3,7 +3,7 @@
     @click="updateState"
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
-    :class="['toggle-item', { disabled, centered, custom }]"
+    :class="['toggle-item', { disabled, centered, custom, readOnly }]"
     :style="{ color: color }"
   >
     <slot v-if="hasSlotContent" />
@@ -26,6 +26,10 @@ export default {
       default: "",
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    readOnly: {
       type: Boolean,
       default: false,
     },
@@ -167,6 +171,10 @@ export default {
   color: var(--color-icon);
   margin-top: -2px;
   margin-bottom: -2px;
+}
+
+.toggle-item.readOnly {
+  pointer-events: none;
 }
 
 .toggle-item:not(.custom) {
