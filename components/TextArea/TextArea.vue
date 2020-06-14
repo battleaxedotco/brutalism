@@ -85,6 +85,7 @@
               'textarea-value',
               !flat && !filled ? 'default' : '',
               hasFocus ? 'active' : 'idle',
+              !resizeable ? 'hidden' : '',
             ]"
           >
             <svg
@@ -259,6 +260,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    resizeable: {
+      type: Boolean,
+      default: true,
+    },
   },
   mixins: [
     require("../mixinStyleProps").default,
@@ -285,6 +290,9 @@ export default {
     } else {
       this.val = this.lastVal = this.value;
     }
+    if (!this.resizeable) this.$refs.input.style.resize = "none";
+
+    console.log(this.rows);
   },
   watch: {
     value(val) {
@@ -609,6 +617,10 @@ textarea.filled.active::-webkit-resizer {
 .filled.active > svg > line {
   stroke: var(--color-input-focus-text);
   fill: none;
+}
+
+.textarea-resizer.hidden {
+  display: none;
 }
 
 /* .default.active::-webkit-scrollbar-corner {

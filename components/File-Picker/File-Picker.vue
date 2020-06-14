@@ -1,5 +1,10 @@
 <template>
-  <div class="file-picker-wrapper">
+  <div
+    :class="[{ disabled, readOnly }, 'file-picker-wrapper']"
+    :style="{
+      width: width,
+    }"
+  >
     <input
       style="display: none;"
       ref="filepicker"
@@ -16,6 +21,7 @@
       <div v-if="!multiple && clearable" class="file-picker-contents input">
         <Input
           @focus="clickOnSlot"
+          :placeholder="realPlaceholder"
           :pseudo="true"
           :label="realLabel"
           ref="pseudoinput"
@@ -36,6 +42,7 @@
         @focus="clickOnSlot"
         v-if="!multiple && !clearable"
         :pseudo="true"
+        :placeholder="realPlaceholder"
         :label="realLabel"
         ref="pseudoinput"
         :flat="flat"
@@ -48,7 +55,11 @@
         <TextArea
           @focus="clickOnSlot"
           ref="pseudotextarea"
+          :resizeable="resizeable"
+          :cols="cols"
+          :rows="rows"
           :pseudo="true"
+          :placeholder="realPlaceholder"
           :label="realLabel"
           :flat="flat"
           :filled="filled"
@@ -68,9 +79,13 @@
       </div>
       <TextArea
         v-else-if="multiple && !clearable"
+        :resizeable="resizeable"
+        :cols="cols"
+        :rows="rows"
         @focus="clickOnSlot"
         ref="pseudotextarea"
         :pseudo="true"
+        :placeholder="realPlaceholder"
         :label="realLabel"
         :flat="flat"
         :filled="filled"
@@ -93,7 +108,19 @@ export default {
       type: String,
       default: "",
     },
+    width: {
+      type: String,
+      default: "100%",
+    },
     folder: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    readOnly: {
       type: Boolean,
       default: false,
     },
@@ -109,6 +136,10 @@ export default {
       type: String,
       default: "",
     },
+    placeholder: {
+      type: String,
+      default: "",
+    },
     title: {
       type: String,
       default: "",
@@ -116,6 +147,14 @@ export default {
     multiple: {
       type: Boolean,
       default: false,
+    },
+    cols: {
+      type: Number,
+      default: null,
+    },
+    rows: {
+      type: Number,
+      default: 2,
     },
     accepts: {
       type: [String, Array],
@@ -166,6 +205,10 @@ export default {
     prefsId: {
       type: String,
       default: "",
+    },
+    resizeable: {
+      type: Boolean,
+      default: true,
     },
   },
   data: () => ({
@@ -224,8 +267,11 @@ export default {
         }`;
     },
     realContents() {
-      return this.contents.length
-        ? this.sanitizeContentsByDepth()
+      return this.contents.length ? this.sanitizeContentsByDepth() : ``;
+    },
+    realPlaceholder() {
+      return this.placeholder.length
+        ? this.placeholder
         : `No ${this.folder ? "Folder" : "File"}${
             this.multiple ? "s" : ""
           } selected`;
@@ -307,7 +353,14 @@ export default {
       await this.folderHandler(result);
     },
     async folderHandler(array) {
-      if (!array.length) return null;
+      if (!array || !array.length) {
+        if (!window.__adobe_cep__) {
+          console.error(
+            `Sorry! Folders can't work in browser due. Try this in an Adobe panel, though.`
+          );
+          return null;
+        } else return null;
+      }
       this.reset();
       this.contents = [];
       this.readContents = [];
@@ -361,6 +414,7 @@ export default {
       return temp;
     },
     async fileHandler(e) {
+      console.log(e.target.files);
       // Stop this function if the user has pressed cancel
       if (!e.target.files.length) {
         this.$emit("cancel");
@@ -376,8 +430,12 @@ export default {
       }
       this.contents = this.makeIterable(fileList).map((item) => {
         return /object/i.test(typeof item)
-          ? item.path.replace(/\\/gm, "/")
-          : item.replace(/\\/gm, "/");
+          ? item.path
+            ? item.path.replace(/\\/gm, "/")
+            : item.name
+          : /string/i.test(typeof item)
+          ? item.replace(/\\/gm, "/")
+          : item;
       });
       if (this.debug) {
         if (this.autoRead) console.log(this.readContents);
@@ -517,7 +575,13 @@ export default {
 </script>
 
 <style>
-.brutalism-filepicker {
+.file-picker-wrapper.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.file-picker-wrapper.readOnly {
+  pointer-events: none;
 }
 .file-picker-contents {
   display: flex;
@@ -533,7 +597,7 @@ export default {
   align-items: flex-end;
 }
 .file-picker-clear-icon.input {
-  margin: 0px 0px 6px 0px;
+  margin: 0px 0px 4px 0px;
 }
 
 .file-picker-contents.textarea {
