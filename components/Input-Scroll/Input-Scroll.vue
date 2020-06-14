@@ -1,19 +1,24 @@
 <template>
-  <div :class="[{ disabled, readOnly }, 'input-scroll-container']" :style="`font-size: ${size}px`">
+  <div
+    :class="[{ disabled, readOnly }, 'input-scroll-container']"
+    :style="`font-size: ${size}px`"
+  >
     <div
       v-if="!thin"
-      :class="[ 'input-scroll-label', { filled }]"
+      :class="['input-scroll-label', { filled }]"
       v-pan.prevent.mouse="panHandle"
-    >{{ label }}</div>
+    >
+      {{ label }}
+    </div>
     <div
       class="input-scroll-wrapper"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
       :style="[
-				{
-					'justify-content': alignPos
-				}
-			]"
+        {
+          'justify-content': alignPos,
+        },
+      ]"
     >
       <!-- Add scrubbing to label as well -->
       <div class="input-scroll-field" v-pan.prevent.mouse="panHandle">
@@ -23,24 +28,24 @@
             ref="input"
             type="number"
             :class="[
-							{ flat, filled },
-							'input-scroll-value',
-							inputting ? 'active' : 'idle'
-						]"
+              { flat, filled },
+              'input-scroll-value',
+              inputting ? 'active' : 'idle',
+            ]"
             title
             :style="[
-							{
-								fontSize: size + 'px',
-								color:
-									hasFocus && !filled && !isPanning
-										? 'var(--color-input-focus-text)'
-										: isPanning && filled
-										? 'var(--default-color) !important'
-										: isPanning || (flat && hasFocus)
-										? realColor
-										: '',
-							}
-						]"
+              {
+                fontSize: size + 'px',
+                color:
+                  hasFocus && !filled && !isPanning
+                    ? 'var(--color-input-focus-text)'
+                    : isPanning && filled
+                    ? 'var(--default-color) !important'
+                    : isPanning || (flat && hasFocus)
+                    ? realColor
+                    : '',
+              },
+            ]"
             :tabindex="disabled ? '-1' : ''"
             :min="min"
             :max="max"
@@ -58,17 +63,15 @@
       <div
         v-if="!filled"
         :class="[
-					hasFocus || hover ? 'active' : 'idle',
-					'input-scroll-indicator'
-				]"
+          hasFocus || hover ? 'active' : 'idle',
+          'input-scroll-indicator',
+        ]"
         :style="[
-					{
-						background: hasFocus
-							? realColor
-							: 'var(--color-default)',
-						height: underlineSize
-					}
-				]"
+          {
+            background: hasFocus ? realColor : 'var(--color-default)',
+            height: underlineSize,
+          },
+        ]"
       ></div>
     </div>
   </div>
@@ -79,98 +82,98 @@ export default {
   props: {
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     size: {
       type: Number,
-      default: 12
+      default: 12,
     },
     min: {
       type: Number,
-      default: null
+      default: null,
     },
     max: {
       type: Number,
-      default: null
+      default: null,
     },
     modifier: {
       type: Number,
-      default: 1
+      default: 1,
     },
     value: {
       type: Number,
-      default: 0
+      default: 0,
     },
     prefix: {
       type: String,
-      default: ""
+      default: "",
     },
     suffix: {
       type: String,
-      default: ""
+      default: "",
     },
     toFixed: {
       type: Number,
-      default: 0
+      default: 0,
     },
     color: {
       type: String,
-      default: "var(--color-selection)"
+      default: "var(--color-selection)",
     },
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     resetValue: {
       type: Number,
-      default: 0
+      default: 0,
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     step: {
       type: Number,
-      default: null
+      default: null,
     },
     thin: {
       type: Boolean,
-      default: false
+      default: false,
     },
     steps: {
       type: Array,
-      default: function() {
+      default: function () {
         return [0.1, 1, 10];
-      }
+      },
     },
     flat: {
       type: Boolean,
-      default: false
+      default: false,
     },
     filled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     underlineSize: {
       type: String,
-      default: "1px"
+      default: "1px",
     },
     left: {
       type: Boolean,
-      default: false
+      default: false,
     },
     right: {
       type: Boolean,
-      default: false
+      default: false,
     },
     lazy: {
       type: Boolean,
-      default: false
+      default: false,
     },
     readOnly: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data: () => ({
     val: 0,
@@ -187,10 +190,10 @@ export default {
     isPanning: false,
     mouseDown: false,
     inputting: false,
-    hover: false
+    hover: false,
   }),
   directives: {
-    pan: require("vue-pan").default
+    pan: require("vue-pan").default,
   },
   watch: {
     value(val) {
@@ -208,17 +211,17 @@ export default {
           this.$emit("update", this.validate(this.val));
           this.lastVal = this.validate(this.val);
         }
-        window.removeEventListener("keydown", evt => {
+        window.removeEventListener("keydown", (evt) => {
           this.parseModifiers(evt, true, false);
         });
-        window.removeEventListener("keyup", evt => {
+        window.removeEventListener("keyup", (evt) => {
           this.parseModifiers(evt, false, true);
         });
       } else {
-        window.addEventListener("keydown", evt => {
+        window.addEventListener("keydown", (evt) => {
           this.parseModifiers(evt, true, false);
         });
-        window.addEventListener("keyup", evt => {
+        window.addEventListener("keyup", (evt) => {
           this.parseModifiers(evt, false, true);
         });
       }
@@ -239,7 +242,7 @@ export default {
     },
     realStep(value) {
       if (this.debug) console.log(`Current step: ${value}`);
-    }
+    },
   },
   computed: {
     alignPos() {
@@ -260,7 +263,7 @@ export default {
     },
     modifierKeys() {
       return `control: ${this.control}, shift: ${this.shift}, alt: ${this.alt}`;
-    }
+    },
   },
   mounted() {
     this.realStep = (this.step || this.steps[1]) * this.modifier;
@@ -272,7 +275,7 @@ export default {
     // 	this.mouseDown = false;
     // 	this.focus();
     // });
-    this.$refs.input.addEventListener("keydown", evt => {
+    this.$refs.input.addEventListener("keydown", (evt) => {
       this.parseModifiers(evt, true, false);
       if (evt.key == "." || evt.code == "Period") {
         if (/\./.test(this.val) && !this.lazy) {
@@ -286,7 +289,7 @@ export default {
         this.blur();
       }
     });
-    this.$refs.input.addEventListener("keyup", evt => {
+    this.$refs.input.addEventListener("keyup", (evt) => {
       this.parseModifiers(evt, false, true);
     });
   },
@@ -396,25 +399,25 @@ export default {
         {
           targs: ["ctrl", "meta"],
           keynames: ["Control", "Meta"],
-          value: "control"
+          value: "control",
         },
         {
           targs: ["shift"],
           keynames: ["Shift"],
-          value: "shift"
+          value: "shift",
         },
         {
           targs: ["alt"],
           keynames: ["Alt"],
-          value: "alt"
-        }
+          value: "alt",
+        },
       ];
-      let modifierkey = keys.find(key => {
+      let modifierkey = keys.find((key) => {
         let found = keydown
-          ? key.targs.filter(item => {
+          ? key.targs.filter((item) => {
               return evt[`${item}Key`];
             }).length > 0
-          : key.keynames.filter(item => {
+          : key.keynames.filter((item) => {
               return evt.key == item;
             }).length > 0;
         return found;
@@ -443,8 +446,8 @@ export default {
         context.font = font;
         return context.measureText(txt.replace(/\d/g, "8")).width;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -453,7 +456,7 @@ export default {
   --animation-timing: 200ms var(--quad) 20ms;
 }
 
-.readOnly {
+.input-scroll-container.readOnly {
   pointer-events: none;
 }
 

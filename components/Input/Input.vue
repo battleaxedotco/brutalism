@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[{ disabled }, 'input-container']"
+    :class="[{ disabled, readOnly, pseudo }, 'input-container']"
     :style="[
       {
         width: width,
@@ -23,10 +23,16 @@
         },
       ]"
     >
-      <div class="input-contents">
+      <div
+        :class="['input-contents', pseudo ? 'pseudo' : '']"
+        @click="$emit('clickinside')"
+      >
         <Icon
           v-if="prependOuterIcon.length"
-          class="input-prepend-outer-icon"
+          :class="[
+            'input-prepend-outer-icon',
+            focusable ? '' : 'noPointerEvents',
+          ]"
           :name="prependOuterIcon"
           :size="iconSize"
         />
@@ -36,6 +42,7 @@
             'input-inside',
             !flat && !filled ? 'default' : '',
             hasFocus ? 'active' : 'idle',
+            focusable ? '' : 'noPointerEvents',
           ]"
         >
           <Icon
@@ -56,6 +63,7 @@
               uppercase ? 'uppercase' : '',
               !flat && !filled ? 'default' : '',
               hasFocus ? 'active' : 'idle',
+              pseudo ? 'pseudo' : '',
             ]"
             :style="[
               {
@@ -82,21 +90,27 @@
         </div>
         <div
           v-if="appendOuterIcon.length && !copyContent"
-          class="input-append-outer-icon"
+          :class="[
+            'input-append-outer-icon',
+            focusable ? '' : 'noPointerEvents',
+          ]"
           @click="$emit('append-outer-click', val)"
         >
           <Icon :name="appendOuterIcon" :size="iconSize" />
         </div>
         <div
           v-else-if="copyContent"
-          class="input-append-outer-icon"
+          :class="[
+            'input-append-outer-icon',
+            focusable ? '' : 'noPointerEvents',
+          ]"
           @click="copyInputContent"
         >
           <Icon :name="dynamicCopyIcon" :size="iconSize" />
         </div>
       </div>
       <div
-        class="input-indicator-wrapper"
+        :class="['input-indicator-wrapper', focusable ? '' : 'noPointerEvents']"
         :style="[
           {
             'justify-content': alignPos,
@@ -220,6 +234,18 @@ export default {
       type: String,
       default: "",
     },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+    focusable: {
+      type: Boolean,
+      default: true,
+    },
+    pseudo: {
+      type: Boolean,
+      default: false,
+    },
   },
   mixins: [
     require("../mixinStyleProps").default,
@@ -339,6 +365,22 @@ export default {
 </script>
 
 <style>
+.input-container.readOnly {
+  pointer-events: none;
+}
+
+.input-container.pseudo {
+  margin-bottom: 0px;
+}
+
+.input-contents.pseudo {
+  cursor: pointer !important;
+}
+
+.noPointerEvents {
+  pointer-events: none;
+}
+
 .input-container.disabled {
   opacity: 0.4;
   pointer-events: none;
@@ -371,6 +413,10 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
+}
+
+.input-value.pseudo {
+  cursor: pointer !important;
 }
 
 .input-value::selection {

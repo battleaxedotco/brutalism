@@ -1,25 +1,34 @@
 <template>
-  <div :class="[{ disabled }, 'textarea-container']" :style="[
-			{
-				width: width
-			}
-		]">
+  <div
+    :class="[{ disabled, readOnly }, 'textarea-container']"
+    :style="[
+      {
+        width: width,
+      },
+    ]"
+  >
     <span class="textarea-label" v-if="label.length">{{ label }}</span>
     <div
       :class="[
-				{ flat, filled },
-				'textarea-wrapper',
-				!flat && !filled ? 'default' : ''
-			]"
+        { flat, filled },
+        'textarea-wrapper',
+        !flat && !filled ? 'default' : '',
+        hasIcon ? 'hasIcon' : '',
+      ]"
       @mouseenter="hover = true"
       @mouseleave="hover = false"
       :style="[
-				{
-					'justify-content': alignPos
-				}
-			]"
+        !hasIcon
+          ? {
+              'justify-content': alignPos,
+            }
+          : {},
+      ]"
     >
-      <div class="textarea-contents">
+      <div
+        :class="['textarea-contents', pseudo ? 'pseudo' : '']"
+        @click="$emit('clickinside')"
+      >
         <Icon
           v-if="prependOuterIcon.length"
           class="textarea-prepend-outer-icon"
@@ -28,11 +37,11 @@
         />
         <div
           :class="[
-						{ filled },
-						'textarea-inside',
-						!flat && !filled ? 'default' : '',
-						hasFocus ? 'active' : 'idle'
-					]"
+            { filled },
+            'textarea-inside',
+            !flat && !filled ? 'default' : '',
+            hasFocus ? 'active' : 'idle',
+          ]"
         >
           <Icon
             v-if="prependIcon.length"
@@ -47,16 +56,17 @@
             ref="input"
             :placeholder="placeholder"
             :class="[
-							{ flat, filled },
-							'textarea-value',
-							!flat && !filled ? 'default' : '',
-							hasFocus ? 'active' : 'idle'
-						]"
+              { flat, filled },
+              'textarea-value',
+              !flat && !filled ? 'default' : '',
+              hasFocus ? 'active' : 'idle',
+              pseudo ? 'pseudo' : '',
+            ]"
             :style="[
-							{
-								color: activeColor
-							}
-						]"
+              {
+                color: activeColor,
+              },
+            ]"
             v-model="val"
             :spellcheck="spellcheck"
             :rows="rows"
@@ -71,11 +81,11 @@
           <div
             class="textarea-resizer"
             :class="[
-							{ flat, filled },
-							'textarea-value',
-							!flat && !filled ? 'default' : '',
-							hasFocus ? 'active' : 'idle'
-						]"
+              { flat, filled },
+              'textarea-value',
+              !flat && !filled ? 'default' : '',
+              hasFocus ? 'active' : 'idle',
+            ]"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,9 +93,27 @@
               height="16.41"
               viewBox="0 0 16.41 16.41"
             >
-              <line class="resizer-svg" x1="15.71" y1="0.71" x2="0.71" y2="15.71" />
-              <line class="resizer-svg" x1="15.71" y1="6.21" x2="6.21" y2="15.71" />
-              <line class="resizer-svg" x1="15.71" y1="11.71" x2="11.71" y2="15.71" />
+              <line
+                class="resizer-svg"
+                x1="15.71"
+                y1="0.71"
+                x2="0.71"
+                y2="15.71"
+              />
+              <line
+                class="resizer-svg"
+                x1="15.71"
+                y1="6.21"
+                x2="6.21"
+                y2="15.71"
+              />
+              <line
+                class="resizer-svg"
+                x1="15.71"
+                y1="11.71"
+                x2="11.71"
+                y2="15.71"
+              />
             </svg>
           </div>
           <Icon
@@ -101,31 +129,26 @@
           v-if="appendOuterIcon.length"
           :size="iconSize"
           class="textarea-append-outer-icon"
-          :icon="appendOuterIcon"
+          :name="appendOuterIcon"
         />
       </div>
       <div
-        class="indicator-wrapper"
+        :class="['indicator-wrapper', hasIcon ? 'hasIcon' : '']"
         :style="[
-					{
-						'justify-content': alignPos
-					}
-				]"
+          {
+            'justify-content': alignPos,
+          },
+        ]"
       >
         <div
           v-if="!filled"
-          :class="[
-						hasFocus || hover ? 'active' : 'idle',
-						'textarea-indicator'
-					]"
+          :class="[hasFocus || hover ? 'active' : 'idle', 'textarea-indicator']"
           :style="[
-						{
-							background: hasFocus
-								? realColor
-								: 'var(--color-default)',
-							height: underlineSize
-						}
-					]"
+            {
+              background: hasFocus ? realColor : 'var(--color-default)',
+              height: underlineSize,
+            },
+          ]"
         />
       </div>
     </div>
@@ -138,100 +161,108 @@ export default {
   props: {
     value: {
       type: String,
-      default: ""
+      default: "",
     },
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     color: {
       type: String,
-      default: "var(--color-selection)"
+      default: "var(--color-selection)",
     },
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     placeholder: {
       type: String,
-      default: ""
+      default: "",
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     flat: {
       type: Boolean,
-      default: false
+      default: false,
     },
     filled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     underlineSize: {
       type: String,
-      default: "1.5px"
+      default: "1.5px",
     },
     left: {
       type: Boolean,
-      default: false
+      default: false,
     },
     right: {
       type: Boolean,
-      default: false
+      default: false,
     },
     cols: {
       type: Number,
-      default: null
+      default: null,
     },
     rows: {
       type: Number,
-      default: 2
+      default: 2,
     },
     wrap: {
       type: String,
-      default: "soft"
+      default: "soft",
     },
     prependIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     appendIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     prependOuterIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     appendOuterIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     autoSelect: {
       type: Boolean,
-      default: false
+      default: false,
     },
     truncate: {
       type: Boolean,
-      default: false
+      default: false,
     },
     spellcheck: {
       type: Boolean,
-      default: false
+      default: false,
     },
     iconSize: {
       type: String,
-      default: "16px"
+      default: "16px",
     },
     prefsId: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
+    },
+    pseudo: {
+      type: Boolean,
+      default: false,
+    },
   },
   mixins: [
     require("../mixinStyleProps").default,
-    require("../mixinPrefs").default
+    require("../mixinPrefs").default,
   ],
   data: () => ({
     val: null,
@@ -239,7 +270,7 @@ export default {
     hasFocus: false,
     type: "textArea",
     hover: false,
-    error: "Something went wrong"
+    error: "Something went wrong",
   }),
   mounted() {
     if (this.prefsId.length) {
@@ -272,11 +303,19 @@ export default {
         }
         this.lastVal = this.val;
       }
-    }
+    },
   },
   computed: {
     alignPos() {
       return this.left ? "flex-start" : this.right ? "flex-end" : "center";
+    },
+    hasIcon() {
+      return (
+        this.appendIcon.length ||
+        this.appendOuterIcon.length ||
+        this.prependIcon.length ||
+        this.prependOuterIcon.length
+      );
     },
     activeColor() {
       return this.hasFocus && this.filled
@@ -298,7 +337,7 @@ export default {
           .replace(/(--color-|color-)/, "")
           .replace(/\)$/, "")})`;
       }
-    }
+    },
   },
   methods: {
     altFocus(evt) {
@@ -325,8 +364,8 @@ export default {
     submit() {
       this.$emit("submit", this.val);
       this.blur();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -339,6 +378,11 @@ export default {
   font-family: "Open Sans", sans-serif;
   color: var(--color-icon);
 }
+
+.textarea-container.readOnly {
+  pointer-events: none;
+}
+
 .textarea-wrapper {
   display: flex;
   justify-content: center;
@@ -347,6 +391,10 @@ export default {
   position: relative;
   /* height: 22px; */
 }
+.textarea-wrapper.hasIcon {
+  justify-content: flex-start;
+}
+
 .textarea-label {
   position: relative;
   top: -4px;
@@ -355,6 +403,7 @@ export default {
 .textarea-contents,
 .textarea-inside {
   width: 100%;
+  position: relative;
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
@@ -430,6 +479,11 @@ export default {
   width: 100%;
   display: flex;
   overflow: visible;
+}
+
+.indicator-wrapper.hasIcon {
+  width: calc(100% - 26px);
+  justify-content: flex-start;
 }
 
 .flat .textarea-indicator.active,
@@ -563,6 +617,10 @@ textarea.filled.active::-webkit-resizer {
 .default.idle::-webkit-scrollbar-corner {
 	background: var(--color-bg);
 } */
+
+.textarea-value.pseudo {
+  cursor: pointer !important;
+}
 
 .textarea-value:not(.flat).idle::-webkit-scrollbar,
 .textarea-value:not(.flat).idle::-webkit-scrollbar-corner {

@@ -38,10 +38,8 @@
 <script>
 const isBrowser = window.__adobe_cep__;
 
-const fs = !isBrowser ? require("fs") : null;
-const path = !isBrowser ? require("path") : null;
-// const spy = !isBrowser ? require("cep-spy").default
-// 	: { appName: 'ILST' };
+const fs = window.__adobe_cep__ ? require("fs") : null;
+const path = window.__adobe_cep__ ? require("path") : null;
 import { evalScript } from "cluecumber";
 
 export default {
@@ -221,21 +219,77 @@ export default {
       //   if (this.fullscreen) return null;
       this.drop(e);
     },
-    drop(e) {
+    makeIterable(list) {
+      let result = [];
+      for (let i = 0; i < list.length; i++) result.push(list[i]);
+      return result;
+    },
+    parseFileListByValidRX(fileList) {
+      let list = [];
+      for (var i = 0; i < fileList.length; i++)
+        if (this.acceptRX.test(fileList[i].name)) list.push(fileList[i]);
+      return list;
+    },
+    isFolder(file) {
+      let result;
+      if (window.__adobe_cep__ && fs)
+        result = fs.lstatSync(file.path).isDirectory();
+      else result = /(\\|\/)[^\\\/]{1,}\.\w{1,}/.test(file.path);
+      return result;
+    },
+    async getFolderContents(folder) {
+      let contents = await this.readDir(folder.path);
+      let result = [];
+      contents.forEach((file) => {
+        result.push(fs.readFileSync(`${folder.path}/${file}`, "utf-8"));
+      });
+      return result;
+    },
+    async drop(e) {
       if (this.debug) console.log("Drop reset");
+      // Clear previous
       this.reset();
+      // Create unique variables per event type
+      let temp = [],
+        paths = [],
+        valids = [];
+      // Make fileList to iterable Array for es6 methods
+      valids = this.makeIterable(e.dataTransfer.files).filter((file) => {
+        return this.acceptRX.test(file.name);
+      });
+      // Sanitize array with a filter
+      let validReadable = this.parseFileListByValidRX(e.dataTransfer.files);
+      // Handle SVG pure drops from Illustrator
       if (this.pureSvg) return this.handleILSTDrop(e);
-      if (this.autoRead)
-        this.single
-          ? this.getAsText(
-              this.acceptRX.test(e.dataTransfer.files[0].name)
-                ? e.dataTransfer.files[0]
-                : null
-            )
-          : e.dataTransfer.files.forEach((file) => {
-              if (this.acceptRX.test(file.name)) this.getAsText(file);
-            });
-      this.confirmDrop(e.dataTransfer.files);
+
+      if (this.single) {
+        if (this.autoRead && (await !this.isFolder(validReadable[0]))) {
+          this.emit("read", await this.getAsText(validReadable[0]));
+        }
+      } else {
+        if (this.autoRead) {
+          for (let file of validReadable)
+            if (!this.isFolder(file)) temp.push(await this.getAsText(file));
+            else temp.push(await this.getFolderContents(file));
+          if (this.flatten) temp = temp.flat();
+
+          if (temp.length) this.$emit("read", temp);
+        }
+        paths = valids.map((item) => {
+          return item.path;
+        });
+        this.$emit("input", paths);
+      }
+      let dropData = validReadable;
+      if (this.readFolders) {
+        if (this.debug) console.log("READ FOLDERS:");
+        dropData = window.__adobe_cep__
+          ? await this.expandFolderData(dropData)
+          : this.createError(`Cannot read folders in browser!`);
+        if (this.debug) console.log(dropData);
+      }
+      this.$emit("drop", dropData);
+      // this.confirmDrop(e.dataTransfer.files);
     },
     async handleILSTDrop(e) {
       if (!window.__adobe_cep__) return null;
@@ -262,26 +316,35 @@ export default {
       }
       this.exit();
     },
-    getAsText(readFile, evt) {
-      if (!readFile)
-        return this.createError(
-          "Unsupported file type for Read event",
-          readFile
-        );
-      var reader = new FileReader();
-      reader.readAsText(readFile, this.encoding);
-      reader.onload = this.loaded;
-      reader.onerror = this.errorHandler;
+    getAsText(readFile) {
+      return new Promise((resolve, reject) => {
+        if (!readFile)
+          reject(
+            this.createError("Unsupported file type for Read event", readFile)
+          );
+        var reader = new FileReader();
+        reader.readAsText(readFile, this.encoding);
+        reader.onload = () => {
+          let result = reader.result;
+          result = this.isJSON(result)
+            ? this.autoParse
+              ? JSON.parse(result)
+              : result
+            : result;
+          resolve(result);
+        };
+        reader.onerror = this.errorHandler;
+      });
     },
-    loaded(evt) {
-      let result = evt.target.result;
-      result = this.isJSON(result)
-        ? this.autoParse
-          ? JSON.parse(result)
-          : result
-        : result;
-      this.$emit("read", result);
-    },
+    // loaded(evt) {
+    //   let result = evt.target.result;
+    //   result = this.isJSON(result)
+    //     ? this.autoParse
+    //       ? JSON.parse(result)
+    //       : result
+    //     : result;
+    //   this.$emit("read", result);
+    // },
     isJSON(data) {
       try {
         JSON.parse(data);
@@ -294,12 +357,12 @@ export default {
       this.errorHandler({
         target: { error: message },
       });
-      console.log("HTML not yet supported! Files only.");
+      // console.log("HTML not yet supported! Files only.");
     },
     errorHandler(evt) {
       this.reset();
       if (evt.target.error.name == "NotReadableError") console.error(evt);
-      else console.error(evt.target.error);
+      // else console.error(evt.target.error);
     },
     getDropzoneStyle() {
       let style;
@@ -331,19 +394,20 @@ export default {
       return style;
     },
     async confirmDrop(data) {
+      console.log("Confirm data:");
       // If not enumerable, wrap in Array so below filter will work
       data = this.single ? [data[0]] : data;
       // Remove any File whose name doesn't pass the accept regex from FileList
       data = [...data].filter((item) => {
         return this.acceptRX.test(item.name);
       });
-      if (this.readFolders)
+      console.log(data);
+      if (this.readFolders) {
         data = !isBrowser
           ? await this.expandFolderData(data)
           : this.createError(`Cannot read folders in browser!`);
-      data.length
-        ? this.$emit("drop", data)
-        : this.createError("Unsupported file type for Drop event");
+      }
+      if (data.length) this.$emit("drop", data);
     },
     reset() {
       this.isDragging = false;
@@ -386,6 +450,8 @@ export default {
       return this.flatten ? data.flat() : data;
     },
     async readDir(thispath) {
+      console.log("TRY TO AS DIR:");
+      console.log(thispath);
       return new Promise((resolve, reject) => {
         fs.readdir(
           path.resolve(thispath),
