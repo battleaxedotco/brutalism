@@ -1,7 +1,7 @@
 # <a href="https://www.battleaxe.co/"><img src="https://avatars2.githubusercontent.com/u/60149336?s=200&v=4" width="40" height="40"/></a> brutalism
 
-| [Demos](#demos) | [Installation](#installation) | [Getting Started](#getting-started) | [Templates](#templates) | [Components](#features) |
-| --------------- | :---------------------------: | :---------------------------------: | :---------------------: | :---------------------: |
+| [Demos](#demos) | [Installation](#installation) | [Getting Started](#getting-started) | [Templates](#templates) | [Components](#components) |
+| --------------- | :---------------------------: | :---------------------------------: | :---------------------: | :-----------------------: |
 
 
 ## [Battleaxe](https://www.battleaxe.co/)'s component library for every app, every theme, and every one
@@ -116,3 +116,5 @@ Quickstart templates with [bombino](https://github.com/Inventsable/bombino) to g
 ---
 
 ## Components
+
+[See all available components live on the documentation site here](https://battleaxe.dev/brutalism-docs/)
