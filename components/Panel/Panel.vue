@@ -31,6 +31,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    debug: {
+      type: Boolean,
+      default: false,
+    },
     app: {
       type: String,
       default: "AEFT",
@@ -47,7 +51,6 @@ export default {
   data: () => ({
     validFile: /\.js(x(bin)?|(fl))?$/,
     themeForcer: null,
-    debug: false,
     csInterface: null,
   }),
   computed: {
@@ -87,7 +90,7 @@ export default {
   },
   async mounted() {
     if (spy) {
-      console.clear();
+      if (!this.debug) console.clear();
       console.log(
         `${spy.extName} ${spy.extVersion} : ${spy.isDev ? "DEV" : "BUILD"}`
       );

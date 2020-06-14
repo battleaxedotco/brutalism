@@ -1,7 +1,7 @@
 <template>
   <div class="file-picker-wrapper">
     <input
-      style="display:none;"
+      style="display: none;"
       ref="filepicker"
       type="file"
       name="testing 1 2 3"
@@ -23,9 +23,9 @@
           :filled="filled"
           v-model="realContents"
           :append-outer-icon="realIcon"
-          :style="
-            `width: ${this.contents.length ? 'calc(100% - 48px)' : '100%'};`
-          "
+          :style="`width: ${
+            this.contents.length ? 'calc(100% - 48px)' : '100%'
+          };`"
           truncate
         />
         <div class="file-picker-clear-icon input" v-show="this.contents.length">
@@ -54,9 +54,9 @@
           :filled="filled"
           v-model="realContents"
           :append-outer-icon="realIcon"
-          :style="
-            `width: ${this.contents.length ? 'calc(100% - 48px)' : '100%'};`
-          "
+          :style="`width: ${
+            this.contents.length ? 'calc(100% - 48px)' : '100%'
+          };`"
           truncate
         />
         <div
@@ -172,7 +172,33 @@ export default {
     contents: [],
     readContents: [],
     text: "No file selected",
+    type: "filepicker",
   }),
+  mixins: [require("../mixinPrefs").default],
+  mounted() {
+    if (this.prefsId.length) {
+      this.checkLocalPrefs();
+      let lastState = this.checkPrefsFor(this.prefsId);
+
+      if (lastState === null) {
+        // Do nothing...
+      } else {
+        let content = lastState.value.split(";");
+        this.contents = content;
+
+        if (this.folder) {
+          this.folderHandler(content);
+        } else {
+          this.fileHandler({
+            target: {
+              files: content,
+            },
+          });
+        }
+        this.$emit("prefs", content);
+      }
+    }
+  },
   computed: {
     realAccepts() {
       return !/string/.test(typeof this.accepts)
@@ -212,7 +238,6 @@ export default {
         : this.depth + 1;
     },
   },
-  mounted() {},
   methods: {
     get() {
       return {
@@ -279,9 +304,9 @@ export default {
         console.log("Folder picked:");
         console.log(result);
       }
-      await this.getFolderData(result);
+      await this.folderHandler(result);
     },
-    async getFolderData(array) {
+    async folderHandler(array) {
       if (!array.length) return null;
       this.reset();
       this.contents = [];
@@ -316,6 +341,7 @@ export default {
         console.log(this.readContents);
         console.log(temp);
       }
+      this.setPrefsById(this.prefsId, this.contents.join(";"));
     },
     async generateDropFolderData() {
       let temp = [];
@@ -349,7 +375,9 @@ export default {
           this.readContents.push(await this.getAsText(file));
       }
       this.contents = this.makeIterable(fileList).map((item) => {
-        return item.path.replace(/\\/gm, "/");
+        return /object/i.test(typeof item)
+          ? item.path.replace(/\\/gm, "/")
+          : item.replace(/\\/gm, "/");
       });
       if (this.debug) {
         if (this.autoRead) console.log(this.readContents);
@@ -362,6 +390,7 @@ export default {
         );
       this.$emit("input", this.multiple ? this.contents : this.contents[0]);
       this.$emit("drop", this.makeIterable(e.target.files));
+      this.setPrefsById(this.prefsId, this.contents.join(";"));
     },
     makeIterable(list) {
       let result = [];
@@ -445,7 +474,6 @@ export default {
       return this.flatten ? data.flat() : data;
     },
     async readDir(thispath) {
-      console.log("READDIR", thispath);
       return new Promise((resolve, reject) => {
         fs.readdir(
           fspath.resolve(thispath),

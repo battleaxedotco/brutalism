@@ -93,11 +93,11 @@ export default {
   },
   methods: {
     checkValue() {
-      console.log("UPDATE?");
+      // console.log("UPDATE?");
       if (this.prefsId.length) {
         this.checkLocalPrefs();
         let lastState = this.checkPrefsFor(this.prefsId);
-        console.log(lastState);
+        // console.log(lastState);
         if (lastState === null) {
           this.path = this.value;
         } else {
@@ -109,8 +109,8 @@ export default {
       }
     },
     updateValue(result) {
-      console.log("RESULT:");
-      console.log(result);
+      // console.log("RESULT:");
+      // console.log(result);
       this.path = result;
       this.$emit("update", result);
       if (this.prefsId.length) {
@@ -136,8 +136,8 @@ export default {
         this.$emit("update", result);
       }
       if (this.prefsId.length) {
-        console.log("SET TO:");
-        console.log(result.path);
+        // console.log("SET TO:");
+        // console.log(result.path);
         this.setPrefsById(this.prefsId, result);
       }
       this.path = result.path;
