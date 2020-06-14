@@ -291,8 +291,6 @@ export default {
       this.val = this.lastVal = this.value;
     }
     if (!this.resizeable) this.$refs.input.style.resize = "none";
-
-    console.log(this.rows);
   },
   watch: {
     value(val) {
