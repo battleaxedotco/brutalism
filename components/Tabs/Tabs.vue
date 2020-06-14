@@ -15,6 +15,7 @@
         'tab-wrapper',
         tab.active ? 'active' : 'idle',
         { filled, flat, isGradient },
+        tab.disabled ? 'tab-disabled' : '',
       ]"
       :ref="`tab-${i}`"
       :key="i"
@@ -24,6 +25,7 @@
         :class="[
           'tab-label',
           tab.active ? 'tab-active' : 'tab-idle',
+          tab.disabled ? 'tab-disabled' : '',
           { filled, flat, isGradient },
         ]"
       >
@@ -99,7 +101,7 @@ export default {
   ],
   computed: {
     activeItem() {
-      return this.tabs.length && this.isMounted
+      return this.tabs && this.tabs.length && this.isMounted
         ? this.tabs.find((item) => {
             return item.active;
           })
@@ -110,7 +112,9 @@ export default {
     },
     activeIndex: {
       get() {
-        return (this.isMounted && this.activeItem.index) || 0;
+        return (
+          (this.isMounted && this.activeItem && this.activeItem.index) || 0
+        );
       },
       set(val) {
         if (val || val == 0) this.makeActive(this.tabs[val]);
@@ -131,7 +135,8 @@ export default {
       if (!this.hover) this.swapSliders();
     },
     routes(val) {
-      this.init();
+      if (val && val.length) this.init();
+      else this.reset();
     },
     activeRoute(val) {
       const self = this;
@@ -173,28 +178,12 @@ export default {
     this.init();
   },
   methods: {
-    doubleCheckRoute(val) {
-      // console.log('Double check route')
-      // if (val.name !== this.activeItem.value || val.path !== this.activeItem.value) {
-      // 	console.log('Inside', val)
-      // 		let foundTab = this.tabs.find(item => {
-      // 			let rx = new RegExp(item.value.replace('home', ''));
-      // 			console.log(rx, this.$route.path)
-      // 			return rx.test(this.$route.path);
-      // 			// return rx.test
-      // 		})
-      // 		if (foundTab) {
-      // 			console.log('Found tab:', foundTab, this.$route)
-      // 			this.makeActive(foundTab)
-      // 		} else {
-      // 			console.log('No found tab...')
-      // 			console.log(foundTab, this.$route)
-      // 		}
-      // 	}
-    },
+    doubleCheckRoute(val) {},
     clickHandler(i) {
-      this.activeIndex = i;
-      this.$emit("click");
+      if (!this.tabs[i].disabled) {
+        this.activeIndex = i;
+        this.$emit("click");
+      }
     },
     buildTabs() {
       let tabs = [];
@@ -295,8 +284,10 @@ export default {
       }
     },
     init() {
+      console.log("Init.");
       const self = this;
       this.tabs = this.buildTabs();
+      console.log(this.tabs[this.tabs.length - 1]);
       setTimeout(() => {
         if (!this.$router) return null;
         let activePath = self.$route.path;
@@ -316,6 +307,12 @@ export default {
         );
         self.$emit("mounted");
       }, 100);
+    },
+    reset() {
+      console.log("Should reset.");
+      console.log(this.routes, this.tabs);
+      this.isMounted = false;
+      this.tabs = [];
     },
   },
 };
@@ -409,12 +406,18 @@ export default {
   background: var(--color-bg);
 }
 
-.tab-wrapper.idle:hover > .tab-line:not(.filled) {
+.tab-wrapper.idle:not(.tab-disabled):hover > .tab-line:not(.filled) {
   background: var(--tabs-idle-hover);
 }
 
-.tab-wrapper:hover > .tab-idle {
+.tab-wrapper:not(.tab-disabled):hover > .tab-idle {
   color: var(--tabs-idle-hover);
+}
+
+.tab-wrapper.tab-disabled,
+.tab-wrapper.tab-disabled:active {
+  /* opacity: .7; */
+  cursor: default;
 }
 
 [class^="active-line"] {
