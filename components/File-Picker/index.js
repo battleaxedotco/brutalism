@@ -1,1 +1,1 @@
-export default require("./FilePicker.vue").default;
+export default require("./File-Picker.vue").default;
