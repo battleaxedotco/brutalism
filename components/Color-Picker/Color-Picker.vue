@@ -1,5 +1,5 @@
 <template>
-  <div :class="['color-picker-wrapper', { disabled }]">
+  <div :class="['color-picker-wrapper', { disabled, readOnly }]">
     <div @click="promptColorPicker" v-if="$slots.default">
       <slot />
     </div>
@@ -76,6 +76,14 @@ export default {
       default: false,
     },
     editable: {
+      type: Boolean,
+      default: false,
+    },
+    uppercase: {
+      type: Boolean,
+      default: false,
+    },
+    readOnly: {
       type: Boolean,
       default: false,
     },
@@ -308,8 +316,14 @@ export default {
   flex-wrap: nowrap;
 }
 
-.color-picker-container.disabled {
+.color-picker-wrapper.readOnly {
+  pointer-events: none;
+  cursor: default;
+}
+
+.color-picker-wrapper.disabled {
   opacity: 0.4;
+  pointer-events: none;
 }
 
 .color-picker-label {
