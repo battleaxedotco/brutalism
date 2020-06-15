@@ -139,11 +139,13 @@ export default {
     value(val) {
       if (val) {
         this.lastModified = "value";
+        this.inputval = val.replace(/^#/, "");
       }
     },
     val(val) {
       if (val) {
         this.lastModified = "val";
+        this.inputval = val.replace(/^#/, "");
       }
     },
     inputval(val) {
