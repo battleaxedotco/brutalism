@@ -336,6 +336,7 @@ textarea,
 select,
 button {
   font-family: "Open Sans", monospace;
+  font-size: 12px;
 }
 
 .panel {

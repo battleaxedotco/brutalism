@@ -52,10 +52,12 @@
             :name="prependIcon"
             :size="iconSize"
           />
+          <span v-if="prefix.length">{{ prefix }}</span>
           <input
             title
             ref="input"
             :type="inputType"
+            :maxlength="maxLength"
             :placeholder="placeholder"
             :class="[
               { flat, filled, truncate },
@@ -142,6 +144,10 @@ export default {
       type: String,
       default: "",
     },
+    prefix: {
+      type: String,
+      default: "",
+    },
     label: {
       type: String,
       default: "",
@@ -153,6 +159,10 @@ export default {
     debug: {
       type: Boolean,
       default: false,
+    },
+    maxLength: {
+      type: Number,
+      default: null,
     },
     placeholder: {
       type: String,
