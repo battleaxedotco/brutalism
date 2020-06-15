@@ -32,7 +32,7 @@
           :flat="flat"
           :filled="filled"
           uppercase
-          placeholder="hex value"
+          placeholder="value"
           v-model="inputval"
           :style="{
             width: realInputWidth,
@@ -140,9 +140,9 @@ export default {
     },
     realInputWidth() {
       if (this.inputWidth) return this.inputWidth;
-      else if (this.flat) return "64px";
-      else if (this.filled) return "76px";
-      else return "76px";
+      else if (this.flat) return "52px";
+      else if (this.filled) return "54px";
+      else return "52px";
     },
     hostColor: {
       get() {
@@ -301,10 +301,10 @@ export default {
     },
     async promptILST() {
       let prev = {
-        red: this.hostValue && this.hostValue.red ? this.hostValue.red : 254,
+        red: this.hostValue && this.hostValue.red ? this.hostValue.red : 127,
         green:
-          this.hostValue && this.hostValue.green ? this.hostValue.green : 255,
-        blue: this.hostValue && this.hostValue.blue ? this.hostValue.blue : 255,
+          this.hostValue && this.hostValue.green ? this.hostValue.green : 127,
+        blue: this.hostValue && this.hostValue.blue ? this.hostValue.blue : 127,
       };
       let result = await evalScript(`(function() {
         var temp = new RGBColor();

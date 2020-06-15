@@ -1,72 +1,27 @@
 <template>
-  <div :class="['color-picker-wrapper', { disabled, readOnly }]">
-    <div @click="promptColorPicker" v-if="$slots.default">
-      <slot />
-    </div>
-    <div class="color-picker-container" v-else>
-      <div class="color-picker-swatch" @click="promptColorPicker">
-        <div
-          class="color-picker-swatch-content"
-          :style="{
-            borderColor: this.active ? 'var(--color-selection)' : '#fff',
-            background: this.realValue.length ? this.realValue : 'transparent',
-          }"
-        />
-      </div>
-      <div class="color-picker-label" v-if="!editable">
-        {{
-          showValue
-            ? realValue.length
-              ? realValue
-              : placeholder
-            : label.length
-            ? label
-            : placeholder
-        }}
-      </div>
-      <div v-else :class="['color-picker-input', { filled, flat }]">
-        <Input
-          @input="updateValue"
-          prefix="#"
-          :max-length="6"
-          :flat="flat"
-          :filled="filled"
-          uppercase
-          placeholder="value"
-          v-model="inputval"
-          :style="{
-            width: realInputWidth,
-          }"
-        />
-      </div>
+  <div
+    @click="updateState"
+    @mouseenter="$emit('mouseenter')"
+    @mouseleave="$emit('mouseleave')"
+    :class="['toggle-item', { disabled, centered, custom, readOnly }]"
+    :style="{ color: color }"
+  >
+    <slot v-if="hasSlotContent" />
+    <div class="toggle-contents" v-else>
+      <Icon :name="activeIcon" :size="size" />
+      <span v-if="label.length" class="label">{{ label }}</span>
     </div>
   </div>
 </template>
 
 <script>
-const isBrowser = !window.__adobe_cep__;
-const spy = window.__adobe_cep__ ? require("cep-spy").default : null;
-import { evalScript } from "cluecumber";
-
 export default {
   props: {
-    label: {
-      type: String,
-      default: "Custom color",
-    },
-    value: {
-      type: String,
-      default: "",
-    },
-    placeholder: {
-      type: String,
-      default: "No value",
-    },
-    showValue: {
+    state: {
       type: Boolean,
       default: false,
     },
-    prefsId: {
+    label: {
       type: String,
       default: "",
     },
@@ -74,108 +29,61 @@ export default {
       type: Boolean,
       default: false,
     },
-    debug: {
-      type: Boolean,
-      default: false,
-    },
-    editable: {
-      type: Boolean,
-      default: false,
-    },
-    uppercase: {
-      type: Boolean,
-      default: false,
-    },
     readOnly: {
       type: Boolean,
       default: false,
     },
-    filled: {
+    onIcon: {
+      type: String,
+      default: "checkbox-intermediate",
+    },
+    offIcon: {
+      type: String,
+      default: "checkbox-blank-outline",
+    },
+    custom: {
       type: Boolean,
       default: false,
     },
-    flat: {
-      type: Boolean,
-      default: false,
+    size: {
+      type: String,
+      default: "18px",
     },
-    inputWidth: {
+    color: {
       type: String,
       default: "",
     },
-  },
-  data: () => ({
-    val: "",
-    hostValue: null,
-    inputval: "",
-    lastModified: "value",
-    active: false,
-    type: "colorPicker",
-    schema: [
-      {
-        apps: ["AEFT"],
-        callback: "promptAEFT",
-      },
-      {
-        apps: ["PHXS"],
-        callback: "promptPHXS",
-      },
-      {
-        apps: ["ILST"],
-        callback: "promptILST",
-      },
-    ],
-  }),
-  computed: {
-    validHex() {
-      return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(this.value);
+    centered: {
+      type: Boolean,
+      default: false,
     },
-    realValue: {
-      get() {
-        return this[this.lastModified];
-      },
-      set(val) {
-        this.lastModified = "val";
-        this.val = val;
-      },
+    checkbox: {
+      type: Boolean,
+      default: false,
     },
-    realInputWidth() {
-      if (this.inputWidth) return this.inputWidth;
-      else if (this.flat) return "52px";
-      else if (this.filled) return "54px";
-      else return "52px";
+    radio: {
+      type: Boolean,
+      default: false,
     },
-    hostColor: {
-      get() {
-        return this.hostValue;
-      },
-      set(val) {
-        this.hostValue = val;
-        this.val = this.rgbToHex(val);
-        this.$emit("input", this.val);
-        return val;
-      },
+    switch: {
+      type: Boolean,
+      default: false,
     },
-  },
-  watch: {
-    realValue(value) {
-      if (this.prefsId.length) this.setPrefsById(this.prefsId, value);
-      this.$emit("update", value);
+    debug: {
+      type: Boolean,
+      default: false,
     },
-    value(val) {
-      if (val) {
-        this.lastModified = "value";
-        this.inputval = val.replace(/^#/, "");
-      }
+    value: {
+      type: Boolean,
+      default: false,
     },
-    val(val) {
-      if (val) {
-        this.lastModified = "val";
-        this.inputval = val.replace(/^#/, "");
-      }
+    prefsId: {
+      type: String,
+      default: "",
     },
-    inputval(val) {
-      if (!val.length) this.realValue = "";
-      else this.updateValue(val);
+    readOnly: {
+      type: Boolean,
+      default: false,
     },
   },
   mixins: [require("../mixinPrefs").default],
@@ -184,253 +92,112 @@ export default {
       this.checkLocalPrefs();
       let lastState = this.checkPrefsFor(this.prefsId);
       if (lastState === null) {
-        // Do nothing...
+        this.realState = this.state;
       } else {
-        let content = lastState.value;
-        this.val = content;
-        this.$emit("prefs", content);
+        this.realState = lastState.value;
+        this.$emit("prefs", lastState);
       }
     }
   },
-  methods: {
-    updateValue(value) {
-      if (this.validateAsHexString(value)) {
-        this.realValue = `#${value}`;
-      }
-      // this.value = value;
+  data: function () {
+    return {
+      type: "toggle",
+      realState: this.state,
+      sets: [
+        {
+          name: "radio",
+          onIcon: "radiobox-marked",
+          offIcon: "radiobox-blank",
+        },
+        {
+          name: "checkbox",
+          onIcon: "checkbox-intermediate",
+          offIcon: "checkbox-blank-outline",
+        },
+        {
+          name: "switch",
+          onIcon: "toggle-switch",
+          offIcon: "toggle-switch-off",
+        },
+      ],
+    };
+  },
+  computed: {
+    hasSlotContent() {
+      return this.$slots.default;
     },
-    validateAsHexString(value) {
-      return (
-        value.length < 7 && /^([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(value)
-      );
-    },
-    reset() {
-      this.hostColor = null;
-      this.active = false;
-    },
-    async promptColorPicker() {
-      if (isBrowser) {
-        console.error("Cannot launch Adobe Color-Picker in browser.");
-        return null;
-      }
-      this.active = true;
-      let isFound = this.schema.find((item) => {
-        return item.apps.includes(spy.appName);
+    activeIcon() {
+      let activeSet = this.sets.find((item) => {
+        return this[item.name];
       });
-      let result = !isFound
-        ? await this.promptLegacy()
-        : await this[`${isFound.callback}`]();
-      this.active = false;
-      if (result) this.hostColor = temp;
+      return !activeSet
+        ? this.realState
+          ? this.onIcon
+          : this.offIcon
+        : this.realState
+        ? activeSet.onIcon
+        : activeSet.offIcon;
     },
-    async promptAEFT() {
-      let result = await evalScript(`(function () {
-        function setComp() {
-            if (app.activeViewer) {
-                app.activeViewer.setActive();
-                thisComp = app.project.activeItem;
-                return thisComp || thisComp instanceof CompItem;
-            } else return app.project.items[0];
-        }
-        // 
-        // Set comp and layer
-        // 
-        var thisComp = setComp();
-        var thisLayer = thisComp.layers.addShape();
-        // 
-        // Record selected properties then deselect them
-        // 
-        var lastSelection = makeIterable(thisComp.selectedProperties);
-        toggleAllSelection(lastSelection, false);
-        // 
-        // Create temporary color control, Edit Value command
-        // 
-        var colorControl = thisLayer.Effects.addProperty("ADBE Color Control")
-        colorControl.property("ADBE Color Control-0001").selected = true;
-        app.executeCommand(+app.findMenuCommandId("Edit Value..."))
-        var result = colorControl.property("ADBE Color Control-0001").value;
-        // 
-        // Remove control, try to restore selection, return result
-        // 
-        thisLayer.remove();
-        toggleAllSelection(lastSelection, true);
-        // 
-        return JSON.stringify(result)
-    
-        function toggleAllSelection(list, status) {
-            for (var i = 1; i <= list.length; i++) 
-                list[i].selected = status        
-        }
-        function makeIterable(original) {
-            var clone = [];
-            for (var i = 0; i < original.length; i++)
-                clone.push(original[i])
-            return clone;
-        }
-      }())`);
-
-      // Not sure how to handle Cancel events
-      // Seem identical to user entering FF0000
-      if (result) {
-        if (!this.isFF0000(result)) {
-          this.hostColor = result;
-        }
+  },
+  watch: {
+    state(val) {
+      this.realState = val;
+      this.$emit("input", val);
+    },
+  },
+  methods: {
+    updateState() {
+      if (this.disabled || this.readOnly) return null;
+      this.$emit("click");
+      this.realState = !this.realState;
+      this.$emit("update", this.realState);
+      this.$emit("input", this.realState);
+      if (this.prefsId.length) {
+        this.setPrefsById(this.prefsId, this.realState);
       }
-    },
-    isFF0000(targ) {
-      let res = [1, 0, 0, 1];
-      for (let i = 0; i < res.length; i++) if (res[i] !== targ[i]) return false;
-      return true;
-    },
-    async promptPHXS() {
-      let result = await evalScript(`(function() {
-        var lastColor = app.foregroundColor;
-        var color = app.showColorPicker();
-        if (color) {
-          var result = app.foregroundColor;
-          app.foregroundColor = lastColor;
-          return JSON.stringify({
-            type: "RGB",
-            red: result.rgb.red,
-            green: result.rgb.green,
-            blue: result.rgb.blue
-          })
-        } else return false;
-      }())`);
-      if (result) this.hostColor = result;
-    },
-    async promptILST() {
-      let prev = {
-        red: this.hostValue && this.hostValue.red ? this.hostValue.red : 127,
-        green:
-          this.hostValue && this.hostValue.green ? this.hostValue.green : 127,
-        blue: this.hostValue && this.hostValue.blue ? this.hostValue.blue : 127,
-      };
-      let result = await evalScript(`(function() {
-        var temp = new RGBColor();
-        temp.red = ${prev.red};
-        temp.green = ${prev.green};
-        temp.blue = ${prev.blue};
-        var result = app.showColorPicker(temp);
-        if (result !== temp) {
-          return JSON.stringify({
-            type: "RGB",
-            red: Math.round(result.red),
-            green: Math.round(result.green),
-            blue: Math.round(result.blue)
-          })
-        } else return false;
-      }())`);
-      if (result) this.hostColor = result;
-    },
-    async promptLegacy() {
-      console.log("Prompt Legacy");
-    },
-    rgbToHex(rgbArray) {
-      if (this.debug) console.log(rgbArray);
-      let temp;
-      if (!(rgbArray instanceof Array)) {
-        if (
-          /object/i.test(typeof rgbArray) &&
-          Object.keys(rgbArray).includes("red")
-        ) {
-          temp = [rgbArray.red, rgbArray.green, rgbArray.blue];
-        } else {
-          console.log("Unknown format:", rgbArray);
-          return null;
-        }
-      } else temp = rgbArray;
-      while (temp.length > 3) temp.pop();
-      if (spy.appName == "AEFT")
-        temp = temp.map((col) => {
-          return +(col * 255).toFixed(0);
-        });
-      return `#${temp
-        .map((c) => {
-          c = c <= 255 ? Math.abs(Math.floor(c)).toString(16) : 0;
-          return c.length < 2 ? `0${c}` : c;
-        })
-        .join("")}`;
     },
   },
 };
 </script>
 
-<style>
-.color-picker-container,
-.color-picker-wrapper {
+<style scoped>
+.toggle-contents {
   display: flex;
-  justify-self: flex-start;
+  justify-content: flex-start;
   flex-wrap: nowrap;
   align-items: center;
 }
 
-.color-picker-wrapper {
+.toggle-item {
   box-sizing: border-box;
-  height: 22px;
+  width: fit-content;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  overflow: hidden;
+  color: var(--color-icon);
 }
 
-.color-picker-wrapper.readOnly {
+.toggle-item.readOnly {
   pointer-events: none;
-  cursor: default;
 }
 
-.color-picker-wrapper.disabled {
+.toggle-item:not(.custom) {
+  align-items: center;
+}
+.toggle-item.custom {
+  align-items: flex-start;
+}
+
+.disabled {
   opacity: 0.4;
   pointer-events: none;
 }
 
-.color-picker-label {
-  display: flex;
-  align-items: center;
-  padding: 0px 10px;
+.label {
+  padding-left: 6px;
 }
-
-.color-picker-input {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: nowrap;
-  margin-left: 6px;
-}
-
-.color-picker-input .input-container {
-  margin: 0px;
-}
-.color-picker-input .input-container input,
-.color-picker-input .input-container {
-  font-size: 10px;
-}
-
-.color-picker-input:not(.filled):not(.flat),
-.color-picker-input.filled {
-  margin-top: 2.5px;
-}
-
-.color-picker-input .input-inside.default.active {
-  border-radius: 3px 3px 0px 0px;
-}
-
-.color-picker-wrapper .default.input-inside,
-.color-picker-wrapper .filled.input-inside {
-  padding-left: 4px;
-}
-
-.color-picker-input .input-container {
-  padding: 0px;
-}
-
-.color-picker-swatch {
-  cursor: pointer;
-  box-sizing: border-box;
-  width: 20px;
-  height: 20px;
-  border: 0.5px solid black;
-}
-.color-picker-swatch-content {
-  box-sizing: border-box;
-  border-width: 1px;
-  border-style: solid;
-  width: 100%;
-  height: 100%;
+.custom .label {
+  margin-top: 2px;
 }
 </style>
