@@ -29,6 +29,7 @@
           :filled="filled"
           v-model="realContents"
           :append-outer-icon="realIcon"
+          @append-outer-click="clickOnSlot"
           :style="`width: ${
             this.contents.length ? 'calc(100% - 48px)' : '100%'
           };`"
@@ -49,6 +50,7 @@
         :filled="filled"
         v-model="realContents"
         :append-outer-icon="realIcon"
+        @append-outer-click="clickOnSlot"
         truncate
       />
       <div v-if="multiple && clearable" class="file-picker-contents textarea">
@@ -65,6 +67,7 @@
           :filled="filled"
           v-model="realContents"
           :append-outer-icon="realIcon"
+          @append-outer-click="clickOnSlot"
           :style="`width: ${
             this.contents.length ? 'calc(100% - 48px)' : '100%'
           };`"
@@ -91,6 +94,7 @@
         :filled="filled"
         v-model="realContents"
         :append-outer-icon="realIcon"
+        @append-outer-click="clickOnSlot"
         truncate
       />
     </div>
@@ -285,6 +289,9 @@ export default {
     },
   },
   methods: {
+    message() {
+      console.log("Hello");
+    },
     get() {
       return {
         read: this.readContents,
@@ -605,5 +612,9 @@ export default {
 }
 .file-picker-clear-icon.textarea {
   margin: 23px 0px 0px 0px;
+}
+
+.file-picker-wrapper .textarea-append-outer-icon {
+  cursor: pointer;
 }
 </style>

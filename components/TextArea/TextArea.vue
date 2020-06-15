@@ -34,6 +34,7 @@
           class="textarea-prepend-outer-icon"
           :name="prependOuterIcon"
           :size="iconSize"
+          @click="$emit('prepend-outer-click')"
         />
         <div
           :class="[
@@ -131,6 +132,7 @@
           :size="iconSize"
           class="textarea-append-outer-icon"
           :name="appendOuterIcon"
+          @click="$emit('append-outer-click')"
         />
       </div>
       <div
