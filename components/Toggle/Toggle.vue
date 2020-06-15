@@ -7,10 +7,10 @@
     :style="{ color: color }"
   >
     <slot v-if="hasSlotContent" />
-    <Icon v-if="!hasSlotContent" :name="activeIcon" :size="size" />
-    <span v-if="!hasSlotContent && label.length" class="label">{{
-      label
-    }}</span>
+    <div class="toggle-contents" v-else>
+      <Icon :name="activeIcon" :size="size" />
+      <span v-if="label.length" class="label">{{ label }}</span>
+    </div>
   </div>
 </template>
 
@@ -161,6 +161,13 @@ export default {
 </script>
 
 <style scoped>
+.toggle-contents {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
 .toggle-item {
   box-sizing: border-box;
   width: fit-content;
@@ -169,8 +176,6 @@ export default {
   flex-direction: row;
   overflow: hidden;
   color: var(--color-icon);
-  margin-top: -2px;
-  margin-bottom: -2px;
 }
 
 .toggle-item.readOnly {

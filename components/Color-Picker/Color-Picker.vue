@@ -24,16 +24,19 @@
             : placeholder
         }}
       </div>
-      <div v-else class="color-picker-input">
+      <div v-else :class="['color-picker-input', { filled, flat }]">
         <Input
           @input="updateValue"
           prefix="#"
           :max-length="6"
-          flat
+          :flat="flat"
+          :filled="filled"
           uppercase
           placeholder="hex value"
           v-model="inputval"
-          style="width: fit-content; max-width: 64px;"
+          :style="{
+            width: realInputWidth,
+          }"
         />
       </div>
     </div>
@@ -87,6 +90,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    filled: {
+      type: Boolean,
+      default: false,
+    },
+    flat: {
+      type: Boolean,
+      default: false,
+    },
+    inputWidth: {
+      type: String,
+      default: "",
+    },
   },
   data: () => ({
     val: "",
@@ -122,6 +137,12 @@ export default {
         this.lastModified = "val";
         this.val = val;
       },
+    },
+    realInputWidth() {
+      if (this.inputWidth) return this.inputWidth;
+      else if (this.flat) return "64px";
+      else if (this.filled) return "76px";
+      else return "76px";
     },
     hostColor: {
       get() {
@@ -336,10 +357,17 @@ export default {
 </script>
 
 <style>
-.color-picker-container {
+.color-picker-container,
+.color-picker-wrapper {
   display: flex;
   justify-self: flex-start;
   flex-wrap: nowrap;
+  align-items: center;
+}
+
+.color-picker-wrapper {
+  box-sizing: border-box;
+  height: 22px;
 }
 
 .color-picker-wrapper.readOnly {
@@ -372,15 +400,30 @@ export default {
 .color-picker-input .input-container {
   font-size: 10px;
 }
-.color-picker-input .input-container input {
-  margin-top: -2px;
+
+.color-picker-input:not(.filled):not(.flat),
+.color-picker-input.filled {
+  margin-top: 2.5px;
+}
+
+.color-picker-input .input-inside.default.active {
+  border-radius: 3px 3px 0px 0px;
+}
+
+.color-picker-wrapper .default.input-inside,
+.color-picker-wrapper .filled.input-inside {
+  padding-left: 4px;
+}
+
+.color-picker-input .input-container {
+  padding: 0px;
 }
 
 .color-picker-swatch {
   cursor: pointer;
   box-sizing: border-box;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border: 0.5px solid black;
 }
 .color-picker-swatch-content {
