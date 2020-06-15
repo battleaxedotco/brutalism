@@ -42,7 +42,7 @@
 
 <script>
 const isBrowser = !window.__adobe_cep__;
-const spy = window.__adobe_cep__ ? require("cep-spy") : null;
+const spy = window.__adobe_cep__ ? require("cep-spy").default : null;
 import { evalScript } from "cluecumber";
 
 export default {
