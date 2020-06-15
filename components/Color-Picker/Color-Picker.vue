@@ -134,25 +134,21 @@ export default {
   watch: {
     realValue(value) {
       if (this.prefsId.length) this.setPrefsById(this.prefsId, value);
+      this.$emit("update", value);
     },
     value(val) {
       if (val) {
         this.lastModified = "value";
-        this.$emit("update", val);
-        // this.inputval = val;
       }
     },
     val(val) {
       if (val) {
         this.lastModified = "val";
-        this.$emit("update", val);
-        // this.inputval = val;
       }
     },
     inputval(val) {
       if (!val.length) this.realValue = "";
       else this.updateValue(val);
-      // this.realValue = val;
     },
   },
   mixins: [require("../mixinPrefs").default],
