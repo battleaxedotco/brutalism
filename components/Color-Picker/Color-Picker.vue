@@ -41,7 +41,8 @@
 </template>
 
 <script>
-import spy from "cep-spy";
+const isBrowser = !window.__adobe_cep__;
+const spy = window.__adobe_cep__ ? require("cep-spy") : null;
 import { evalScript } from "cluecumber";
 
 export default {
@@ -177,6 +178,10 @@ export default {
       this.active = false;
     },
     async promptColorPicker() {
+      if (isBrowser) {
+        console.error("Cannot launch Adobe Color-Picker in browser.");
+        return null;
+      }
       this.active = true;
       let isFound = this.schema.find((item) => {
         return item.apps.includes(spy.appName);
