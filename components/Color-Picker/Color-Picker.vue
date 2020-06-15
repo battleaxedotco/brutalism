@@ -90,6 +90,7 @@ export default {
   },
   data: () => ({
     val: "",
+    hostValue: null,
     inputval: "",
     lastModified: "value",
     active: false,
@@ -105,7 +106,7 @@ export default {
       },
       {
         apps: ["ILST"],
-        callback: "promptLegacy",
+        callback: "promptILST",
       },
     ],
   }),
@@ -123,8 +124,11 @@ export default {
       },
     },
     hostColor: {
-      get() {},
+      get() {
+        return this.hostValue;
+      },
       set(val) {
+        this.hostValue = val;
         this.val = this.rgbToHex(val);
         this.$emit("input", this.val);
         return val;
@@ -269,6 +273,30 @@ export default {
             red: result.rgb.red,
             green: result.rgb.green,
             blue: result.rgb.blue
+          })
+        } else return false;
+      }())`);
+      if (result) this.hostColor = result;
+    },
+    async promptILST() {
+      let prev = {
+        red: this.hostValue && this.hostValue.red ? this.hostValue.red : 254,
+        green:
+          this.hostValue && this.hostValue.green ? this.hostValue.green : 255,
+        blue: this.hostValue && this.hostValue.blue ? this.hostValue.blue : 255,
+      };
+      let result = await evalScript(`(function() {
+        var temp = new RGBColor();
+        temp.red = ${prev.red};
+        temp.green = ${prev.green};
+        temp.blue = ${prev.blue};
+        var result = app.showColorPicker(temp);
+        if (result !== temp) {
+          return JSON.stringify({
+            type: "RGB",
+            red: Math.round(result.red),
+            green: Math.round(result.green),
+            blue: Math.round(result.blue)
           })
         } else return false;
       }())`);
