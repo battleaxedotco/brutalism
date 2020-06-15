@@ -13,7 +13,15 @@
           }"
         />
       </div>
-      <div class="color-picker-label" v-if="!editable">
+      <div
+        :class="[
+          'color-picker-label',
+          {
+            uppercase,
+          },
+        ]"
+        v-if="!editable"
+      >
         {{
           showValue
             ? realValue.length
@@ -384,6 +392,10 @@ export default {
   display: flex;
   align-items: center;
   padding: 0px 10px;
+}
+
+.color-picker-label.uppercase {
+  text-transform: uppercase;
 }
 
 .color-picker-input {
