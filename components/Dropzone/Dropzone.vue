@@ -264,7 +264,7 @@ export default {
 
       if (this.single) {
         if (this.autoRead && (await !this.isFolder(validReadable[0]))) {
-          this.emit("read", await this.getAsText(validReadable[0]));
+          this.$emit("read", await this.getAsText(validReadable[0]));
         }
       } else {
         if (this.autoRead) {
