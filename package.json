@@ -12,8 +12,8 @@
   "author": "Adam Plouff <adamplouff@gmail.com> && Tom Scharstein <tom@inventsable.cc>",
   "license": "ISC",
   "dependencies": {
-    "cep-spy": "^1.2.3",
-    "cluecumber": "0.0.7",
+    "cep-spy": "latest",
+    "cluecumber": "latest",
     "starlette": "latest",
     "vue-pan": "latest"
   }
