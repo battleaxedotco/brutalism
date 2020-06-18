@@ -25,10 +25,7 @@
           : {},
       ]"
     >
-      <div
-        :class="['textarea-contents', pseudo ? 'pseudo' : '']"
-        @click="$emit('clickinside')"
-      >
+      <div :class="['textarea-contents', pseudo ? 'pseudo' : '']" @click="$emit('clickinside')">
         <Icon
           v-if="prependOuterIcon.length"
           class="textarea-prepend-outer-icon"
@@ -95,27 +92,9 @@
               height="16.41"
               viewBox="0 0 16.41 16.41"
             >
-              <line
-                class="resizer-svg"
-                x1="15.71"
-                y1="0.71"
-                x2="0.71"
-                y2="15.71"
-              />
-              <line
-                class="resizer-svg"
-                x1="15.71"
-                y1="6.21"
-                x2="6.21"
-                y2="15.71"
-              />
-              <line
-                class="resizer-svg"
-                x1="15.71"
-                y1="11.71"
-                x2="11.71"
-                y2="15.71"
-              />
+              <line class="resizer-svg" x1="15.71" y1="0.71" x2="0.71" y2="15.71" />
+              <line class="resizer-svg" x1="15.71" y1="6.21" x2="6.21" y2="15.71" />
+              <line class="resizer-svg" x1="15.71" y1="11.71" x2="11.71" y2="15.71" />
             </svg>
           </div>
           <Icon
@@ -164,112 +143,112 @@ export default {
   props: {
     value: {
       type: String,
-      default: "",
+      default: ""
     },
     label: {
       type: String,
-      default: "",
+      default: ""
     },
     color: {
       type: String,
-      default: "var(--color-selection)",
+      default: "var(--color-selection)"
     },
     debug: {
       type: Boolean,
-      default: false,
+      default: false
     },
     placeholder: {
       type: String,
-      default: "",
+      default: ""
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     flat: {
       type: Boolean,
-      default: false,
+      default: false
     },
     filled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     underlineSize: {
       type: String,
-      default: "1.5px",
+      default: "1.5px"
     },
     left: {
       type: Boolean,
-      default: false,
+      default: false
     },
     right: {
       type: Boolean,
-      default: false,
+      default: false
     },
     cols: {
       type: Number,
-      default: null,
+      default: null
     },
     rows: {
       type: Number,
-      default: 2,
+      default: 2
     },
     wrap: {
       type: String,
-      default: "soft",
+      default: "soft"
     },
     prependIcon: {
       type: String,
-      default: "",
+      default: ""
     },
     appendIcon: {
       type: String,
-      default: "",
+      default: ""
     },
     prependOuterIcon: {
       type: String,
-      default: "",
+      default: ""
     },
     appendOuterIcon: {
       type: String,
-      default: "",
+      default: ""
     },
     autoSelect: {
       type: Boolean,
-      default: false,
+      default: false
     },
     truncate: {
       type: Boolean,
-      default: false,
+      default: false
     },
     spellcheck: {
       type: Boolean,
-      default: false,
+      default: false
     },
     iconSize: {
       type: String,
-      default: "16px",
+      default: "16px"
     },
     prefsId: {
       type: String,
-      default: "",
+      default: ""
     },
     readOnly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     pseudo: {
       type: Boolean,
-      default: false,
+      default: false
     },
     resizeable: {
       type: Boolean,
-      default: true,
-    },
+      default: true
+    }
   },
   mixins: [
     require("../mixinStyleProps").default,
-    require("../mixinPrefs").default,
+    require("../mixinPrefs").default
   ],
   data: () => ({
     val: null,
@@ -277,7 +256,7 @@ export default {
     hasFocus: false,
     type: "textArea",
     hover: false,
-    error: "Something went wrong",
+    error: "Something went wrong"
   }),
   mounted() {
     if (this.prefsId.length) {
@@ -311,7 +290,7 @@ export default {
         }
         this.lastVal = this.val;
       }
-    },
+    }
   },
   computed: {
     alignPos() {
@@ -345,7 +324,7 @@ export default {
           .replace(/(--color-|color-)/, "")
           .replace(/\)$/, "")})`;
       }
-    },
+    }
   },
   methods: {
     altFocus(evt) {
@@ -372,8 +351,8 @@ export default {
     submit() {
       this.$emit("submit", this.val);
       this.blur();
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -404,6 +383,7 @@ export default {
 }
 
 .textarea-label {
+  font-size: 10px;
   position: relative;
   top: -4px;
 }
