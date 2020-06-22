@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="[{ disabled, readOnly, pseudo }, 'input-container']"
+    :class="[{ disabled, readOnly, pseudo, noLabel }, 'input-container']"
     :style="[
       {
         width: width,
@@ -8,7 +8,7 @@
       },
     ]"
   >
-    <span class="input-label" v-if="label.length">{{ label }}</span>
+    <span class="input-label" v-if="label.length && !noLabel">{{ label }}</span>
     <div
       :class="[
         { flat, filled },
@@ -23,7 +23,10 @@
         },
       ]"
     >
-      <div :class="['input-contents', pseudo ? 'pseudo' : '']" @click="$emit('clickinside')">
+      <div
+        :class="['input-contents', pseudo ? 'pseudo' : '']"
+        @click="$emit('clickinside')"
+      >
         <Icon
           v-if="prependOuterIcon.length"
           :class="[
@@ -139,124 +142,128 @@ export default {
   props: {
     value: {
       type: String,
-      default: ""
+      default: "",
     },
     prefix: {
       type: String,
-      default: ""
+      default: "",
+    },
+    noLabel: {
+      type: Boolean,
+      default: false,
     },
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     color: {
       type: String,
-      default: "var(--color-selection)"
+      default: "var(--color-selection)",
     },
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     maxLength: {
       type: Number,
-      default: null
+      default: null,
     },
     placeholder: {
       type: String,
-      default: ""
+      default: "",
     },
     inputType: {
       type: String,
-      default: "text"
+      default: "text",
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     flat: {
       type: Boolean,
-      default: false
+      default: false,
     },
     filled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     underlineSize: {
       type: String,
-      default: "1.5px"
+      default: "1.5px",
     },
     iconSize: {
       type: String,
-      default: "16px"
+      default: "16px",
     },
     left: {
       type: Boolean,
-      default: false
+      default: false,
     },
     right: {
       type: Boolean,
-      default: false
+      default: false,
     },
     prependIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     appendIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     prependOuterIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     appendOuterIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     autoSelect: {
       type: Boolean,
-      default: false
+      default: false,
     },
     uppercase: {
       type: Boolean,
-      default: false
+      default: false,
     },
     truncate: {
       type: Boolean,
-      default: false
+      default: false,
     },
     spellcheck: {
       type: Boolean,
-      default: false
+      default: false,
     },
     copyContent: {
       type: Boolean,
-      default: false
+      default: false,
     },
     clipboardCooldown: {
       type: Number,
-      default: 1000
+      default: 1000,
     },
     prefsId: {
       type: String,
-      default: ""
+      default: "",
     },
     readOnly: {
       type: Boolean,
-      default: false
+      default: false,
     },
     focusable: {
       type: Boolean,
-      default: true
+      default: true,
     },
     pseudo: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   mixins: [
     require("../mixinStyleProps").default,
-    require("../mixinPrefs").default
+    require("../mixinPrefs").default,
   ],
   data: () => ({
     val: null,
@@ -265,7 +272,7 @@ export default {
     hover: false,
     error: null,
     type: "input",
-    dynamicCopyIcon: "content-copy"
+    dynamicCopyIcon: "content-copy",
   }),
   mounted() {
     if (this.prefsId.length) {
@@ -302,7 +309,7 @@ export default {
         }
         this.lastVal = this.val;
       }
-    }
+    },
   },
   computed: {
     alignPos() {
@@ -328,7 +335,7 @@ export default {
           .replace(/(--color-|color-)/, "")
           .replace(/\)$/, "")})`;
       }
-    }
+    },
   },
   methods: {
     altFocus(evt) {
@@ -366,8 +373,8 @@ export default {
     submit() {
       this.$emit("submit", this.val);
       this.blur();
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -400,9 +407,11 @@ export default {
   top: -4px;
 }
 
+.input-container:not(.noLabel) {
+  margin: 6px 0px 10px 0px;
+}
 .input-container {
   padding: 1px 4px;
-  margin: 6px 0px 10px 0px;
   width: calc(100% - 8px);
   font-size: 12px;
   font-family: "Open Sans", sans-serif;

@@ -24,6 +24,7 @@
           :placeholder="realPlaceholder"
           :pseudo="true"
           :label="realLabel"
+          :no-label="noLabel"
           ref="pseudoinput"
           :flat="flat"
           :filled="filled"
@@ -45,6 +46,7 @@
         :pseudo="true"
         :placeholder="realPlaceholder"
         :label="realLabel"
+        :no-label="noLabel"
         ref="pseudoinput"
         :flat="flat"
         :filled="filled"
@@ -63,6 +65,7 @@
           :pseudo="true"
           :placeholder="realPlaceholder"
           :label="realLabel"
+          :no-label="noLabel"
           :flat="flat"
           :filled="filled"
           v-model="realContents"
@@ -90,6 +93,7 @@
         :pseudo="true"
         :placeholder="realPlaceholder"
         :label="realLabel"
+        :no-label="noLabel"
         :flat="flat"
         :filled="filled"
         v-model="realContents"
@@ -117,6 +121,10 @@ export default {
       default: "100%",
     },
     folder: {
+      type: Boolean,
+      default: false,
+    },
+    noLabel: {
       type: Boolean,
       default: false,
     },

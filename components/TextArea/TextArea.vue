@@ -1,13 +1,13 @@
 <template>
   <div
-    :class="[{ disabled, readOnly }, 'textarea-container']"
+    :class="[{ disabled, readOnly, pseudo, noLabel }, 'textarea-container']"
     :style="[
       {
         width: width,
       },
     ]"
   >
-    <span class="textarea-label" v-if="label.length">{{ label }}</span>
+    <span class="textarea-label" v-if="label.length && !noLabel">{{ label }}</span>
     <div
       :class="[
         { flat, filled },
@@ -148,6 +148,10 @@ export default {
     label: {
       type: String,
       default: ""
+    },
+    noLabel: {
+      type: Boolean,
+      default: false
     },
     color: {
       type: String,
