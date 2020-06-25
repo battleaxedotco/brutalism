@@ -284,10 +284,8 @@ export default {
       }
     },
     init() {
-      console.log("Init.");
       const self = this;
       this.tabs = this.buildTabs();
-      console.log(this.tabs[this.tabs.length - 1]);
       setTimeout(() => {
         if (!this.$router) return null;
         let activePath = self.$route.path;

@@ -6,7 +6,7 @@
     }"
   >
     <input
-      style="display: none;"
+      style="display: none; tabindex: -1;"
       ref="filepicker"
       type="file"
       name="testing 1 2 3"
@@ -178,6 +178,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    fullPath: {
+      type: Boolean,
+      default: false,
+    },
     flatten: {
       type: Boolean,
       default: true,
@@ -321,14 +325,16 @@ export default {
     sanitizeContentsByDepth() {
       let result = [];
       this.contents.forEach((path) => {
-        result.push(
-          `${this.prefix}${path
-            .split(/\/{1,}|\/{1,}/)
-            .reverse()
-            .slice(0, this.realDepth)
-            .reverse()
-            .join("/")}`
-        );
+        if (this.fullPath) result.push(`${path}`);
+        else
+          result.push(
+            `${this.prefix}${path
+              .split(/\/{1,}|\/{1,}/)
+              .reverse()
+              .slice(0, this.realDepth)
+              .reverse()
+              .join("/")}`
+          );
       });
       return result.length > 1 ? result.join(", ") : result[0];
     },
