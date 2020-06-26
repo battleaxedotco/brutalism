@@ -117,7 +117,7 @@ export default {
       },
       false
     );
-    if (window.__adobe_cep__ && !this.debug) {
+    if (window.__adobe_cep__) {
       await this.loadUtils();
       await this.loadScriptPath();
     } else if (this.app && this.theme) {
@@ -220,15 +220,17 @@ export default {
     async loadScript(loadPath) {
       if (!this.noExclusion && this.realExcludes.test(loadPath))
         return console.log(`Excluding ${loadPath}`);
-      console.log(`Loading ${loadPath}`);
+      if (!this.debug) console.log(`Loading ${loadPath}`);
       try {
         // Correctly loads a script regardless of whether Animate or regular CEP app
         if (spy && !/FLPR/.test(spy.appName) && window.__adobe_cep__) {
-          await evalScript(`$.evalFile('${loadPath}')`);
+          let result = await evalScript(`$.evalFile('${loadPath}')`);
+          if (this.debug) console.log(`Loading...`, loadPath, result)
         } else if (window.__adobe_cep__)
-          await evalScript(
+          let result = await evalScript(
             `fl.runScript(FLfile.platformPathToURI("${loadPath}"))`
           );
+          if (this.debug) console.log(`Loading...`, loadPath, result)
       } catch (err) {
         this.errorMessage(err);
       }
@@ -248,6 +250,7 @@ export default {
           });
     },
     async loadScriptPath() {
+      if (this.debug) console.log('Loading paths:', this.realScriptPath)
       if (typeof this.realScriptPath === "string") {
         let isFolder = await this.isFolder(this.realScriptPath);
         if (!isFolder) return await this.handlePath(this.realScriptPath);
@@ -265,16 +268,24 @@ export default {
       }
     },
     async handlePath(thispath) {
+      if (this.debug) console.log(`Handling path:`, thispath)
       return await this.investigatePath(thispath);
     },
     async investigatePath(thispath) {
       let exists = await this.exists(thispath);
-      if (!exists)
+      if (!exists) {
+        if (this.debug) console.log(`DOES NOT EXIST:`, thispath)
         return this.noUtils ? null : new Error(`${thispath} does not exist`);
+      }
       let isFolder = await this.isFolder(thispath);
-      return isFolder
+      let result = isFolder
         ? await this.loadFolder(thispath)
         : await this.handleFile(thispath);
+      if (this.debug) {
+        console.log('Investigating:', thispath)
+        console.log('Is folder?', isFolder)
+        console.log(result)
+      }
     },
     async handleFile(thispath) {
       if (this.validFile.test(thispath)) await this.loadScript(thispath);
