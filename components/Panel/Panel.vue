@@ -224,8 +224,11 @@ export default {
       try {
         // Correctly loads a script regardless of whether Animate or regular CEP app
         if (spy && !/FLPR/.test(spy.appName) && window.__adobe_cep__) {
-          let result = await evalScript(`$.evalFile('${loadPath}')`);
-          if (this.debug) console.log(`Loading...`, loadPath, result);
+          let result = await evalScript(
+            `$.evalFile('${loadPath.replace(/\\/gm, "/")}')`
+          );
+          if (this.debug)
+            console.log(`Loading...`, loadPath.replace(/\\/gm, "/"), result);
         } else if (window.__adobe_cep__) {
           let result = await evalScript(
             `fl.runScript(FLfile.platformPathToURI("${loadPath}"))`
