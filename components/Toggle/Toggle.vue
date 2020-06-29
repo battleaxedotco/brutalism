@@ -144,6 +144,10 @@ export default {
       this.realState = val;
       this.$emit("input", val);
     },
+    value(val) {
+      this.realState = val;
+      this.$emit("input", val);
+    },
   },
   methods: {
     updateState() {

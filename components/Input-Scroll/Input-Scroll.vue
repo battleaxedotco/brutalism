@@ -203,6 +203,7 @@ export default {
       if (("" + value).length < 1) value = this.resetValue;
       if (this.inputting) return null;
       this.val = this.validate(value);
+      this.$emit("input", this.val);
     },
     hasFocus(val) {
       if (!val) {

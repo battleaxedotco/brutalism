@@ -13,53 +13,55 @@
       :src="src"
       :width="width"
       :height="height"
-      :gradient="gradient" 
-    />
+      :gradient="gradient"
+    >
+      <slot v-if="$slots.default" />
+    </panelify>
     <div class="panel-footer" :style="getFooterStyle()"></div>
   </div>
 </template>
 
 <script>
-import starlette from 'starlette'
+import starlette from "starlette";
 
 export default {
   props: {
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     name: {
       type: String,
-      default: ''
+      default: "",
     },
     app: {
       type: String,
-      default: 'ILST'
+      default: "ILST",
     },
     url: {
       type: String,
-      default: 'https://zen-ramanujan-97e3d0.netlify.app/#'
+      default: "https://zen-ramanujan-97e3d0.netlify.app/#",
     },
     route: {
       type: String,
-      default: '/'
+      default: "/",
     },
     theme: {
       type: String,
-      default: 'darkest'
+      default: "darkest",
     },
     gradient: {
       type: Number,
-      default: 0
+      default: 0,
     },
     height: {
       type: String,
-      default: "100%"
+      default: "100%",
     },
     width: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   computed: {
     src() {
@@ -67,33 +69,33 @@ export default {
       let srcHasTrailingSlash = /\/$/.test(this.url);
       let correctedPath = this.url;
       if (routeHasLeadingSlash && !srcHasTrailingSlash) {
-        correctedPath = `${this.url}${this.route}`
+        correctedPath = `${this.url}${this.route}`;
       } else if (!routeHasLeadingSlash && srcHasTrailingSlash) {
-        correctedPath = `${this.url}${this.route}`
+        correctedPath = `${this.url}${this.route}`;
       } else if (!routeHasLeadingSlash && !srcHasTrailingSlash) {
-        correctedPath = `${this.url}/${this.route}`
+        correctedPath = `${this.url}/${this.route}`;
       } else if (routeHasLeadingSlash && srcHasTrailingSlash) {
-        correctedPath = `${this.url}${this.route.replace(/^\//, '')}`
+        correctedPath = `${this.url}${this.route.replace(/^\//, "")}`;
       } else {
-        correctedPath = `${this.url}${this.route}`
-        if (this.debug) console.log(this.url, this.route, correctedPath)
+        correctedPath = `${this.url}${this.route}`;
+        if (this.debug) console.log(this.url, this.route, correctedPath);
       }
-      if (this.debug) console.log('Panelify launches at:', correctedPath)
-      return correctedPath
+      if (this.debug) console.log("Panelify launches at:", correctedPath);
+      return correctedPath;
     },
     realTheme() {
-      return this.theme == 'gradient' ? this.gradient : this.theme;
+      return this.theme == "gradient" ? this.gradient : this.theme;
     },
     isGradientApp() {
-      return /ILST|IDSN|PHXS/.test(this.app)
-    }
+      return /ILST|IDSN|PHXS/.test(this.app);
+    },
   },
   mounted() {
     // if (this.debug) console.log('Panelify src value at:', this.src)
   },
   components: {
-    panelify: require('./panelify').default,
-    "header-icon": require('./svg.vue').default,
+    panelify: require("./panelify").default,
+    "header-icon": require("./svg.vue").default,
   },
   methods: {
     getFooterStyle() {
@@ -104,7 +106,7 @@ export default {
           this.theme,
           this.gradient || null
         )};
-      `
+      `;
     },
     getWrapperStyle() {
       return `
@@ -122,9 +124,8 @@ export default {
         )};
       `;
     },
-    
-  }
-}
+  },
+};
 </script>
 
 <style>
@@ -133,11 +134,10 @@ export default {
   box-sizing: border-box;
   max-width: calc(100% - 20px);
   overflow: auto;
-  box-shadow: 0 1px 1px rgba(0,0,0,0.11), 
-              0 2px 2px rgba(0,0,0,0.11), 
-              0 4px 4px rgba(0,0,0,0.11);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.11), 0 2px 2px rgba(0, 0, 0, 0.11),
+    0 4px 4px rgba(0, 0, 0, 0.11);
   height: 100%;
-  }
+}
 
 .panel-header {
   background: var(--color-header-dark);

@@ -17,7 +17,11 @@
         </div>
       </div>
       <div class="block-panel-content">
+        <div style="padding: 10px;" v-if="$slots.default">
+          <slot />
+        </div>
         <iframe
+          v-else
           ref="panel"
           :src="this.src"
           frameborder="0"
@@ -108,7 +112,7 @@ export default {
         });
     themeController.active = true;
     const self = this;
-    if (this.src)
+    if (this.src && !this.$slots.default)
       this.$refs.panel.onload = () => {
         // self.updatePanelifyTheme();
       };
