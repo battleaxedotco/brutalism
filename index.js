@@ -28,23 +28,7 @@ const Toggle = require("./components/Toggle").default;
 const Wrapper = require("./components/Wrapper").default;
 const Autofocus = require("./components/directiveAutofocus.js").default;
 const FakeSpy = require("./utils/fakeSpy").default;
-const WrapNode = {
-  props: {
-    value: { type: [Object, Array], required: true },
-    tag: { type: String, default: "div" },
-    options: {
-      type: Object,
-      default: () => {},
-    },
-  },
-  render: function (h) {
-    let nodes = this.value;
-    if (!Array.isArray(nodes)) {
-      nodes = [nodes];
-    }
-    return h(this.tag, this.options, nodes);
-  },
-};
+const WrapNode = require("./components/wrapNode.js").default;
 require("./assets/material_icon_font/css/materialdesignicons.css");
 require("./assets/fonts.css");
 
