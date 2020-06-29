@@ -10,7 +10,7 @@
           !flat ? 'default' : '',
           { flat },
         ]"
-        @click="open = !open"
+        @click="toggleOpen"
       >
         <div
           :class="['select-contents', !flat ? 'default' : '', { flat }]"
@@ -52,9 +52,23 @@
               noIndicator ? 'no-indicator' : '',
             ]"
           >
+            <div
+              v-if="!noIndicator && $slots.indicator"
+              :style="{
+                visibility:
+                  item.active && !noIndicator && $slots.indicator && open
+                    ? 'visible'
+                    : 'hidden',
+                margin: !indicatorToRight
+                  ? '0px 3px 0px 0px'
+                  : '0px 0px 0px 3px',
+              }"
+            >
+              <slot name="indicator" v-if="$slots.indicator" />
+            </div>
             <Icon
               name="check"
-              v-if="!noIndicator"
+              v-if="!$slots.indicator && !noIndicator"
               size="16px"
               :style="`width: 20px; height: 16px; margin-top: -6px; padding: 0px ${
                 indicatorToRight ? '3px 0px 6px' : '3px 0px 3px'
@@ -290,6 +304,9 @@ export default {
     menu: [],
   }),
   methods: {
+    toggleOpen() {
+      if (this.menu.length) this.open = !this.open;
+    },
     init() {
       this.buildMenu();
     },
@@ -392,13 +409,17 @@ export default {
   display: flex;
   justify-content: flex-start;
   flex-wrap: nowrap;
-  align-items: baseline;
+  align-items: flex-start;
   box-sizing: border-box;
   position: absolute;
   left: 0px;
 }
 
 .select-label {
+  box-sizing: border-box;
+  height: 23px;
+  display: flex;
+  align-items: center;
   color: var(--color-text-label);
   margin-right: 6px;
 }
