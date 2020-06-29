@@ -427,7 +427,7 @@ export default {
   position: relative;
   box-sizing: border-box;
   /* border: 1.5px solid var(--color-dropdown-border); */
-  box-shadow: 1.5px 1.5px 4px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 1.5px 1.5px 1px 0px rgba(0, 0, 0, 0.6);
 }
 
 .select-menu.hidden {
