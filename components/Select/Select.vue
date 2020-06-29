@@ -7,11 +7,13 @@
           'select-container',
           open ? 'active' : inside && !open ? 'hover' : 'idle',
           override ? 'override' : '',
+          !flat ? 'default' : '',
+          { flat },
         ]"
         @click="open = !open"
       >
         <div
-          :class="['select-contents']"
+          :class="['select-contents', !flat ? 'default' : '', { flat }]"
           @mouseenter="inside = true"
           @mouseleave="inside = false"
         >
@@ -43,15 +45,21 @@
             @click="activeItem = item"
             @mouseenter="item.hover = true"
             @mouseleave="item.hover = false"
-            :class="['select-menu-item', item.active ? 'active' : 'idle']"
+            :class="[
+              'select-menu-item',
+              item.active ? 'active' : 'idle',
+              indicatorToRight ? 'reverse' : '',
+              noIndicator ? 'no-indicator' : '',
+            ]"
           >
             <Icon
               name="check"
-              v-if="item.active"
+              v-if="!noIndicator"
               size="16px"
-              style="width: 20px; height: 16px; margin-top: -6px;"
+              :style="`width: 20px; height: 16px; margin-top: -6px; padding: 0px ${
+                indicatorToRight ? '3px 0px 6px' : '3px 0px 3px'
+              }; visibility: ${item.active && open ? 'visible' : 'hidden'}`"
             />
-            <div v-else style="width: 20px;" />
             <span class="select-menu-item-label">
               {{ item.label || item.value }}
             </span>
@@ -83,20 +91,20 @@
                   item.active && !noIndicator && $slots.indicator && open
                     ? 'visible'
                     : 'hidden',
+                margin: !indicatorToRight
+                  ? '0px 3px 0px 0px'
+                  : '0px 0px 0px 3px',
               }"
             >
               <slot name="indicator" v-if="$slots.indicator" />
             </div>
             <Icon
               name="check"
-              v-if="!$slots.indicator && item.active && !noIndicator"
+              v-if="!$slots.indicator && !noIndicator"
               size="16px"
-              style="width: 20px; height: 16px; margin-top: -6px;"
-            />
-            <div
-              class="placehold-indicator"
-              v-else-if="!noIndicator && !$slots.indicator"
-              style="width: 20px;"
+              :style="`width: 20px; height: 16px; margin-top: -6px; padding: 0px ${
+                indicatorToRight ? '3px 0px 6px' : '3px 0px 3px'
+              }; visibility: ${item.active && open ? 'visible' : 'hidden'}`"
             />
             <Option v-if="item.model" :model="item.model" />
             <Option v-else-if="item.node" :node="item.node" />
@@ -151,6 +159,10 @@ export default {
       type: String,
       default: "",
     },
+    flat: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeItem: {
@@ -168,7 +180,7 @@ export default {
         });
         item.active = true;
         if (this.prefsId.length) {
-          console.log("Setting prefsid", item.index);
+          if (this.debug) console.log("Setting prefsid", item.index);
           this.setPrefsById(this.prefsId, item.index);
         }
       },
@@ -282,7 +294,6 @@ export default {
       this.buildMenu();
     },
     buildMenu() {
-      console.log("Building menu...");
       this.menu = [];
       let list = [];
       // If an array of standard objects or strings
@@ -331,12 +342,7 @@ export default {
           }
         });
         this.menu = list;
-        if (!this.value) {
-          this.activeIndex =
-            this.startIndex > -1 ? this.startIndex : this.active;
-        } else if (this.debug) {
-          console.log("Value:", this.value);
-        }
+        this.activeIndex = this.startIndex > -1 ? this.startIndex : this.active;
       }
       if (this.debug)
         console.log(
@@ -398,10 +404,13 @@ export default {
 }
 
 .select-container {
-  border: 1.5px solid var(--color-dropdown-border);
-  border-radius: 2px;
-  background: var(--color-dropdown);
   box-sizing: border-box;
+}
+
+.select-container.default {
+  border: 1.5px solid var(--color-dropdown-border);
+  background: var(--color-dropdown);
+  border-radius: 2px;
 }
 
 .select-container:hover:not(.active):not(.override) > .select-contents {
@@ -418,6 +427,7 @@ export default {
   position: relative;
   box-sizing: border-box;
   /* border: 1.5px solid var(--color-dropdown-border); */
+  box-shadow: 1.5px 1.5px 4px 0px rgba(0, 0, 0, 0.3);
 }
 
 .select-menu.hidden {
