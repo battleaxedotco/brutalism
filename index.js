@@ -21,12 +21,30 @@ const Panelify = require("./components/Panelify").default;
 const PanelInfo = require("./components/Panel-Info").default;
 const Panel = require("./components/Panel").default;
 const Row = require("./components/Row").default;
+const Select = require("./components/Select").default;
 const Tabs = require("./components/Tabs").default;
 const TextArea = require("./components/TextArea").default;
 const Toggle = require("./components/Toggle").default;
 const Wrapper = require("./components/Wrapper").default;
 const Autofocus = require("./components/directiveAutofocus.js").default;
 const FakeSpy = require("./utils/fakeSpy").default;
+const WrapNode = {
+  props: {
+    value: { type: [Object, Array], required: true },
+    tag: { type: String, default: "div" },
+    options: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  render: function (h) {
+    let nodes = this.value;
+    if (!Array.isArray(nodes)) {
+      nodes = [nodes];
+    }
+    return h(this.tag, this.options, nodes);
+  },
+};
 require("./assets/material_icon_font/css/materialdesignicons.css");
 require("./assets/fonts.css");
 
@@ -78,10 +96,12 @@ export {
   PanelInfo,
   Panel,
   Row,
+  Select,
   Tabs,
   TextArea,
   Toggle,
   Wrapper,
+  WrapNode,
   Autofocus,
   FakeSpy,
   Pan,
