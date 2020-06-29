@@ -23,7 +23,7 @@
           <div class="select-arrow">
             <svg
               width="18"
-              style="fill: var(--color-icon)"
+              style="fill: var(--color-icon);"
               height="18"
               viewBox="0 0 24 24"
             >
@@ -51,7 +51,7 @@
               size="16px"
               style="width: 20px; height: 16px; margin-top: -6px;"
             />
-            <div v-else style="width: 20px" />
+            <div v-else style="width: 20px;" />
             <span class="select-menu-item-label">
               {{ item.label || item.value }}
             </span>
@@ -147,6 +147,10 @@ export default {
       type: String,
       default: "",
     },
+    prefsId: {
+      type: String,
+      default: "",
+    },
   },
   computed: {
     activeItem: {
@@ -163,8 +167,10 @@ export default {
           entry.active = false;
         });
         item.active = true;
-        console.log("Active changed...", this.inside, this.open);
-        // this.inside = this.open = false;
+        if (this.prefsId.length) {
+          console.log("Setting prefsid", item.index);
+          this.setPrefsById(this.prefsId, item.index);
+        }
       },
     },
     activeIndex: {
@@ -172,7 +178,7 @@ export default {
         if (!this.menu || !this.menu.length) return -1;
       },
       set(val) {
-        console.log("Setting index to:", val);
+        if (this.debug) console.log("Setting index to:", val);
         // if (val > 0 || val > this.menu.length + 1) return -1;
         if (val > -1 && val < this.menu.length) {
           let target = this.menu[val];
@@ -240,8 +246,20 @@ export default {
       console.log(this.$slots);
     }
     const self = this;
+    if (this.prefsId.length) {
+      this.checkLocalPrefs();
+      let temp = this.checkPrefsFor(this.prefsId);
+      if (temp === null) {
+        // this.realState = this.state;
+      } else {
+        console.log("Prefsid found:", temp.value);
+        this.startIndex = temp.value;
+        this.$emit("prefs", temp);
+      }
+    }
     this.init();
     this.isMounted = true;
+
     if (this.debug) {
       console.log("Slots:", this.$slots);
       setTimeout(() => {
@@ -249,11 +267,14 @@ export default {
       }, 2000);
     }
   },
+  mixins: [require("../mixinPrefs").default],
   data: () => ({
     open: false,
     inside: false,
     override: false,
     isMounted: false,
+    startIndex: -1,
+    type: "select",
     menu: [],
   }),
   methods: {
@@ -283,7 +304,7 @@ export default {
           list.push(item);
         });
         this.menu = list;
-        this.activeIndex = this.active;
+        this.activeIndex = this.startIndex > -1 ? this.startIndex : this.active;
       } else if (this.$slots.default) {
         // Else if a collection of vNodes or Slots
         this.$slots.default.forEach((slot, index) => {
@@ -311,15 +332,17 @@ export default {
         });
         this.menu = list;
         if (!this.value) {
-          this.activeIndex = this.active;
-        } else {
+          this.activeIndex =
+            this.startIndex > -1 ? this.startIndex : this.active;
+        } else if (this.debug) {
           console.log("Value:", this.value);
         }
       }
-      console.log(
-        "Active is currently:",
-        this.activeItem.label || this.activeItem.value
-      );
+      if (this.debug)
+        console.log(
+          "Active is currently:",
+          this.activeItem.label || this.activeItem.value
+        );
     },
     getMenuStyle() {
       let style = "z-index: 200 !important;";
