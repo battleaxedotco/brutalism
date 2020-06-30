@@ -436,6 +436,10 @@ export default {
   box-sizing: border-box;
 }
 
+.select-container.flat {
+  margin-top: 1.5px;
+}
+
 .select-container.default {
   border: 1.5px solid var(--color-dropdown-border);
   background: var(--color-dropdown);
