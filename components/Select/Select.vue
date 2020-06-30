@@ -177,6 +177,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    top: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     activeItem: {
@@ -193,6 +197,7 @@ export default {
           entry.active = false;
         });
         item.active = true;
+        // this.$emit('input', item.value)
         if (this.prefsId.length) {
           if (this.debug) console.log("Setting prefsid", item.index);
           this.setPrefsById(this.prefsId, item.index);
@@ -258,6 +263,9 @@ export default {
     },
     value(val) {
       this.activeValue = val;
+    },
+    activeValue(val) {
+      this.$emit("input", val);
     },
   },
   mounted() {
@@ -369,7 +377,7 @@ export default {
     },
     getMenuStyle() {
       let style = "z-index: 200 !important;";
-      if (this.determineIfUpOrDown()) style += "top: 16px;";
+      if (this.top) style += "top: 16px;";
       else style += "bottom: 16px;";
       return style;
     },
