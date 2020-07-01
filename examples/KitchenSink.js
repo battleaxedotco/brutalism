@@ -1,42 +1,37 @@
-import Vue from "vue";
-import App from "./App.vue";
-import router from "./router";
-
-Vue.config.productionTip = false;
-Vue.config.devtools = false;
-
+// Brutalism library support
 import {
-  Alert,
   Anno,
+  Alert,
   ButtonGroup,
   Button,
   Col,
-  ColorPicker,
   Divider,
   Dropdown,
   Dropzone,
   FileInput,
-  FilePicker,
   Fold,
   Footer,
+  Link,
   Grid,
   Icon,
   InputScroll,
   Input,
-  Link,
   Menus,
   PanelInfo,
   Panel,
-  Panelify,
   Row,
+  Select,
   Tabs,
   TextArea,
   Toggle,
   Wrapper,
+  WrapNode,
+  FilePicker,
+  ColorPicker,
 } from "brutalism";
 
-Vue.component("Alert", Alert);
 Vue.component("Anno", Anno);
+Vue.component("Alert", Alert);
 Vue.component("Button-Group", ButtonGroup);
 Vue.component("Button", Button);
 Vue.component("Col", Col);
@@ -54,16 +49,12 @@ Vue.component("Input-Scroll", InputScroll);
 Vue.component("Input", Input);
 Vue.component("Link", Link);
 Vue.component("Menus", Menus);
-Vue.component("Panelify", Panel);
 Vue.component("Panel-Info", PanelInfo);
 Vue.component("Panel", Panel);
 Vue.component("Row", Row);
+Vue.component("Select", Select);
 Vue.component("Tabs", Tabs);
 Vue.component("TextArea", TextArea);
 Vue.component("Toggle", Toggle);
 Vue.component("Wrapper", Wrapper);
-
-new Vue({
-  router,
-  render: (h) => h(App),
-}).$mount("#app");
+Vue.component("wrap-node", WrapNode);

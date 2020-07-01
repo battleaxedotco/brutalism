@@ -1,6 +1,6 @@
 <template>
   <div :class="['brutalism-select-wrapper', { disabled }]">
-    <div class="brutalism-position-offset">
+    <div :class="['brutalism-position-offset', { labelOnTop }]">
       <div v-if="label.length" class="select-label">{{ label }}</div>
       <div
         :class="[
@@ -13,7 +13,12 @@
         @click="toggleOpen"
       >
         <div
-          :class="['select-contents', !flat ? 'default' : '', { flat }]"
+          :class="[
+            'select-contents',
+            !flat ? 'default' : '',
+            appName == 'PHXS' ? 'PHXS' : '',
+            { flat },
+          ]"
           @mouseenter="inside = true"
           @mouseleave="inside = false"
         >
@@ -50,6 +55,7 @@
               item.active ? 'active' : 'idle',
               indicatorToRight ? 'reverse' : '',
               noIndicator ? 'no-indicator' : '',
+              appName == 'PHXS' ? 'PHXS' : '',
             ]"
           >
             <div
@@ -74,7 +80,12 @@
                 indicatorToRight ? '3px 0px 6px' : '3px 0px 3px'
               }; visibility: ${item.active && open ? 'visible' : 'hidden'}`"
             />
-            <span class="select-menu-item-label">
+            <span
+              :class="[
+                'select-menu-item-label',
+                appName == 'PHXS' ? 'PHXS' : '',
+              ]"
+            >
               {{ item.label || item.value }}
             </span>
           </li>
@@ -96,6 +107,7 @@
               item.active ? 'active' : 'idle',
               indicatorToRight ? 'reverse' : '',
               noIndicator ? 'no-indicator' : '',
+              appName == 'PHXS' ? 'PHXS' : '',
             ]"
           >
             <div
@@ -130,6 +142,8 @@
 </template>
 
 <script>
+import spy from "cep-spy";
+
 export default {
   components: {
     Option: require("./Option.vue").default,
@@ -181,8 +195,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    labelOnTop: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    appName() {
+      return spy.appName;
+    },
     activeItem: {
       get() {
         if (!this.menu || !this.menu.length) return { label: "none" };
@@ -415,12 +436,16 @@ export default {
 
 .brutalism-position-offset {
   display: flex;
+  box-sizing: border-box;
   justify-content: flex-start;
   flex-wrap: nowrap;
   align-items: flex-start;
   box-sizing: border-box;
   position: absolute;
   left: 0px;
+}
+.brutalism-position-offset.labelOnTop {
+  flex-direction: column;
 }
 
 .select-label {
@@ -436,19 +461,14 @@ export default {
   box-sizing: border-box;
 }
 
+.select-container:not(.active) {
+  overflow: hidden;
+}
+
 .select-container.flat {
   margin-top: 1.5px;
 }
 
-.select-container.default {
-  border: 1.5px solid var(--color-dropdown-border);
-  background: var(--color-dropdown);
-  border-radius: 2px;
-}
-
-.select-container:hover:not(.active):not(.override) > .select-contents {
-  background: var(--color-dropdown-hover);
-}
 .select-arrow {
   box-sizing: border-box;
   margin-left: 6px;
@@ -459,12 +479,13 @@ export default {
   top: 0px;
   position: relative;
   box-sizing: border-box;
-  /* border: 1.5px solid var(--color-dropdown-border); */
+  border-width: 0px 1.5px 1.5px 1.5px;
+  border-color: var(--color-dropdown-border);
+  border-style: solid;
   box-shadow: 1.5px 1.5px 1px 0px rgba(0, 0, 0, 0.6);
 }
 
 .select-menu.hidden {
-  border-width: 0px;
   height: 0px;
   visibility: hidden;
 }
@@ -481,6 +502,17 @@ export default {
   align-items: center;
   max-height: 20px;
 }
+
+.select-contents.default {
+  border: 1.5px solid var(--color-dropdown-border);
+  background: var(--color-dropdown);
+  border-radius: 2px;
+}
+
+.select-container:hover:not(.active):not(.override) > .select-contents {
+  background: var(--color-dropdown-hover);
+}
+
 ul {
   padding-left: 0px;
   margin: 0px;
@@ -498,6 +530,10 @@ ul {
   background-color: var(--color-dropdown-item);
 }
 
+.select-menu-item.PHXS {
+  color: #000;
+}
+
 .select-menu-item.no-indicator {
   padding: 2px 20px 2px 6px;
 }
@@ -511,8 +547,12 @@ ul {
 .select-menu-item:hover {
   background-color: var(--color-dropdown-item-hover);
 }
+.select-menu-item.PHXS:hover {
+  background-color: var(--color-dropdown-item-hover);
+  color: #fff;
+}
 
-.select-menu-item.active {
+.select-menu-item.active:not(.PHXS) {
   color: var(--color-selection);
 }
 
