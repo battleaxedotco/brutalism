@@ -75,8 +75,8 @@ bombino
 import { Panel, Menus } from "brutalism";
 
 // Assign them as global components to the Vue instance
-Vue.use("Panel", Panel);
-Vue.use("Menus", Menus);
+Vue.component("Panel", Panel);
+Vue.component("Menus", Menus);
 
 // Be sure to do so before instantiating Vue:
 new Vue({
