@@ -7,29 +7,33 @@
 
 <script>
 import { RuntimeTemplateCompiler } from "vue-runtime-template-compiler";
-
 export default {
   components: {
     RuntimeTemplateCompiler,
+    "wrap-node": require("../wrapNode").default
   },
   props: {
     model: {
       type: String,
-      default: "",
+      default: ""
     },
     node: {
       type: Object,
       default: () => {
         return {};
-      },
-    },
+      }
+    }
   },
   mounted() {
     // if (this.node) console.log(this.node);
     // else if (this.model.length) {
     // }
-  },
+  }
 };
 </script>
 
-<style></style>
+<style>
+.option-wrapper {
+  padding-right: 3px;
+}
+</style>

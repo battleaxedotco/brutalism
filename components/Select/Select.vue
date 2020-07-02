@@ -1,5 +1,5 @@
 <template>
-  <div :class="['brutalism-select-wrapper', { disabled }]">
+  <div :class="['brutalism-select-wrapper', { disabled, labelOnTop }]">
     <div :class="['brutalism-position-offset', { labelOnTop }]">
       <div v-if="label.length" class="select-label">{{ label }}</div>
       <div
@@ -22,18 +22,16 @@
           @mouseenter="inside = true"
           @mouseleave="inside = false"
         >
-          <div class="select-value">
+          <div class="select-value" v-if="!prompt.length">
             <Option v-if="activeItem.model" :model="activeItem.model" />
             <Option v-else-if="activeItem.node" :node="activeItem.node" />
             <div v-else>{{ activeItem.label }}</div>
           </div>
+          <div class="select-value" v-else>
+            <div>{{prompt}}</div>
+          </div>
           <div class="select-arrow">
-            <svg
-              width="18"
-              style="fill: var(--color-icon);"
-              height="18"
-              viewBox="0 0 24 24"
-            >
+            <svg width="18" style="fill: var(--color-icon);" height="18" viewBox="0 0 24 24">
               <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
             </svg>
           </div>
@@ -59,7 +57,7 @@
             ]"
           >
             <div
-              v-if="!noIndicator && $slots.indicator"
+              v-if="!noIndicator && $slots.indicator && !prompt.length"
               :style="{
                 visibility:
                   item.active && !noIndicator && $slots.indicator && open
@@ -74,7 +72,7 @@
             </div>
             <Icon
               name="check"
-              v-if="!$slots.indicator && !noIndicator"
+              v-if="!$slots.indicator && !noIndicator && !prompt.length"
               size="16px"
               :style="`width: 20px; height: 16px; margin-top: -6px; padding: 0px ${
                 indicatorToRight ? '3px 0px 6px' : '3px 0px 3px'
@@ -85,9 +83,7 @@
                 'select-menu-item-label',
                 appName == 'PHXS' ? 'PHXS' : '',
               ]"
-            >
-              {{ item.label || item.value }}
-            </span>
+            >{{ item.label || item.value }}</span>
           </li>
         </ul>
         <ul
@@ -108,10 +104,11 @@
               indicatorToRight ? 'reverse' : '',
               noIndicator ? 'no-indicator' : '',
               appName == 'PHXS' ? 'PHXS' : '',
+              prompt.length ? 'prompted' : ''
             ]"
           >
             <div
-              v-if="!noIndicator"
+              v-if="!noIndicator && $slots.indicator && !prompt.length"
               :style="{
                 visibility:
                   item.active && !noIndicator && $slots.indicator && open
@@ -120,13 +117,14 @@
                 margin: !indicatorToRight
                   ? '0px 3px 0px 0px'
                   : '0px 0px 0px 3px',
+                
               }"
             >
               <slot name="indicator" v-if="$slots.indicator" />
             </div>
             <Icon
               name="check"
-              v-if="!$slots.indicator && !noIndicator"
+              v-if="!$slots.indicator && !noIndicator && !prompt.length"
               size="16px"
               :style="`width: 20px; height: 16px; margin-top: -6px; padding: 0px ${
                 indicatorToRight ? '3px 0px 6px' : '3px 0px 3px'
@@ -146,59 +144,63 @@ import spy from "cep-spy";
 
 export default {
   components: {
-    Option: require("./Option.vue").default,
+    Option: require("./Option.vue").default
   },
   props: {
     label: {
       type: String,
-      default: "",
+      default: ""
     },
     debug: {
       type: Boolean,
-      default: false,
+      default: false
     },
     items: {
       type: Array,
       default: () => {
         return [];
-      },
+      }
     },
     noIndicator: {
       type: Boolean,
-      default: false,
+      default: false
     },
     indicatorToRight: {
       type: Boolean,
-      default: false,
+      default: false
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     active: {
       type: Number,
-      default: 0,
+      default: 0
     },
     value: {
       type: String,
-      default: "",
+      default: ""
     },
     prefsId: {
       type: String,
-      default: "",
+      default: ""
     },
     flat: {
       type: Boolean,
-      default: false,
+      default: false
     },
     top: {
       type: Boolean,
-      default: false,
+      default: false
     },
     labelOnTop: {
       type: Boolean,
-      default: false,
+      default: false
     },
+    prompt: {
+      type: String,
+      default: ""
+    }
   },
   computed: {
     appName() {
@@ -208,13 +210,13 @@ export default {
       get() {
         if (!this.menu || !this.menu.length) return { label: "none" };
         return (
-          this.menu.find((item) => {
+          this.menu.find(item => {
             return item.active;
           }) || this.menu[0]
         );
       },
       set(item) {
-        this.menu.forEach((entry) => {
+        this.menu.forEach(entry => {
           entry.active = false;
         });
         item.active = true;
@@ -223,7 +225,7 @@ export default {
           if (this.debug) console.log("Setting prefsid", item.index);
           this.setPrefsById(this.prefsId, item.index);
         }
-      },
+      }
     },
     activeIndex: {
       get() {
@@ -241,14 +243,14 @@ export default {
         } else {
           return null;
         }
-      },
+      }
     },
     activeValue: {
       get() {
         return this.activeItem.value;
       },
       set(val) {
-        let target = this.menu.find((item) => {
+        let target = this.menu.find(item => {
           return item.value == val;
         });
         if (target) {
@@ -257,8 +259,8 @@ export default {
         } else {
           console.log("No item found with query value of:", val);
         }
-      },
-    },
+      }
+    }
   },
   watch: {
     open(val) {
@@ -287,13 +289,13 @@ export default {
     },
     activeValue(val) {
       this.$emit("input", val);
-    },
+    }
   },
   mounted() {
     window.addEventListener("click", () => {
       if (!this.inside) this.open = false;
     });
-    window.addEventListener("mousemove", (evt) => {
+    window.addEventListener("mousemove", evt => {
       if (this.override) this.override = false;
     });
     if (this.debug) {
@@ -330,7 +332,7 @@ export default {
     isMounted: false,
     startIndex: -1,
     type: "select",
-    menu: [],
+    menu: []
   }),
   methods: {
     toggleOpen() {
@@ -348,7 +350,7 @@ export default {
           let item = {
             index: index,
             active: false,
-            hover: false,
+            hover: false
           };
 
           if (/string/i.test(typeof entry)) {
@@ -361,7 +363,9 @@ export default {
           list.push(item);
         });
         this.menu = list;
-        this.activeIndex = this.startIndex > -1 ? this.startIndex : this.active;
+        if (!this.prompt.length)
+          this.activeIndex =
+            this.startIndex > -1 ? this.startIndex : this.active;
       } else if (this.$slots.default) {
         // Else if a collection of vNodes or Slots
         this.$slots.default.forEach((slot, index) => {
@@ -369,7 +373,7 @@ export default {
             value: slot.data.attrs.value,
             index: index,
             active: false,
-            hover: false,
+            hover: false
           };
           if (slot.children) {
             if (!/vue-component/i.test(slot.children[0].tag)) {
@@ -377,7 +381,7 @@ export default {
             } else {
               let str = `<${slot.children[0].componentOptions.tag} `;
               Object.keys(slot.children[0].componentOptions.propsData).forEach(
-                (key) => {
+                key => {
                   str += `${key}="${slot.children[0].componentOptions.propsData[key]}"`;
                 }
               );
@@ -388,7 +392,9 @@ export default {
           }
         });
         this.menu = list;
-        this.activeIndex = this.startIndex > -1 ? this.startIndex : this.active;
+        if (!this.prompt.length)
+          this.activeIndex =
+            this.startIndex > -1 ? this.startIndex : this.active;
       }
       if (this.debug)
         console.log(
@@ -418,8 +424,8 @@ export default {
         : this.$el.getBoundingClientRect().top -
             window.innerHeight +
             window.innerHeight;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -432,6 +438,10 @@ export default {
   box-sizing: border-box;
   position: relative;
   min-height: 25px;
+}
+
+.brutalism-select-wrapper.labelOnTop {
+  min-height: 48px;
 }
 
 .brutalism-position-offset {
@@ -453,7 +463,7 @@ export default {
   height: 23px;
   display: flex;
   align-items: center;
-  color: var(--color-text-label);
+  color: var(--color-icon);
   margin-right: 6px;
 }
 
@@ -479,10 +489,12 @@ export default {
   top: 0px;
   position: relative;
   box-sizing: border-box;
-  border-width: 0px 1.5px 1.5px 1.5px;
   border-color: var(--color-dropdown-border);
   border-style: solid;
-  box-shadow: 1.5px 1.5px 1px 0px rgba(0, 0, 0, 0.6);
+  box-shadow: 1.5px 1.5px 1px 0px rgba(0, 0, 0, 0.2);
+  border-width: 0px 1px 1px 1px;
+  /* border-width: 0px 1.5px 1.5px 1.5px;
+  box-shadow: 1.5px 1.5px 1px 0px rgba(0, 0, 0, 0.6); */
 }
 
 .select-menu.hidden {
@@ -495,18 +507,21 @@ export default {
 }
 
 .select-contents {
-  padding: 1px 4px;
+  padding: 2px 4px;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-height: 20px;
 }
 
 .select-contents.default {
   border: 1.5px solid var(--color-dropdown-border);
   background: var(--color-dropdown);
   border-radius: 2px;
+}
+
+.select-container.active > .select-contents.default.PHXS {
+  border-color: var(--color-dropdown-item-hover);
 }
 
 .select-container:hover:not(.active):not(.override) > .select-contents {
@@ -519,8 +534,8 @@ ul {
 }
 
 .select-menu-item {
-  padding: 2px 10px 2px 2px;
-  font-size: 12px;
+  font-size: 11px;
+  padding: 3px 0;
   cursor: default;
   list-style-type: none;
   display: flex;
@@ -528,6 +543,10 @@ ul {
   z-index: 200 !important;
   align-items: center;
   background-color: var(--color-dropdown-item);
+}
+
+.select-menu-item.prompted {
+  padding: 3px;
 }
 
 .select-menu-item.PHXS {
@@ -539,7 +558,7 @@ ul {
 }
 
 .select-menu-item.reverse {
-  padding: 2px 2px 2px 10px;
+  padding: 3px 0px 3px 3px;
   flex-direction: row-reverse;
   justify-content: space-between;
 }
