@@ -20,6 +20,7 @@ const Menus = require("./components/Menus").default;
 const Panelify = require("./components/Panelify").default;
 const PanelInfo = require("./components/Panel-Info").default;
 const Panel = require("./components/Panel").default;
+const ProgressBar = require("./components/Progress-Bar").default;
 const Row = require("./components/Row").default;
 const Select = require("./components/Select").default;
 const Tabs = require("./components/Tabs").default;
@@ -79,6 +80,7 @@ export {
   Panelify,
   PanelInfo,
   Panel,
+  ProgressBar,
   Row,
   Select,
   Tabs,
