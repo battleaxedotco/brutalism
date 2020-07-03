@@ -37,7 +37,7 @@
               {
                 fontSize: size + 'px',
                 color:
-                  hasFocus && !filled && !isPanning
+                  hasFocus && !filled && !flat && !isPanning
                     ? 'var(--color-input-focus-text)'
                     : isPanning && filled
                     ? 'var(--default-color) !important'

@@ -30,6 +30,9 @@ const Wrapper = require("./components/Wrapper").default;
 const Autofocus = require("./components/directiveAutofocus.js").default;
 const FakeSpy = require("./utils/fakeSpy").default;
 const WrapNode = require("./components/wrapNode.js").default;
+const RotationControl = require("./components/Rotation-Control").default;
+const SliderControl = require("./components/Slider-Control").default;
+
 require("./assets/material_icon_font/css/materialdesignicons.css");
 require("./assets/fonts.css");
 
@@ -81,8 +84,10 @@ export {
   PanelInfo,
   Panel,
   ProgressBar,
+  RotationControl,
   Row,
   Select,
+  SliderControl,
   Tabs,
   TextArea,
   Toggle,

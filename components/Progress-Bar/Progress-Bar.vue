@@ -1,9 +1,13 @@
 <template>
+  <!-- 
+    Issues:
+      - I want the bar to pop up / down BEFORE the width is adjusted
+  -->
   <div
     class="progress-bar-wrapper"
     :style="{
       top: realTop,
-      opacity: value >= 100 ? 1 : 1
+      opacity: value >= 100 ? 1 : 1,
     }"
   >
     <div class="progress-bar-container">
@@ -28,36 +32,36 @@ export default {
   props: {
     percent: {
       type: Number,
-      default: 0
+      default: 0,
     },
     delay: {
       type: String,
-      default: "20ms"
+      default: "20ms",
     },
     duration: {
       type: String,
-      default: "120ms"
+      default: "120ms",
     },
     timing: {
       type: String,
-      default: "var(--quad)"
+      default: "var(--quad)",
     },
     size: {
       type: Number,
-      default: 2
+      default: 2,
     },
     color: {
       type: String,
-      default: ""
+      default: "",
     },
     value: {
       type: Number,
-      default: 0
+      default: 0,
     },
     debug: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   computed: {
     realPercent() {
@@ -78,12 +82,12 @@ export default {
           .replace(/(--color-|color-)/, "")
           .replace(/\)$/, "")})`;
       }
-    }
+    },
   },
   data: () => ({
     realValue: 0,
     realTop: 0,
-    locked: false
+    locked: false,
   }),
   mounted() {
     this.realValue = this.percent || this.value;
@@ -122,7 +126,7 @@ export default {
           }, 520);
         }
       this.$emit("input", val);
-    }
+    },
   },
   methods: {
     getRealTop() {
@@ -145,8 +149,8 @@ export default {
       this.$emit("reset");
       this.realValue = 0;
       this.locked = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
