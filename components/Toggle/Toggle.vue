@@ -19,72 +19,72 @@ export default {
   props: {
     state: {
       type: Boolean,
-      default: false,
+      default: false
     },
     label: {
       type: String,
-      default: "",
+      default: ""
     },
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     },
     readOnly: {
       type: Boolean,
-      default: false,
+      default: false
     },
     onIcon: {
       type: String,
-      default: "checkbox-intermediate",
+      default: "checkbox-intermediate"
     },
     offIcon: {
       type: String,
-      default: "checkbox-blank-outline",
+      default: "checkbox-blank-outline"
     },
     custom: {
       type: Boolean,
-      default: false,
+      default: false
     },
     size: {
       type: String,
-      default: "18px",
+      default: "18px"
     },
     color: {
       type: String,
-      default: "",
+      default: ""
     },
     centered: {
       type: Boolean,
-      default: false,
+      default: false
     },
     checkbox: {
       type: Boolean,
-      default: false,
+      default: false
     },
     radio: {
       type: Boolean,
-      default: false,
+      default: false
     },
     switch: {
       type: Boolean,
-      default: false,
+      default: false
     },
     debug: {
       type: Boolean,
-      default: false,
+      default: false
     },
     value: {
       type: Boolean,
-      default: false,
+      default: false
     },
     prefsId: {
       type: String,
-      default: "",
+      default: ""
     },
     readOnly: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   mixins: [require("../mixinPrefs").default],
   mounted() {
@@ -99,7 +99,7 @@ export default {
       }
     }
   },
-  data: function () {
+  data: function() {
     return {
       type: "toggle",
       realState: this.state,
@@ -107,19 +107,19 @@ export default {
         {
           name: "radio",
           onIcon: "radiobox-marked",
-          offIcon: "radiobox-blank",
+          offIcon: "radiobox-blank"
         },
         {
           name: "checkbox",
           onIcon: "checkbox-intermediate",
-          offIcon: "checkbox-blank-outline",
+          offIcon: "checkbox-blank-outline"
         },
         {
           name: "switch",
           onIcon: "toggle-switch",
-          offIcon: "toggle-switch-off",
-        },
-      ],
+          offIcon: "toggle-switch-off"
+        }
+      ]
     };
   },
   computed: {
@@ -127,17 +127,18 @@ export default {
       return this.$slots.default;
     },
     activeIcon() {
-      let activeSet = this.sets.find((item) => {
+      let activeSet = this.sets.find(item => {
         return this[item.name];
       });
-      return !activeSet
-        ? this.realState
+      let result = !activeSet
+        ? this.realState || this.value
           ? this.onIcon
           : this.offIcon
-        : this.realState
+        : this.realState || this.value
         ? activeSet.onIcon
         : activeSet.offIcon;
-    },
+      return result;
+    }
   },
   watch: {
     state(val) {
@@ -147,7 +148,7 @@ export default {
     value(val) {
       this.realState = val;
       this.$emit("input", val);
-    },
+    }
   },
   methods: {
     updateState() {
@@ -159,8 +160,8 @@ export default {
       if (this.prefsId.length) {
         this.setPrefsById(this.prefsId, this.realState);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
