@@ -1,6 +1,6 @@
 {
   "name": "brutalism",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Battleaxe's component library for Adobe CEP panels",
   "main": "index.js",
   "scripts": {
