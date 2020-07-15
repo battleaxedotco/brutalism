@@ -2,7 +2,7 @@
   <!-- 
     This is getting too obtuse with color models. Should be revamped so that models
     can accept either 'red' or 'r', Object.keys iterate with first letter.toLowerCase() to use
-    
+
     Not sure how to implement LAB, HSB, Spot or Gradient yet
    -->
   <div :class="['color-picker-wrapper', { disabled, readOnly }]">
@@ -15,9 +15,7 @@
           class="color-picker-swatch-content"
           :style="{
             borderColor: this.active ? 'var(--color-selection)' : '#fff',
-            background: this.styleString.length
-              ? this.styleString
-              : 'transparent',
+            background: this.styleString,
           }"
         />
       </div>
@@ -255,10 +253,14 @@ export default {
       return found ? found : possibles[0];
     },
     styleString() {
-      if (!this.value || !this.value.length) return "transparent";
+      // if (this.debug) console.log(this.value, this.realModel)
+      // if (this.realModel == 'hex' && !this.value.length)
+      if (/string/i.test(typeof this.value) && !this.realValue.length)
+        return "transparent";
+      // if (this.debug) console.log('PASSED')
       if (this.realModel == "cmyk") {
         let result = this.cmykToHex();
-        // console.log(result)
+        // if (this.debug) console.log(result)
         return result;
       } else if (this.realModel == "hex") {
         return this.realValue.length ? this.realValue : "transparent";
@@ -270,12 +272,17 @@ export default {
     },
     valueAsString() {
       let str = this.realModel == "hex" ? this.styleString : "";
+      let temp = {};
+      Object.keys(this.activeModel).forEach((key) => {
+        if (key !== "type") temp[key] = this.activeModel[key];
+      });
       if (this.realModel !== "hex") {
         str = `${this.realModel.toLowerCase()}(`;
-        Object.keys(this.activeModel).forEach((key, index) => {
-          str += `${this.activeModel[key]}${
-            index !== Object.keys(this.activeModel).length - 1 ? ", " : ""
-          }`;
+        Object.keys(temp).forEach((key, index) => {
+          if (key !== "type")
+            str += `${temp[key]}${
+              index !== Object.keys(temp).length - 1 ? ", " : ""
+            }`;
         });
         str += ")";
       }
@@ -318,21 +325,24 @@ export default {
       if (this.shouldUpdateVModelObject) {
         this.$emit("update", this.activeModel);
         this.$emit("input", this.activeModel);
+        // if (this.debug) console.log('STRING:', val, this.realModel)
       }
     },
     realValue(value) {
+      // if (this.debug) console.log('REAL VAL:', value)
       if (this.prefsId.length) this.setPrefsById(this.prefsId, value);
       this.$emit("update", value);
     },
-    realModel(value, lastVal) {
-      console.log(`SHOULD CONVERT FROM ${lastVal} > ${value}`);
+    activeModel(value) {
+      if (this.debug) console.log("ACTIVE MODEL:", value);
     },
     value(val) {
+      // if (this.debug) console.log(val, this.realModel)
       if (val) {
         this.lastModified = "value";
         if (this.realModel == "hex") this.inputval = val.replace(/^#/, "");
         else {
-          console.log("MODEL NOT SET:", val);
+          if (this.debug) console.log("MODEL NOT SET:", val);
         }
       }
     },
@@ -341,7 +351,7 @@ export default {
         this.lastModified = "val";
         if (this.realModel == "hex") this.inputval = val.replace(/^#/, "");
         else {
-          console.log("VAL NOT SET:", val);
+          if (this.debug) console.log("VAL NOT SET:", val);
         }
       }
     },
@@ -350,7 +360,7 @@ export default {
         if (!val.length) this.realValue = "";
         else this.updateValue(val);
       } else {
-        console.log("INPUTVAL NOT SET:", val);
+        if (this.debug) console.log("INPUTVAL NOT SET:", val);
       }
     },
   },
@@ -371,6 +381,18 @@ export default {
     }
   },
   methods: {
+    hexToRgb() {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
+        this.styleString
+      );
+      return result
+        ? {
+            red: parseInt(result[1], 16),
+            green: parseInt(result[2], 16),
+            blue: parseInt(result[3], 16),
+          }
+        : null;
+    },
     cmykToHex() {
       let c = this.model.cmyk.cyan / 100,
         m = this.model.cmyk.magenta / 100,
@@ -389,11 +411,12 @@ export default {
       return "#" + padZero(color.toString(16));
     },
     updateValue(value) {
-      if (this.realModel == "hex" && this.validateAsHexString(value)) {
-        this.realValue = `#${value}`;
-      } else {
-        console.log("Update?");
-      }
+      // if (this.debug) console.log(value)
+      // if (this.realModel == 'hex' && this.validateAsHexString(value)) {
+      this.realValue = `#${value}`;
+      // } else {
+      //   if (this.debug) console.log('Update?', this.realModel, value)
+      // }
       // this.value = value;
     },
     validateAsHexString(value) {
@@ -407,7 +430,8 @@ export default {
     },
     async promptColorPicker() {
       if (isBrowser) {
-        console.error("Cannot launch Adobe Color-Picker in browser.");
+        if (this.debug)
+          console.error("Cannot launch Adobe Color-Picker in browser.");
         return null;
       }
       this.active = true;
@@ -498,20 +522,23 @@ export default {
     },
     async promptILST() {
       let prev = {};
-      Object.assign(prev, this.activeModel);
-      let inputColor = /rgb|hex/i.test(this.realModel)
-        ? `var temp = new RGBColor();
+      if (!/hex/i.test(this.realModel)) Object.assign(prev, this.activeModel);
+      else {
+        let temp = this.hexToRgb();
+        Object.assign(prev, temp);
+      }
+      let inputColor;
+      if (/rgb|hex/i.test(this.realModel))
+        inputColor = `var temp = new RGBColor();
           temp.red = ${prev.red || 127};
           temp.green = ${prev.green || 127};
-          temp.blue = ${prev.blue || 127};`
-        : /cmyk/i.test(this.realModel)
-        ? `var temp = new CMYKColor();
+          temp.blue = ${prev.blue || 127};`;
+      else if (/cmyk/i.test(this.realModel))
+        inputColor = `var temp = new CMYKColor();
           temp.cyan = ${prev.cyan || 0};
           temp.magenta = ${prev.magenta || 0};
           temp.yellow = ${prev.yellow || 0};
-          temp.black = ${prev.black || 0}`
-        : "return null;";
-
+          temp.black = ${prev.black || 0}`;
       let outputColor = /rgb|hex/i.test(this.realModel)
         ? `{
             type: "RGB",
@@ -544,7 +571,7 @@ export default {
       }
     },
     async promptLegacy() {
-      console.log("Prompt Legacy");
+      if (this.debug) console.log("Prompt Legacy");
     },
     rgbToHex(rgbArray) {
       if (this.debug) console.log(rgbArray);
@@ -556,7 +583,7 @@ export default {
         ) {
           temp = [rgbArray.red, rgbArray.green, rgbArray.blue];
         } else {
-          console.log("Unknown format:", rgbArray);
+          if (this.debug) console.log("Unknown format:", rgbArray);
           return null;
         }
       } else temp = rgbArray;
