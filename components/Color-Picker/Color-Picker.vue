@@ -1,4 +1,10 @@
 <template>
+  <!-- 
+    This is getting too obtuse with color models. Should be revamped so that models
+    can accept either 'red' or 'r', Object.keys iterate with first letter.toLowerCase() to use
+    
+    Not sure how to implement LAB, HSB, Spot or Gradient yet
+   -->
   <div :class="['color-picker-wrapper', { disabled, readOnly }]">
     <div @click="promptColorPicker" v-if="$slots.default">
       <slot />
@@ -9,7 +15,9 @@
           class="color-picker-swatch-content"
           :style="{
             borderColor: this.active ? 'var(--color-selection)' : '#fff',
-            background: this.realValue.length ? this.realValue : 'transparent',
+            background: this.styleString.length
+              ? this.styleString
+              : 'transparent',
           }"
         />
       </div>
@@ -24,28 +32,97 @@
       >
         {{
           showValue
-            ? realValue.length
-              ? realValue
+            ? styleString.length
+              ? styleString
               : placeholder
             : label.length
             ? label
             : placeholder
         }}
       </div>
-      <div v-else :class="['color-picker-input', { filled, flat }]">
-        <Input
-          @input="updateValue"
-          prefix="#"
-          :max-length="6"
-          :flat="flat"
-          :filled="filled"
-          uppercase
-          placeholder="value"
-          v-model="inputval"
-          :style="{
-            width: realInputWidth,
-          }"
-        />
+      <div v-else :class="['color-picker-input', realModel, { filled, flat }]">
+        <div v-if="realModel == 'hex'">
+          <Input
+            @input="updateValue"
+            prefix="#"
+            :max-length="6"
+            :flat="flat"
+            :filled="filled"
+            uppercase
+            placeholder="value"
+            v-model="inputval"
+            :style="{
+              width: realInputWidth,
+            }"
+          />
+        </div>
+        <div v-else-if="realModel == 'rgb'" style="display: flex;">
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="R"
+            v-model="model.rgb.red"
+            :flat="flat"
+            :filled="filled"
+            :max="255"
+            :min="0"
+          />
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="G"
+            v-model="model.rgb.green"
+            :flat="flat"
+            :filled="filled"
+            :max="255"
+            :min="0"
+          />
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="B"
+            v-model="model.rgb.blue"
+            :flat="flat"
+            :filled="filled"
+            :max="255"
+            :min="0"
+          />
+        </div>
+        <div v-else-if="realModel == 'cmyk'" style="display: flex;">
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="C"
+            v-model="model.cmyk.cyan"
+            :flat="flat"
+            :filled="filled"
+            :max="100"
+            :min="0"
+          />
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="M"
+            v-model="model.cmyk.magenta"
+            :flat="flat"
+            :filled="filled"
+            :max="100"
+            :min="0"
+          />
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="Y"
+            v-model="model.cmyk.yellow"
+            :flat="flat"
+            :filled="filled"
+            :max="100"
+            :min="0"
+          />
+          <Input-Scroll
+            style="width: 40px;"
+            prefix="K"
+            v-model="model.cmyk.black"
+            :flat="flat"
+            :filled="filled"
+            :max="100"
+            :min="0"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -62,8 +139,12 @@ export default {
       type: String,
       default: "Custom color",
     },
-    value: {
+    colorModel: {
       type: String,
+      default: "hex",
+    },
+    value: {
+      type: [String, Object],
       default: "",
     },
     placeholder: {
@@ -114,6 +195,30 @@ export default {
   data: () => ({
     val: "",
     hostValue: null,
+    model: {
+      hex: "",
+      cmyk: {
+        cyan: 0,
+        magenta: 0,
+        yellow: 0,
+        black: 0,
+      },
+      rgb: {
+        red: 127,
+        green: 127,
+        blue: 127,
+      },
+      hsb: {
+        hue: 127,
+        saturation: 127,
+        brightness: 127,
+      },
+      lab: {
+        L: 127,
+        A: 127,
+        B: 127,
+      },
+    },
     inputval: "",
     lastModified: "value",
     active: false,
@@ -133,9 +238,51 @@ export default {
       },
     ],
   }),
+  // http://www.easyrgb.com/en/math.php
+  // http://www.brucelindbloom.com/index.html?Equations.html
   computed: {
+    shouldUpdateVModelObject() {
+      return this.realModel !== "hex" && /object/i.test(this.value);
+    },
     validHex() {
       return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(this.value);
+    },
+    realModel() {
+      let possibles = ["hex", "rgb", "cmyk", "lab", "hsb"];
+      let found = possibles.find((model) => {
+        return model == this.colorModel.toLowerCase();
+      });
+      return found ? found : possibles[0];
+    },
+    styleString() {
+      if (!this.value || !this.value.length) return "transparent";
+      if (this.realModel == "cmyk") {
+        let result = this.cmykToHex();
+        // console.log(result)
+        return result;
+      } else if (this.realModel == "hex") {
+        return this.realValue.length ? this.realValue : "transparent";
+      } else if (this.realModel == "rgb") {
+        return `rgb(${this.activeModel.red}, ${this.activeModel.green}, ${this.activeModel.blue})`;
+      } else {
+        return "transparent";
+      }
+    },
+    valueAsString() {
+      let str = this.realModel == "hex" ? this.styleString : "";
+      if (this.realModel !== "hex") {
+        str = `${this.realModel.toLowerCase()}(`;
+        Object.keys(this.activeModel).forEach((key, index) => {
+          str += `${this.activeModel[key]}${
+            index !== Object.keys(this.activeModel).length - 1 ? ", " : ""
+          }`;
+        });
+        str += ")";
+      }
+      return str;
+    },
+    activeModel() {
+      return this.model[this.realModel];
     },
     realValue: {
       get() {
@@ -158,32 +305,53 @@ export default {
       },
       set(val) {
         this.hostValue = val;
-        this.val = this.rgbToHex(val);
-        this.$emit("input", this.val);
+        if (/hex/i.test(this.realModel)) {
+          this.val = this.rgbToHex(val);
+          this.$emit("input", this.val);
+        }
         return val;
       },
     },
   },
   watch: {
+    valueAsString(val) {
+      if (this.shouldUpdateVModelObject) {
+        this.$emit("update", this.activeModel);
+        this.$emit("input", this.activeModel);
+      }
+    },
     realValue(value) {
       if (this.prefsId.length) this.setPrefsById(this.prefsId, value);
       this.$emit("update", value);
     },
+    realModel(value, lastVal) {
+      console.log(`SHOULD CONVERT FROM ${lastVal} > ${value}`);
+    },
     value(val) {
       if (val) {
         this.lastModified = "value";
-        this.inputval = val.replace(/^#/, "");
+        if (this.realModel == "hex") this.inputval = val.replace(/^#/, "");
+        else {
+          console.log("MODEL NOT SET:", val);
+        }
       }
     },
     val(val) {
       if (val) {
         this.lastModified = "val";
-        this.inputval = val.replace(/^#/, "");
+        if (this.realModel == "hex") this.inputval = val.replace(/^#/, "");
+        else {
+          console.log("VAL NOT SET:", val);
+        }
       }
     },
     inputval(val) {
-      if (!val.length) this.realValue = "";
-      else this.updateValue(val);
+      if (this.realModel == "hex") {
+        if (!val.length) this.realValue = "";
+        else this.updateValue(val);
+      } else {
+        console.log("INPUTVAL NOT SET:", val);
+      }
     },
   },
   mixins: [require("../mixinPrefs").default],
@@ -198,12 +366,33 @@ export default {
         this.val = content;
         this.$emit("prefs", content);
       }
+    } else if (this.value) {
+      Object.assign(this.activeModel, this.value);
     }
   },
   methods: {
+    cmykToHex() {
+      let c = this.model.cmyk.cyan / 100,
+        m = this.model.cmyk.magenta / 100,
+        y = this.model.cmyk.yellow / 100,
+        k = this.model.cmyk.black / 100;
+      function padZero(str) {
+        return "000000".substr(str.length) + str;
+      }
+
+      var cyan = (c * 255 * (1 - k)) << 16;
+      var magenta = (m * 255 * (1 - k)) << 8;
+      var yellow = (y * 255 * (1 - k)) >> 0;
+      var black = 255 * (1 - k);
+      var white = black | (black << 8) | (black << 16);
+      var color = white - (cyan | magenta | yellow);
+      return "#" + padZero(color.toString(16));
+    },
     updateValue(value) {
-      if (this.validateAsHexString(value)) {
+      if (this.realModel == "hex" && this.validateAsHexString(value)) {
         this.realValue = `#${value}`;
+      } else {
+        console.log("Update?");
       }
       // this.value = value;
     },
@@ -308,28 +497,51 @@ export default {
       if (result) this.hostColor = result;
     },
     async promptILST() {
-      let prev = {
-        red: this.hostValue && this.hostValue.red ? this.hostValue.red : 127,
-        green:
-          this.hostValue && this.hostValue.green ? this.hostValue.green : 127,
-        blue: this.hostValue && this.hostValue.blue ? this.hostValue.blue : 127,
-      };
-      let result = await evalScript(`(function() {
-        var temp = new RGBColor();
-        temp.red = ${prev.red};
-        temp.green = ${prev.green};
-        temp.blue = ${prev.blue};
-        var result = app.showColorPicker(temp);
-        if (result !== temp) {
-          return JSON.stringify({
+      let prev = {};
+      Object.assign(prev, this.activeModel);
+      let inputColor = /rgb|hex/i.test(this.realModel)
+        ? `var temp = new RGBColor();
+          temp.red = ${prev.red || 127};
+          temp.green = ${prev.green || 127};
+          temp.blue = ${prev.blue || 127};`
+        : /cmyk/i.test(this.realModel)
+        ? `var temp = new CMYKColor();
+          temp.cyan = ${prev.cyan || 0};
+          temp.magenta = ${prev.magenta || 0};
+          temp.yellow = ${prev.yellow || 0};
+          temp.black = ${prev.black || 0}`
+        : "return null;";
+
+      let outputColor = /rgb|hex/i.test(this.realModel)
+        ? `{
             type: "RGB",
             red: Math.round(result.red),
             green: Math.round(result.green),
             blue: Math.round(result.blue)
-          })
+          }`
+        : /cmyk/i.test(this.realModel)
+        ? `{
+            type: "CMYK",
+            cyan: Math.round(result.cyan),
+            magenta: Math.round(result.magenta),
+            yellow: Math.round(result.yellow),
+            black: Math.round(result.black),
+          }`
+        : `return null;`;
+
+      let code = `(function() {
+        ${inputColor}
+        var result = app.showColorPicker(temp);
+        if (result !== temp) {
+          return JSON.stringify(${outputColor})
         } else return false;
-      }())`);
-      if (result) this.hostColor = result;
+      }())`;
+      let result = await evalScript(code);
+      if (!result) return null;
+      if (result && this.realModel == "hex") this.hostColor = result;
+      else {
+        Object.assign(this.activeModel, result);
+      }
     },
     async promptLegacy() {
       console.log("Prompt Legacy");
@@ -444,5 +656,9 @@ export default {
   border-style: solid;
   width: 100%;
   height: 100%;
+}
+
+.color-picker-input .input-scroll-container {
+  margin-right: 4px;
 }
 </style>
