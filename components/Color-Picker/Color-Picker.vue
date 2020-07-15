@@ -377,7 +377,8 @@ export default {
         this.$emit("prefs", content);
       }
     } else if (this.value) {
-      Object.assign(this.activeModel, this.value);
+      if (this.realModel == "hex") this.inputval = this.value.replace("#", "");
+      else Object.assign(this.activeModel, this.value);
     }
   },
   methods: {
@@ -411,13 +412,9 @@ export default {
       return "#" + padZero(color.toString(16));
     },
     updateValue(value) {
-      // if (this.debug) console.log(value)
-      // if (this.realModel == 'hex' && this.validateAsHexString(value)) {
       this.realValue = `#${value}`;
-      // } else {
-      //   if (this.debug) console.log('Update?', this.realModel, value)
-      // }
-      // this.value = value;
+      if (this.validateAsHexString(`${value}`))
+        this.$emit("input", `#${value}`);
     },
     validateAsHexString(value) {
       return (
