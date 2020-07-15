@@ -47,6 +47,10 @@ export default {
       type: String,
       default: "",
     },
+    keepConsole: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     validFile: /\.js(x(bin)?|(fl))?$/,
@@ -90,7 +94,7 @@ export default {
   },
   async mounted() {
     if (spy) {
-      if (!this.debug) console.clear();
+      if (!this.debug && !this.keepConsole) console.clear();
       console.log(
         `${spy.extName} ${spy.extVersion} : ${spy.isDev ? "DEV" : "BUILD"}`
       );
