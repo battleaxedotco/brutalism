@@ -104,23 +104,6 @@ export default {
       this.csInterface.addEventListener("console", this.consoler);
     }
 
-    // dont redirect if file dropped
-    window.addEventListener(
-      "dragover",
-      function (e) {
-        e = e || event;
-        e.preventDefault();
-      },
-      false
-    );
-    window.addEventListener(
-      "drop",
-      function (e) {
-        e = e || event;
-        e.preventDefault();
-      },
-      false
-    );
     if (window.__adobe_cep__) {
       await this.loadUtils();
       await this.loadScriptPath();

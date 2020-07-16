@@ -138,6 +138,24 @@ export default {
     },
   },
   mounted() {
+    // dont redirect if file dropped
+    window.addEventListener(
+      "dragover",
+      function (e) {
+        e = e || event;
+        e.preventDefault();
+      },
+      false
+    );
+    window.addEventListener(
+      "drop",
+      function (e) {
+        e = e || event;
+        e.preventDefault();
+      },
+      false
+    );
+
     window.addEventListener("dragenter", () => {
       if (this.fullscreen) {
         if (this.debug) console.log("dragover");
