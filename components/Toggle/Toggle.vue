@@ -16,6 +16,10 @@
 
 <script>
 export default {
+  model: {
+    prop: 'state',
+    event: 'input'
+  },
   props: {
     state: {
       type: Boolean,
