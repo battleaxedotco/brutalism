@@ -105,6 +105,8 @@ export default {
     }
 
     if (window.__adobe_cep__) {
+      console.log("Hello???");
+      console.log(this.realScriptPath);
       await this.loadUtils();
       await this.loadScriptPath();
     } else if (this.app && this.theme) {
@@ -232,13 +234,19 @@ export default {
       );
     },
     async loadUtils() {
+      if (this.noUtils) return null;
+      return await require("gehenna").default.init();
       return this.noUtils
         ? null
         : typeof this.realUtils === "string"
         ? await this.handlePath(this.realUtils)
-        : this.realUtils.forEach((util) => {
-            this.handlePath(util);
-          });
+        : this.realUtils
+            .filter((util) => {
+              return !/(Console|json2|ES6_Array_Methods)\.jsx/.test(util);
+            })
+            .forEach((util) => {
+              this.handlePath(util);
+            });
     },
     async loadScriptPath() {
       if (this.debug) console.log("Loading paths:", this.realScriptPath);

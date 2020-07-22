@@ -672,7 +672,7 @@ export default {
   box-sizing: border-box;
   width: 20px;
   height: 20px;
-  border: 0.5px solid black;
+  border: 0.5px solid rgb(165, 37, 37);
 }
 .color-picker-swatch-content {
   box-sizing: border-box;
