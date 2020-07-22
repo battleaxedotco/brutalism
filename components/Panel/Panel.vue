@@ -105,8 +105,6 @@ export default {
     }
 
     if (window.__adobe_cep__) {
-      console.log("Hello???");
-      console.log(this.realScriptPath);
       await this.loadUtils();
       await this.loadScriptPath();
     } else if (this.app && this.theme) {
