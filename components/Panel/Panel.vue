@@ -12,6 +12,7 @@ const fs = require("fs");
 const path = require("path");
 import starlette from "starlette";
 import { evalScript } from "cluecumber";
+import gehenna from "gehenna";
 
 export default {
   props: {
@@ -101,7 +102,18 @@ export default {
     }
     if (window.__adobe_cep__) {
       this.csInterface = new CSInterface();
-      this.csInterface.addEventListener("console", this.consoler);
+      this.csInterface.addEventListener("console", (msg) => {
+        console.log(msg);
+      });
+      this.csInterface.addEventListener("console_error", (msg) => {
+        console.error(msg);
+      });
+      this.csInterface.addEventListener("console_debug", (msg) => {
+        console.debug(msg);
+      });
+      this.csInterface.addEventListener("console_clear", () => {
+        console.clear();
+      });
     }
 
     if (window.__adobe_cep__) {
@@ -233,18 +245,14 @@ export default {
     },
     async loadUtils() {
       if (this.noUtils) return null;
-      return await require("gehenna").default.init();
+      await gehenna();
       return this.noUtils
         ? null
         : typeof this.realUtils === "string"
         ? await this.handlePath(this.realUtils)
-        : this.realUtils
-            .filter((util) => {
-              return !/(Console|json2|ES6_Array_Methods)\.jsx/.test(util);
-            })
-            .forEach((util) => {
-              this.handlePath(util);
-            });
+        : this.realUtils.forEach((util) => {
+            this.handlePath(util);
+          });
     },
     async loadScriptPath() {
       if (this.debug) console.log("Loading paths:", this.realScriptPath);
@@ -291,7 +299,10 @@ export default {
     async loadFolder(thispath) {
       let contents = await this.readDir(thispath);
       let valids = contents.filter((file) => {
-        return this.validFile.test(file);
+        return (
+          this.validFile.test(file) &&
+          !/json2|ES6_Array_Methods|Console/i.test(file)
+        );
       });
       for (let index in valids)
         await this.loadScript(`${thispath}/${valids[index]}`);
