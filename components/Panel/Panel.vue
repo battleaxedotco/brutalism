@@ -103,13 +103,13 @@ export default {
     if (window.__adobe_cep__) {
       this.csInterface = new CSInterface();
       this.csInterface.addEventListener("console", (msg) => {
-        console.log(msg.data);
+        if (msg.data && msg.data !== "undefined") console.log(msg.data);
       });
       this.csInterface.addEventListener("console_error", (msg) => {
-        console.error(msg.data);
+        if (msg.data && msg.data !== "undefined") console.error(msg.data);
       });
       this.csInterface.addEventListener("console_debug", (msg) => {
-        console.debug(msg.data);
+        if (msg.data && msg.data !== "undefined") console.debug(msg.data);
       });
       this.csInterface.addEventListener("console_clear", () => {
         console.clear();
