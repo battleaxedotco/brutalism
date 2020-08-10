@@ -19,6 +19,7 @@
         outline,
         secondary,
         pill,
+        hover,
       },
     ]"
     :style="{
@@ -28,6 +29,7 @@
       margin: margin,
     }"
     @click.exact="handleClick"
+    @click="$emit('clickevt', $event)"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
   >
@@ -256,7 +258,7 @@ export default {
     },
   },
   methods: {
-    async handleClick() {
+    async handleClick(evt) {
       const self = this;
       let possibles = [
         {
@@ -276,7 +278,7 @@ export default {
             (this.passClick || !this.groupItem) &&
             !this.goto.length &&
             !this.to.length,
-          callback: () => self.$emit("click"),
+          callback: () => self.$emit("click", evt),
         },
         {
           type: "GroupButton",
@@ -286,7 +288,9 @@ export default {
       ];
       // Since only one value will be true, use filter to remove any false conditions
       // Immediately call the remaining Array item's callback
-      possibles.filter((type) => type.condition)[0].callback();
+      let target = possibles.filter((type) => type.condition)[0];
+      target.callback();
+
       if (this.evalScript.length) {
         let result = await evalScript(this.evalScript);
         this.$emit("evalScript", result);
