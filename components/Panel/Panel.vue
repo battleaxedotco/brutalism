@@ -1,5 +1,10 @@
 <template>
-  <div class="panel" :style="checkPanelHeight()">
+  <div
+    class="panel"
+    :style="checkPanelHeight()"
+    @mouseenter="$emit('mouseenter')"
+    @mouseleave="$emit('mouseleave')"
+  >
     <slot style="overflow: hidden;" />
   </div>
 </template>
