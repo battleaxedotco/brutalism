@@ -131,6 +131,10 @@ export default {
     this.checkSize();
     window.addEventListener("resize", () => {
       this.checkSize();
+      this.$emit("resize", {
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
     });
   },
   methods: {

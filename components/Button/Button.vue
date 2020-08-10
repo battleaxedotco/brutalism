@@ -2,31 +2,31 @@
   <div
     class="button"
     :class="[
-			{
-				uppercase,
-				block,
-				primary,
-				left,
-				right,
-				flat,
-				filled,
-				disabled,
-				color,
-				tall,
-				custom,
-				toolbar,
-				bg,
-				outline,
-				secondary,
-				pill
-			}
-		]"
+      {
+        uppercase,
+        block,
+        primary,
+        left,
+        right,
+        flat,
+        filled,
+        disabled,
+        color,
+        tall,
+        custom,
+        toolbar,
+        bg,
+        outline,
+        secondary,
+        pill,
+      },
+    ]"
     :style="{
-			background: realBG,
-			color: realColor,
-			height: height,
-			margin: margin
-		}"
+      background: realBG,
+      color: realColor,
+      height: height,
+      margin: margin,
+    }"
     @click.exact="handleClick"
     @mouseenter="hover = true"
     @mouseleave="hover = false"
@@ -39,28 +39,27 @@
       <span
         ref="tooltip"
         :class="[
-					'button-tooltip',
-					hover ? 'button-tooltip-active' : 'button-tooltip-idle',
-					top ? 'top' : 'bottom',
-					{ noSlide }
-				]"
+          'button-tooltip',
+          hover ? 'button-tooltip-active' : 'button-tooltip-idle',
+          top ? 'top' : 'bottom',
+          { noSlide },
+        ]"
         :style="[
-					{
-						'transition-delay': delay,
-						'transition-duration': duration,
-						'transition-timing-function': timing,
-						opacity: debug && !hover ? '1' : '',
-						'font-weight': noBold ? '500' : '600'
-					}
-				]"
-      >{{ tooltip }}</span>
+          {
+            'transition-delay': delay,
+            'transition-duration': duration,
+            'transition-timing-function': timing,
+            opacity: debug && !hover ? '1' : '',
+            'font-weight': noBold ? '500' : '600',
+          },
+        ]"
+        >{{ tooltip }}</span
+      >
     </div>
     <slot v-if="$slots.default" />
     <div v-else class="button-interior">
       <span v-if="label.length" :style="computedLabelStyle()">
-        {{
-        label
-        }}
+        {{ label }}
       </span>
       <Icon
         :class="{ prefixIcon }"
@@ -79,120 +78,120 @@ export default {
   props: {
     block: {
       type: Boolean,
-      default: false
+      default: false,
     },
     pill: {
       type: Boolean,
-      default: false
+      default: false,
     },
     outline: {
       type: Boolean,
-      default: false
+      default: false,
     },
     left: {
       type: Boolean,
-      default: false
+      default: false,
     },
     right: {
       type: Boolean,
-      default: false
+      default: false,
     },
     primary: {
       type: Boolean,
-      default: false
+      default: false,
     },
     secondary: {
       type: Boolean,
-      default: false
+      default: false,
     },
     filled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     flat: {
       type: Boolean,
-      default: false
+      default: false,
     },
     disabled: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tall: {
       type: Boolean,
-      default: false
+      default: false,
     },
     custom: {
       type: Boolean,
-      default: false
+      default: false,
     },
     prefixIcon: {
       type: String,
-      default: ""
+      default: "",
     },
     icon: {
       type: String,
-      default: ""
+      default: "",
     },
     iconSize: {
       type: String,
-      default: "16px"
+      default: "16px",
     },
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     to: {
       type: String,
-      default: ""
+      default: "",
     },
     goto: {
       type: String,
-      default: ""
+      default: "",
     },
     toolbar: {
       type: Boolean,
-      default: false
+      default: false,
     },
     tooltip: {
       type: String,
-      default: ""
+      default: "",
     },
     top: {
       type: Boolean,
-      default: false
+      default: false,
     },
     delay: {
       type: String,
-      default: ""
+      default: "",
     },
     duration: {
       type: String,
-      default: ""
+      default: "",
     },
     timing: {
       type: String,
-      default: "var(--quad)"
+      default: "var(--quad)",
     },
     noSlide: {
       type: Boolean,
-      default: false
+      default: false,
     },
     debug: {
       type: Boolean,
-      default: false
+      default: false,
     },
     noBold: {
       type: Boolean,
-      default: false
+      default: false,
     },
     evalScript: {
       type: String,
-      default: ""
+      default: "",
     },
     copy: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   data: () => ({
     groupItem: false,
@@ -201,16 +200,19 @@ export default {
     sizeDebouncer: null,
     isResizing: false,
     realClipboard: "",
-    hasCopy: false
+    hasCopy: false,
   }),
   mixins: [
     require("../mixinUID").default,
-    require("../mixinStyleProps").default
+    require("../mixinStyleProps").default,
   ],
   watch: {
     copy(val) {
       this.realClipboard = val;
-    }
+    },
+    hover(val) {
+      this.$emit(`mouse${val ? "enter" : "leave"}`);
+    },
   },
   mounted() {
     if (/button-group/i.test(this.$parent.$vnode.tag)) {
@@ -251,7 +253,7 @@ export default {
           .replace(/(--color-|color-)/, "")
           .replace(/\)$/, "")})`;
       }
-    }
+    },
   },
   methods: {
     async handleClick() {
@@ -260,7 +262,7 @@ export default {
         {
           type: "GotoButton",
           condition: this.goto.length > 0,
-          callback: () => openURL(self.goto)
+          callback: () => openURL(self.goto),
         },
         // Was this missing? There's a :to parameter. For routes?
         // {
@@ -274,17 +276,17 @@ export default {
             (this.passClick || !this.groupItem) &&
             !this.goto.length &&
             !this.to.length,
-          callback: () => self.$emit("click")
+          callback: () => self.$emit("click"),
         },
         {
           type: "GroupButton",
           condition: !this.passClick && this.groupItem,
-          callback: () => self.$parent.setActiveByUID(self.uuid)
-        }
+          callback: () => self.$parent.setActiveByUID(self.uuid),
+        },
       ];
       // Since only one value will be true, use filter to remove any false conditions
       // Immediately call the remaining Array item's callback
-      possibles.filter(type => type.condition)[0].callback();
+      possibles.filter((type) => type.condition)[0].callback();
       if (this.evalScript.length) {
         let result = await evalScript(this.evalScript);
         this.$emit("evalScript", result);
@@ -318,7 +320,7 @@ export default {
     },
     debounce(func, delay) {
       let inDebounce;
-      return function() {
+      return function () {
         const context = this;
         const args = arguments;
         clearTimeout(inDebounce);
@@ -356,8 +358,8 @@ export default {
           tooltip.style.right = 0;
         }
       }, 50);
-    }
-  }
+    },
+  },
 };
 </script>
 
