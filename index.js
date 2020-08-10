@@ -27,6 +27,7 @@ const Tabs = require("./components/Tabs").default;
 const TextArea = require("./components/TextArea").default;
 const Toggle = require("./components/Toggle").default;
 const Wrapper = require("./components/Wrapper").default;
+const Watcher = require("./components/Watcher").default;
 const Autofocus = require("./components/directiveAutofocus.js").default;
 const FakeSpy = require("./utils/fakeSpy").default;
 const WrapNode = require("./components/wrapNode.js").default;
@@ -95,6 +96,7 @@ export {
   WrapNode,
   Autofocus,
   FakeSpy,
+  Watcher,
   Pan,
 };
 // spy,
