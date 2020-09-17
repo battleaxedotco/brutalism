@@ -5,7 +5,7 @@
     @mouseenter="$emit('mouseenter')"
     @mouseleave="$emit('mouseleave')"
   >
-    <slot style="overflow: hidden;" />
+    <slot style="overflow: hidden" />
   </div>
 </template>
 
@@ -68,14 +68,14 @@ export default {
       return typeof this.utils === "string"
         ? this.sanitizeString(this.utils)
         : this.utils.map((util) => {
-            this.sanitizeString(util);
+            return this.sanitizeString(util);
           });
     },
     realScriptPath() {
       return typeof this.scriptPath === "string"
         ? this.sanitizeString(this.scriptPath)
         : this.scriptPath.map((script) => {
-            this.sanitizeString(script);
+            return this.sanitizeString(script);
           });
     },
     noExclusion() {
@@ -272,11 +272,11 @@ export default {
           return await this.handlePath(`${this.realScriptPath}/host.jsx`);
         else throw new Error(`${this.realScriptPath} is a folder, not a file`);
       } else {
-        for (const scriptPath in this.realScriptPath) {
+        for (const scriptPath of this.realScriptPath) {
           let isFolder = await this.isFolder(scriptPath);
-          if (!isFolder) return await this.handlePath(scriptPath);
+          if (!isFolder) await this.handlePath(scriptPath);
           else if (this.exists(`${scriptPath}/host.jsx`))
-            return await this.handlePath(`${scriptPath}/host.jsx`);
+            await this.handlePath(`${scriptPath}/host.jsx`);
           else throw new Error(`${scriptPath} is a folder, not a file`);
         }
       }
@@ -286,6 +286,7 @@ export default {
       return await this.investigatePath(thispath);
     },
     async investigatePath(thispath) {
+      if (/\/src\/host\/universal$/.test(thispath)) return null;
       let exists = await this.exists(thispath);
       if (!exists) {
         if (this.debug) console.log(`DOES NOT EXIST:`, thispath);
@@ -302,7 +303,7 @@ export default {
       }
     },
     async handleFile(thispath) {
-      if (this.validFile.test(thispath)) await this.loadScript(thispath);
+      if (this.validFile.test(thispath)) return await this.loadScript(thispath);
       else throw new Error(`${thispath} is not a valid scripting file`);
     },
     async loadFolder(thispath) {
