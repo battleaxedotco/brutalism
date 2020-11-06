@@ -238,10 +238,22 @@ export default {
           if (this.debug)
             console.log(`Loading...`, loadPath.replace(/\\/gm, "/"), result);
         } else if (window.__adobe_cep__) {
+          /**
+           * REF: Timelord Windows users reporting "Alert: Javascript Argument 1 is invalid" error
+           * This was caused by faulty Windows filepath URI
+           */
+          let ensuredPath = loadPath;
+          if (!navigator.platform.indexOf("Mac") > -1) {
+            ensuredPath = loadPath
+              .replace("C:\\", "C:\\\\")
+              .replace(/\//gm, "\\")
+              .replace(/\\/gm, "/");
+          }
+          // The above ensures that it works for Windows 10, but may be better left resolved through path.resolve() and decodeURI()
+          if (this.debug) console.log(`Loading...`, ensuredPath);
           let result = await evalScript(
-            `fl.runScript(FLfile.platformPathToURI("${loadPath}"))`
+            `fl.runScript(FLfile.platformPathToURI("${ensuredPath}"))`
           );
-          if (this.debug) console.log(`Loading...`, loadPath, result);
         }
       } catch (err) {
         this.errorMessage(err);
