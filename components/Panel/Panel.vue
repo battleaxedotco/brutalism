@@ -245,7 +245,7 @@ export default {
           let ensuredPath = loadPath;
           if (!navigator.platform.indexOf("Mac") > -1) {
             ensuredPath = loadPath
-              .replace("C:\\", "C:\\\\")
+              .replace(/C:(\\|\/){1,}/, "C:\\\\")
               .replace(/\//gm, "\\")
               .replace(/\\/gm, "/");
           }
