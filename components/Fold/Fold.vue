@@ -1,5 +1,8 @@
 <template>
-  <div class="fold" :style="{ 'margin-top': marginTop, margin: margin, padding: padding }">
+  <div
+    class="fold"
+    :style="{ 'margin-top': marginTop, margin: margin, padding: padding }"
+  >
     <div class="fold-label" @click="toggle">
       <div class="fold-label-text">{{ label }}</div>
       <div class="fold-icon" :class="{ flip: !isOpen }">
@@ -16,11 +19,20 @@
         otherwise the data inside will be reset whenever the user
         folds and unfolds. Checkboxes, inputs, etc. will all reset
     -->
-    <div class="fold-content" v-if="persistent" v-show="isOpen" :style="{ padding: innerPadding }">
+    <div
+      class="fold-content"
+      v-if="persistent"
+      v-show="isOpen"
+      :style="{ padding: innerPadding }"
+    >
       <slot />
     </div>
     <div v-else>
-      <div class="fold-content" v-if="isOpen" :style="{ padding: innerPadding }">
+      <div
+        class="fold-content"
+        v-if="isOpen"
+        :style="{ padding: innerPadding }"
+      >
         <slot />
       </div>
     </div>
@@ -31,33 +43,33 @@
 export default {
   data: () => ({
     isOpen: null,
-    type: "fold"
+    type: "fold",
   }),
   mixins: [
     require("../mixinStyleProps").default,
-    require("../mixinPrefs").default
+    require("../mixinPrefs").default,
   ],
   props: {
     open: {
       type: Boolean,
-      default: false
+      default: false,
     },
     label: {
       type: String,
-      default: ""
+      default: "",
     },
     persistent: {
       type: Boolean,
-      default: true
+      default: true,
     },
     innerPadding: {
       type: String,
-      default: ""
+      default: "",
     },
     prefsId: {
       type: String,
-      default: ""
-    }
+      default: "",
+    },
   },
   methods: {
     toggle() {
@@ -67,12 +79,15 @@ export default {
       if (this.prefsId) {
         this.setPrefsById(this.prefsId, this.isOpen);
       }
-    }
+    },
   },
   watch: {
     open(val) {
       this.toggle();
-    }
+    },
+    isOpen(val) {
+      this.$emit(val ? "open" : "close");
+    },
   },
   created() {
     if (this.prefsId.length) {
@@ -87,7 +102,7 @@ export default {
     } else {
       this.isOpen = this.open;
     }
-  }
+  },
 };
 </script>
 
