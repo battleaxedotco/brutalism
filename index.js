@@ -1,3 +1,5 @@
+const openExplorer = require("open-file-explorer");
+
 const Alert = require("./components/Alert").default;
 const Anno = require("./components/Anno").default;
 const ButtonGroup = require("./components/Button-Group").default;
@@ -52,6 +54,14 @@ let Pan = require("vue-pan").default;
 // import { spy } from 'cep-spy'
 // import { starlette } from 'starlette'
 
+async function openPath(path) {
+  return new Promise((resolve, reject) => {
+    openExplorer(path, (err) => {
+      return err ? reject(err) : resolve(true);
+    });
+  });
+}
+
 export {
   Alert,
   Anno,
@@ -67,6 +77,7 @@ export {
   openURL,
   saveDialog,
   openDialog,
+  openPath,
   loadScript,
   rgbToHex,
   readDir,
