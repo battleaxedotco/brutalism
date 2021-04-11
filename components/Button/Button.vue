@@ -18,8 +18,7 @@
         bg,
         outline,
         secondary,
-        pill,
-        hover,
+        pill
       },
     ]"
     :style="{
