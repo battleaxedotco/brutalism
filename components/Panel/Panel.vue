@@ -16,7 +16,7 @@ const spy = window.__adobe_cep__ ? require("cep-spy").default : null;
 const fs = require("fs");
 const path = require("path");
 import starlette from "starlette";
-import { evalScript } from "workaround";
+import { evalScript } from "cluecumber";
 import gehenna from "gehenna";
 
 export default {
