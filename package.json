@@ -1,6 +1,6 @@
 {
   "name": "brutalism",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "description": "Battleaxe's component library for Adobe CEP panels",
   "main": "index.js",
   "scripts": {
@@ -18,7 +18,6 @@
     "open-file-explorer": "^1.0.2",
     "starlette": "latest",
     "vue-pan": "latest",
-    "vue-runtime-template-compiler": "^1.2.0",
-    "workaround": "^1.0.3"
+    "vue-runtime-template-compiler": "^1.2.0"
   }
 }
