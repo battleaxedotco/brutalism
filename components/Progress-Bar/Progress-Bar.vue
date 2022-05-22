@@ -1,12 +1,9 @@
 <template>
-  <!-- 
-    Issues:
-      - I want the bar to pop up / down BEFORE the width is adjusted
-  -->
   <div
     class="progress-bar-wrapper"
     :style="{
       top: realTop,
+      zIndex: realZIndex,
       opacity: value >= 100 ? 1 : 1,
     }"
   >
@@ -58,6 +55,10 @@ export default {
       type: Number,
       default: 0,
     },
+    zIndex: {
+      type: [String, Number],
+      default: 100,
+    },
     debug: {
       type: Boolean,
       default: false,
@@ -66,6 +67,9 @@ export default {
   computed: {
     realPercent() {
       return `${this.realValue}%`;
+    },
+    realZIndex() {
+      return isNaN(+this.zIndex) ? 99 : +this.zIndex;
     },
     realTransition() {
       return `width ${this.timing}`;
@@ -94,9 +98,6 @@ export default {
     this.getRealTop();
   },
   watch: {
-    realTop(val) {
-      if (this.debug) console.log("Top is now:", val);
-    },
     percent(val) {
       this.realValue = val;
     },
@@ -104,45 +105,30 @@ export default {
       this.realValue = val >= 0 && val <= 100 ? val : val >= 100 ? 100 : 0;
     },
     realValue(val, lastVal) {
-      const self = this;
-      if (this.debug)
-        console.log("VALUE:", this.realValue, "LAST VAL:", lastVal);
       if (val >= 100 || val <= 0 || lastVal >= 100 || lastVal <= 0) {
         this.getRealTop();
-        if (this.debug) console.log("Toggle top first...");
         setTimeout(() => {
-          self.realValue = val >= 0 && val <= 100 ? val : val >= 100 ? 100 : 0;
+          this.realValue = val >= 0 && val <= 100 ? val : val >= 100 ? 100 : 0;
         }, 220);
-      } else {
-        if (this.debug) console.log("No toggle");
+      } else
         this.realValue = val >= 0 && val <= 100 ? val : val >= 100 ? 100 : 0;
-      }
-      if (this.debug)
-        if (val >= 100) {
-          // console.log(val, lastVal);
-          this.locked = true;
-          setTimeout(() => {
-            self.reset();
-          }, 520);
-        }
       this.$emit("input", val);
+      if (val > 0 && lastVal == 0) this.$emit("show", true);
+      else if (val >= 100)
+        setTimeout(() => {
+          this.$emit("show", false);
+        }, 500);
     },
   },
   methods: {
     getRealTop() {
-      let temp = `${
+      this.realTop = `${
         this.value >= 100 || this.percent >= 100
           ? this.size * -1
           : this.value > 0 || this.percent > 0
-          ? this.size
+          ? 0
           : this.size * -1
       }px`;
-      this.realTop = temp;
-    },
-    getProgressStyle() {
-      let style = "";
-      style += `height: ${this.size}; width: ${this.realValue}%;`;
-      return style;
     },
     reset() {
       if (this.debug) console.log("RESET");
@@ -163,6 +149,7 @@ export default {
   width: 100%;
   margin: 0;
   height: fit-content;
+  z-index: 100;
 }
 .progress-bar-container {
   display: flex;

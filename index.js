@@ -54,11 +54,24 @@ let Pan = require("vue-pan").default;
 // import { spy } from 'cep-spy'
 // import { starlette } from 'starlette'
 
+// async function openPath(path) {
+//   return new Promise((resolve, reject) => {
+//     openExplorer(path, (err) => {
+//       return err ? reject(err) : resolve(true);
+//     });
+//   });
+// }
+
 async function openPath(path) {
   return new Promise((resolve, reject) => {
-    openExplorer(path, (err) => {
-      return err ? reject(err) : resolve(true);
-    });
+    try {
+      const attempt = require("child_process").exec(
+        `start "" "${path.replace(/\\/gm, "/")}"`
+      );
+      resolve(true);
+    } catch (err) {
+      reject(false);
+    }
   });
 }
 
