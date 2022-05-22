@@ -22,12 +22,12 @@ const Menus = require("./components/Menus").default;
 const Panelify = require("./components/Panelify").default;
 const PanelInfo = require("./components/Panel-Info").default;
 const Panel = require("./components/Panel").default;
-const ProgressBar = require("./components/Progress-Bar").default;
 const Row = require("./components/Row").default;
 const Select = require("./components/Select").default;
 const Tabs = require("./components/Tabs").default;
 const TextArea = require("./components/TextArea").default;
 const Toggle = require("./components/Toggle").default;
+
 const Wrapper = require("./components/Wrapper").default;
 const Watcher = require("./components/Watcher").default;
 const Autofocus = require("./components/directiveAutofocus.js").default;
@@ -35,6 +35,10 @@ const FakeSpy = require("./utils/fakeSpy").default;
 const WrapNode = require("./components/wrapNode.js").default;
 const RotationControl = require("./components/Rotation-Control").default;
 const SliderControl = require("./components/Slider-Control").default;
+
+const Overlay = require("./components/Overlay").default;
+const ProgressBar = require("./components/Progress-Bar").default;
+const Notification = require("./components/Notification").default;
 
 require("./assets/material_icon_font/css/materialdesignicons.css");
 require("./assets/fonts.css");
@@ -109,6 +113,8 @@ export {
   PanelInfo,
   Panel,
   ProgressBar,
+  Notification,
+  Overlay,
   RotationControl,
   Row,
   Select,
